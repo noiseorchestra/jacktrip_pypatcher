@@ -1,43 +1,62 @@
 import jack
 
-client = jack.Client('MadwortAutoPatcher')
+jackClient = jack.Client('MadwortAutoPatcher')
 
-all_jacktrip_receive_ports = client.get_ports('.*receive.*')
+all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
 
 # remove all existing jacktrip connections (hubserver autopatcher)
 # TODO: only remove autopatched connections, not our own connections (HOW?)
 print("=== Disconnecting existing connections ===")
 for	receive_port in all_jacktrip_receive_ports:
-	send_ports = client.get_all_connections(receive_port)
+	send_ports = jackClient.get_all_connections(receive_port)
 	for send_port in send_ports:
 		print('disconnect', receive_port.name, 'from', send_port.name)
-		client.disconnect(receive_port, send_port)
+		jackClient.disconnect(receive_port, send_port)
 	
 # add some new jacktrip connections
 print("=== Creating new connections ===")
-jacktrip_receive_1_ports = client.get_ports('.*receive_1')
-print("client count:", len(jacktrip_receive_1_ports))
+jacktrip_clients = list(map(lambda x: x.name.split(':')[0],jackClient.get_ports('.*receive_1')))
+print("client count:", len(jacktrip_clients))
+print('clients', jacktrip_clients)
 
-for	receive_port in jacktrip_receive_1_ports:
-	this_client = receive_port.name.split(':')[0]
+for	client in jacktrip_clients:
+	client_hostname = client.split(':')[0]
 	# get a list of target ip addresses to send this receive port to
-	send_targets = list(map(lambda x: x.name.split(':')[0],filter(lambda x: not x.name.startswith(this_client),jacktrip_receive_1_ports)))
-	print("client", this_client, "with send_targets:", send_targets)
-	if len(send_targets) == 1:
+	# TODO: these are not send_targets, they are receives!
+	receive_targets = list(filter(lambda x: not x.startswith(client_hostname), jacktrip_clients))
+	print("client", client_hostname, "with receive_targets:", receive_targets)
+	if len(receive_targets) == 1:
 		print('Only two clients, duplicate it')
-		channel_1_send_addresses = send_targets
-		channel_2_send_addresses = send_targets
+		channel_1_receive_addresses = receive_targets
+		channel_2_receive_addresses = receive_targets
 	else:
-		channel_1_send_addresses = send_targets[:len(send_targets)//2]
-		channel_2_send_addresses = send_targets[len(send_targets)//2:]
+		channel_1_receive_addresses = receive_targets[:len(receive_targets)//2]
+		channel_2_receive_addresses = receive_targets[len(receive_targets)//2:]
 
-	print("Targets split into two lists: ", channel_1_send_addresses, " : ", channel_2_send_addresses)
+	print("Targets split into two lists: ", channel_1_receive_addresses, " : ", channel_2_receive_addresses)
 
-	for send_address in channel_1_send_addresses:
-		send_port = send_address + ':send_1'
-		print('connect chan1', receive_port.name, 'to', send_port)
-		client.connect(receive_port.name, send_port)
-	for send_address in channel_2_send_addresses:
-		send_port = send_address + ':send_2'
-		print('connect chan2', receive_port.name, 'to', send_port)
-		client.connect(receive_port.name, send_port)
+	for receive_address in channel_1_receive_addresses:
+		receive_port = receive_address + ':receive_1'
+		send_port = client_hostname + ':send_1'
+		print('connect chan1', receive_port, 'to', send_port)
+		try:
+			jackClient.connect(receive_port, send_port)
+		except JackError as e:
+			print('error making connection', e)
+	for receive_address in channel_2_receive_addresses:
+		receive_port = receive_address + ':receive_1'
+		send_port = client_hostname + ':send_2'
+		send_port_list = jackClient.get_ports(send_port)
+		print('connect chan2', receive_port, 'to', send_port)
+		# fixup for mono clients
+		if(len(send_port_list) > 0):
+			try:
+				jackClient.connect(receive_port, send_port)
+			except JackError as e:
+				print('error making connection', e)
+		else:
+			send_port = client_hostname + ':send_1'
+			try:
+				jackClient.connect(receive_port, send_port)
+			except JackError as e:
+				print('error making connection', e)
