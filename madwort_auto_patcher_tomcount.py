@@ -65,13 +65,12 @@ print("=== Creating new connections ===")
 mpg123_ports_all = list(map(lambda x: x.name.split(':')[0],jackClient.get_ports('mpg123.*:1')))
 random.shuffle(mpg123_ports_all)
 mpg123_ports = mpg123_ports_all[0:number_of_voices]
-print("client count:", len(mpg123_ports))
-print('clients', mpg123_ports)
+print("count count:", len(mpg123_ports))
+print('counts', mpg123_ports)
 
-mytarget = '..ffff.92.15.227.38'
-
-if len(mpg123_ports) < 1:
-	os._exit(1)
+jacktrip_clients = list(map(lambda x: x.name.split(':')[0],jackClient.get_ports('.*receive_1')))
+print("client count:", len(jacktrip_clients))
+print('clients', jacktrip_clients)
 
 # RUN THESE FIRST!
 # tom@noiseaa1:~$ mpg123-jack --name mpg123-one --loop -1 tom-count-one.mp3
@@ -79,21 +78,25 @@ if len(mpg123_ports) < 1:
 # tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j slight-right -i '0:0:0:0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
 # tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j slight-left -i '0:0:0:-0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
 
-if len(mpg123_ports) == 1:
-	connect_to_centre(mpg123_ports[0], mytarget)
+for	jacktrip_client in jacktrip_clients:
+	if len(mpg123_ports) < 1:
+		os._exit(1)
 
-if len(mpg123_ports) >= 2:
-	connect_to_left(mpg123_ports[0], mytarget)
-	connect_to_right(mpg123_ports[1], mytarget)
+	if len(mpg123_ports) == 1:
+		connect_to_centre(mpg123_ports[0], jacktrip_client)
 
-if len(mpg123_ports) == 3:
-	connect_to_centre(mpg123_ports[2], mytarget)
+	if len(mpg123_ports) >= 2:
+		connect_to_left(mpg123_ports[0], jacktrip_client)
+		connect_to_right(mpg123_ports[1], jacktrip_client)
 
-if len(mpg123_ports) >= 4:
-	connect_to_soft_left(mpg123_ports[2], mytarget)
-	connect_to_soft_right(mpg123_ports[3], mytarget)
+	if len(mpg123_ports) == 3:
+		connect_to_centre(mpg123_ports[2], jacktrip_client)
 
-if len(mpg123_ports) == 5:
-	connect_to_centre(mpg123_ports[4], mytarget)
+	if len(mpg123_ports) >= 4:
+		connect_to_soft_left(mpg123_ports[2], jacktrip_client)
+		connect_to_soft_right(mpg123_ports[3], jacktrip_client)
 
-os._exit(1)
+	if len(mpg123_ports) == 5:
+		connect_to_centre(mpg123_ports[4], jacktrip_client)
+
+os._exit(0)
