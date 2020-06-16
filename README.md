@@ -45,8 +45,6 @@ $ make njackspa jackspa-cli
 $ ./njackspa /usr/lib/ladspa/inv_input.so 3301
 ```
 
-#### Usage
-
 For example:
 
 ```bash
@@ -62,6 +60,9 @@ right-50:Output (Left)
 right-50:Output (Right)
 ```
 
+#### Usage
+
+To use this autopatcher, you'll need to run `start_plugins.sh` and `stop_plugins.sh` accordingly!
 
 ## Credits
 
