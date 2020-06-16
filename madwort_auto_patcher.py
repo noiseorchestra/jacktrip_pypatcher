@@ -40,8 +40,23 @@ hold_music_port = 'lounge-music'
 
 # RUN THESE FIRST!
 # tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
-# tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j slight-right -i '0:0:0:0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
-# tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j slight-left -i '0:0:0:-0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
+# tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j right-50 -i '0:0:0:0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
+# tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j left-50 -i '0:0:0:-0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
+
+# Sample output:
+# $ jack_lsp
+# system:capture_1
+# system:capture_2
+# system:playback_1
+# system:playback_2
+# right-50:Input (Left)
+# right-50:Input (Right)
+# right-50:Output (Left)
+# right-50:Output (Right)
+# left-50:Input (Left)
+# left-50:Input (Right)
+# left-50:Output (Left)
+# left-50:Output (Right)
 
 if len(jacktrip_clients) < 1:
   os._exit(1)
@@ -77,8 +92,8 @@ if len(jacktrip_clients) == 4:
 if len(jacktrip_clients) == 5:
   # We want to only use a minimum number of LADSPA plugins, so do "missing 
   # person" style mixing - i.e. everyone is panned to the same places
-  ladspa_soft_left = 'slight-left'
-  ladspa_soft_right = 'slight-right'
+  ladspa_soft_left = 'left-50'
+  ladspa_soft_right = 'right-50'
   p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_left, dry_run)
   p.connect_to_ladspa(jackClient, jacktrip_clients[3], ladspa_soft_right, dry_run)
 
