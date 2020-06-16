@@ -35,6 +35,22 @@ def connect_to_right(jack_client, receive, send, dry_run = False):
 	jack_client.connect(receive + ':1', send + ':send_2')
 	jack_client.connect(receive + ':2', send + ':send_2')
 
+def connect_to_ladspa(jack_client, receive, ladspa, dry_run = False):
+	"""connect a pair of receive ports to a ladspa plugin"""
+	if dry_run:
+		print("Connect to ladspa", receive, "to", ladspa)
+		return
+	jack_client.connect(receive + ':1', ladspa + ':Input (Left)')
+	jack_client.connect(receive + ':2', ladspa + ':Input (Right)')
+
+def connect_from_ladspa(jack_client, ladspa, send, dry_run = False):
+	"""connect a ladspa plugin to a pair of send ports"""
+	if dry_run:
+		print("Connect from ladspa", ladspa, "to", send)
+		return
+	jack_client.connect(ladspa + ':Output (Left)', send + ':send_1')
+	jack_client.connect(ladspa + ':Output (Right)', send + ':send_2')
+
 def connect_to_soft_left(jack_client, receive, send, dry_run = False):
 	if dry_run:
 		print("Connect soft left", receive, "to", send)
