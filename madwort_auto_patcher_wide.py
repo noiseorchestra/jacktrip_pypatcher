@@ -11,7 +11,7 @@ all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
 print("=== Disconnecting existing connections ===")
 for	receive_port in all_jacktrip_receive_ports:
 	p.disconnect_all(jackClient, receive_port)
-	
+
 # add some new jacktrip connections
 print("=== Creating new connections ===")
 jacktrip_clients = list(map(lambda x: x.name.split(':')[0],jackClient.get_ports('.*receive_1')))
