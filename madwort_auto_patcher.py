@@ -39,20 +39,16 @@ if dry_run:
 print("client count:", len(jacktrip_clients))
 print('clients', jacktrip_clients)
 
-# TODO: get this working
-hold_music_port = 'lounge-music'
-
 # RUN THESE FIRST!
 # tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
-
-# TODO: Verify that the LADSPA plugins are running!
+hold_music_port = 'lounge-music'
 
 if len(jacktrip_clients) < 1:
   os._exit(1)
 
 if len(jacktrip_clients) == 1:
   # patch hold music to the one client
-  p.connect_to_centre(jackClient, hold_music_port, jacktrip_clients[0], dry_run)
+  p.connect_mpg123_to_centre(jackClient, hold_music_port, jacktrip_clients[0], dry_run)
 
 if len(jacktrip_clients) == 2:
   soft_pan_and_loopback = True
