@@ -40,23 +40,8 @@ hold_music_port = 'lounge-music'
 
 # RUN THESE FIRST!
 # tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
-# tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j right-50 -i '0:0:0:0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
-# tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j left-50 -i '0:0:0:-0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
 
-# Sample output:
-# $ jack_lsp
-# system:capture_1
-# system:capture_2
-# system:playback_1
-# system:playback_2
-# right-50:Input (Left)
-# right-50:Input (Right)
-# right-50:Output (Left)
-# right-50:Output (Right)
-# left-50:Input (Left)
-# left-50:Input (Right)
-# left-50:Output (Left)
-# left-50:Output (Right)
+# TODO: Verify that the LADSPA plugins are running!
 
 if len(jacktrip_clients) < 1:
   os._exit(1)
