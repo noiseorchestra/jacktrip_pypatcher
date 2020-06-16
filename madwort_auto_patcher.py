@@ -27,7 +27,7 @@ jacktrip_clients = list(map(lambda x: x.name.split(':')[0],jackClient.get_ports(
 
 if dry_run:
 	jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2', '..ffff.192.168.0.3', '..ffff.192.168.0.4', '..ffff.192.168.0.5', '..ffff.192.168.0.6']
-	jacktrip_clients = jacktrip_clients[0:2]
+	jacktrip_clients = jacktrip_clients[0:4]
 
 print("client count:", len(jacktrip_clients))
 print('clients', jacktrip_clients)
@@ -45,23 +45,41 @@ if len(jacktrip_clients) < 1:
 
 if len(jacktrip_clients) == 1:
 	# patch hold music to the one client
-	p.connect_to_centre(jackClient, hold_music_port, jacktrip_client[0], dry_run)
+	p.connect_to_centre(jackClient, hold_music_port, jacktrip_clients[0], dry_run)
 
 if len(jacktrip_clients) == 2:
-	p.connect_to_centre(jackClient, jacktrip_clients[0], jacktrip_client[1], dry_run)
-	p.connect_to_centre(jackClient, jacktrip_clients[1], jacktrip_client[0], dry_run)
+	p.connect_to_centre(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run)
+	p.connect_to_centre(jackClient, jacktrip_clients[0], jacktrip_clients[1], dry_run)
 
 if len(jacktrip_clients) == 3:
-	p.connect_to_left(jackClient, jacktrip_clients[1], jacktrip_client[0], dry_run)
-	p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_client[0], dry_run)
+	p.connect_to_left(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_clients[0], dry_run)
 
-	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_client[1], dry_run)
-	p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_client[1], dry_run)
+	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[1], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_clients[1], dry_run)
 
-	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_client[2], dry_run)
-	p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_client[2], dry_run)
+	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[2], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[2], dry_run)
 
-if len(jacktrip_clients) >= 4:
+if len(jacktrip_clients) == 4:
+	# some of this block is duplicated with the block for clients == 3
+	p.connect_to_left(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_clients[0], dry_run)
+	p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[0], dry_run)
+
+	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[1], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_clients[1], dry_run)
+	p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[1], dry_run)
+
+	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[2], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[2], dry_run)
+	p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[2], dry_run)
+
+	p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[3], dry_run)
+	p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[3], dry_run)
+	p.connect_to_centre(jackClient, jacktrip_clients[2], jacktrip_clients[3], dry_run)
+
+if len(jacktrip_clients) >= 5:
 	print("Not yet implemented")
 	os._exit(1)
 
