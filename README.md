@@ -28,6 +28,41 @@ $ python3 madwort_auto_patcher.py
 * `madwort_auto_patcher_wide.py` should patch a number of mono clients to a stereo mix by patching them only to hard left or right
 * `madwort_auto_patcher_tomcount.py` is a fun testing script that will patch multiple mpg123 players to a stereo mix
 
+
+### LADSPA/Jack plugins
+
+In order to use 5/6 clients, you'll need to have some panning plugins.
+
+#### Install
+
+```bash
+$ sudo aptitude install invada-studio-plugins-ladspa
+$ git clone https://repo.or.cz/ng-jackspa.git
+$ sudo aptitude install libglib2.0-dev libncurses5-dev ladspa-sdk ladspa-sdk-dev
+$ cd ng-jackspa
+# trying to avoid building the GTK version...!
+$ make njackspa jackspa-cli
+$ ./njackspa /usr/lib/ladspa/inv_input.so 3301
+```
+
+#### Usage
+
+For example:
+
+```bash
+tom@noiseaa1:~/ng-jackspa$ ./jackspa-cli -j right-50 -i '0:0:0:0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
+tom@noiseaa1:~/ng-jackspa$ jack_lsp
+system:capture_1
+system:capture_2
+system:playback_1
+system:playback_2
+right-50:Input (Left)
+right-50:Input (Right)
+right-50:Output (Left)
+right-50:Output (Right)
+```
+
+
 ## Credits
 
 Written by Tom Ward ( http://www.madwort.co.uk ) as part of a project with Noise Orchestra ( https://noiseorchestra.org/ )
