@@ -3,7 +3,7 @@ import os
 import random
 import jacktrip_pypatcher as p
 
-dry_run = False
+dry_run = True
 jackClient = jack.Client('MadwortAutoPatcher')
 
 # number_of_voices = random.randint(1,5)
@@ -34,7 +34,7 @@ if dry_run:
   jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2',
                       '..ffff.192.168.0.3', '..ffff.192.168.0.4',
                       '..ffff.192.168.0.5', '..ffff.192.168.0.6']
-  jacktrip_clients = jacktrip_clients[0:2]
+  jacktrip_clients = jacktrip_clients[0:6]
 
 print("client count:", len(jacktrip_clients))
 print('clients', jacktrip_clients)
@@ -119,7 +119,34 @@ if len(jacktrip_clients) == 5:
     else:
       p.connect_to_right(jackClient, jacktrip_clients[4], jacktrip_client, dry_run)
 
-if len(jacktrip_clients) >= 6:
+if len(jacktrip_clients) == 6:
+  # We want to only use a minimum number of LADSPA plugins, so do "missing 
+  # person" style mixing - i.e. everyone is panned to the same places
+  ladspa_left_1 = 'left-65'
+  ladspa_left_2 = 'left-30'
+  ladspa_right_1 = 'right-30'
+  ladspa_right_2 = 'right-65'
+  p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_left_1, dry_run)
+  p.connect_to_ladspa(jackClient, jacktrip_clients[2], ladspa_left_2, dry_run)
+  p.connect_to_ladspa(jackClient, jacktrip_clients[4], ladspa_right_1, dry_run)
+  p.connect_to_ladspa(jackClient, jacktrip_clients[5], ladspa_right_2, dry_run)
+
+  for jacktrip_client in jacktrip_clients:
+    print("-- jacktrip client:", jacktrip_client, '--')
+    if jacktrip_clients[0] != jacktrip_client:
+      p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_client, dry_run)
+    if jacktrip_clients[1] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_left_1, jacktrip_client, dry_run)
+    if jacktrip_clients[2] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_left_2, jacktrip_client, dry_run)
+    if jacktrip_clients[3] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_right_1, jacktrip_client, dry_run)
+    if jacktrip_clients[4] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_right_2, jacktrip_client, dry_run)
+    if jacktrip_clients[5] != jacktrip_client:
+      p.connect_to_right(jackClient, jacktrip_clients[5], jacktrip_client, dry_run)
+
+if len(jacktrip_clients) >= 7:
   print("Not yet implemented")
   os._exit(1)
 
