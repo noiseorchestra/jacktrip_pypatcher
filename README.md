@@ -4,4 +4,4 @@ Use https://github.com/spatialaudio/jackclient-python/ to do some autopatching f
 
 ## Credits
 
-Written by Tom Ward ( http://www.madwort.co.uk )
+Written by Tom Ward ( http://www.madwort.co.uk ) as part of a project with Noise Orchestra ( https://noiseorchestra.org/ )
