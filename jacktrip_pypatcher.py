@@ -78,3 +78,37 @@ def connect_to_soft_right(jack_client, receive, send, dry_run = False):
 
   jack_client.connect(receive + ':receive_2', 'slight-right:Input (Right)')
   jack_client.connect('slight-right:Output (Right)', send + ':send_2')
+
+# Darkice
+
+def connect_darkice_to_centre(jack_client, receive, send, dry_run = False):
+  """connect an instance of mpg123-jack to a jacktrip client"""
+  if dry_run:
+    print("Connect centre", receive, "to", send)
+    return
+  jack_client.connect(receive + ':1', send + ':left')
+  jack_client.connect(receive + ':2', send + ':right')
+
+def connect_darkice_to_left(jack_client, receive, send, dry_run = False):
+  """connect pair of receive ports to the send ports, left panned"""
+  if dry_run:
+    print("Connect left", receive, "to", send)
+    return
+  jack_client.connect(receive + ':receive_1', send + ':left')
+  jack_client.connect(receive + ':receive_2', send + ':left')
+
+def connect_darkice_to_right(jack_client, receive, send, dry_run = False):
+  """connect pair of receive ports to the send ports, right panned"""
+  if dry_run:
+    print("Connect right", receive, "to", send)
+    return
+  jack_client.connect(receive + ':receive_1', send + ':right')
+  jack_client.connect(receive + ':receive_2', send + ':right')
+
+def connect_darkice_from_ladspa(jack_client, ladspa, send, dry_run = False):
+  """connect a ladspa plugin to a pair of send ports"""
+  if dry_run:
+    print("Connect from ladspa", ladspa, "to", send)
+    return
+  jack_client.connect(ladspa + ':Output (Left)', send + ':left')
+  jack_client.connect(ladspa + ':Output (Right)', send + ':right')
