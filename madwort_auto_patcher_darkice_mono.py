@@ -54,6 +54,10 @@ darkice_ports = list(map(lambda x: x.name.split(':')[0],
 if dry_run:
   darkice_ports = ['darkice-10545']
 
+if len(darkice_ports) == 0:
+  print("Start darkice first, please")
+  os._exit(1)
+
 darkice_port = darkice_ports[0]
 print("darkice port:", darkice_port)
 
