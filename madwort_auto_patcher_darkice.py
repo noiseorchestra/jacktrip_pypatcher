@@ -34,7 +34,7 @@ if dry_run:
   jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2',
                       '..ffff.192.168.0.3', '..ffff.192.168.0.4',
                       '..ffff.192.168.0.5', '..ffff.192.168.0.6']
-  jacktrip_clients = jacktrip_clients[0:4]
+  jacktrip_clients = jacktrip_clients[0:6]
 
 print("client count:", len(jacktrip_clients))
 print('clients', jacktrip_clients)
@@ -58,6 +58,8 @@ if len(jacktrip_clients) < 1:
 if len(jacktrip_clients) == 1:
   # patch hold music to the one client
   p.connect_mpg123_to_centre(jackClient, hold_music_port, jacktrip_clients[0], dry_run)
+  print("-- darkice --")
+  p.connect_darkice_to_centre(jackClient, jacktrip_clients[0], darkice_port, dry_run)
 
 if len(jacktrip_clients) == 2:
   soft_pan_and_loopback = True
@@ -77,9 +79,17 @@ if len(jacktrip_clients) == 2:
     p.connect_from_ladspa(jackClient, ladspa_soft_right, jacktrip_clients[0], dry_run)
     # client 1 - loopback panned right
     p.connect_from_ladspa(jackClient, ladspa_soft_right, jacktrip_clients[1], dry_run)
+
+    print("-- darkice --")
+    p.connect_darkice_from_ladspa(jackClient, ladspa_soft_left, darkice_port, dry_run)
+    p.connect_darkice_from_ladspa(jackClient, ladspa_soft_right, darkice_port, dry_run)
   else:
     p.connect_to_centre(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run)
     p.connect_to_centre(jackClient, jacktrip_clients[0], jacktrip_clients[1], dry_run)
+
+    print("-- darkice --")
+    p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run)
+    p.connect_darkice_to_right(jackClient, jacktrip_clients[1], darkice_port, dry_run)
 
 if len(jacktrip_clients) == 3 or len(jacktrip_clients) == 4:
   p.connect_to_left(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run)
@@ -91,6 +101,12 @@ if len(jacktrip_clients) == 3 or len(jacktrip_clients) == 4:
   p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[2], dry_run)
   p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[2], dry_run)
 
+if len(jacktrip_clients) == 3:
+  print("-- darkice --")
+  p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run)
+  p.connect_darkice_to_centre(jackClient, jacktrip_clients[1], darkice_port, dry_run)
+  p.connect_darkice_to_right(jackClient, jacktrip_clients[2], darkice_port, dry_run)
+
 if len(jacktrip_clients) == 4:
   # Nb. these are in addition to the above block!
   p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[0], dry_run)
@@ -101,20 +117,16 @@ if len(jacktrip_clients) == 4:
   p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[3], dry_run)
   p.connect_to_centre(jackClient, jacktrip_clients[2], jacktrip_clients[3], dry_run)
 
-  # darkice config
+  print("-- darkice --")
   ladspa_soft_left = 'left-50'
   ladspa_soft_right = 'right-50'
+  p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_left, dry_run)
+  p.connect_to_ladspa(jackClient, jacktrip_clients[2], ladspa_soft_right, dry_run)
 
   p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run)
-
-  p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_left, dry_run)
   p.connect_darkice_from_ladspa(jackClient, ladspa_soft_left, darkice_port, dry_run)
-
-  p.connect_to_ladspa(jackClient, jacktrip_clients[2], ladspa_soft_right, dry_run)
   p.connect_darkice_from_ladspa(jackClient, ladspa_soft_right, darkice_port, dry_run)
-
   p.connect_darkice_to_right(jackClient, jacktrip_clients[3], darkice_port, dry_run)
-
 
 if len(jacktrip_clients) == 5:
   # We want to only use a minimum number of LADSPA plugins, so do "missing 
@@ -143,7 +155,7 @@ if len(jacktrip_clients) == 5:
     else:
       p.connect_to_right(jackClient, jacktrip_clients[4], jacktrip_client, dry_run)
 
-  # setup darkice
+  print("-- darkice --")
   p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run)
   p.connect_darkice_from_ladspa(jackClient, ladspa_soft_left, darkice_port, dry_run)
   p.connect_darkice_to_centre(jackClient, jacktrip_clients[2], darkice_port, dry_run)
@@ -159,8 +171,8 @@ if len(jacktrip_clients) == 6:
   ladspa_right_2 = 'right-65'
   p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_left_1, dry_run)
   p.connect_to_ladspa(jackClient, jacktrip_clients[2], ladspa_left_2, dry_run)
-  p.connect_to_ladspa(jackClient, jacktrip_clients[4], ladspa_right_1, dry_run)
-  p.connect_to_ladspa(jackClient, jacktrip_clients[5], ladspa_right_2, dry_run)
+  p.connect_to_ladspa(jackClient, jacktrip_clients[3], ladspa_right_1, dry_run)
+  p.connect_to_ladspa(jackClient, jacktrip_clients[4], ladspa_right_2, dry_run)
 
   for jacktrip_client in jacktrip_clients:
     print("-- jacktrip client:", jacktrip_client, '--')
@@ -177,7 +189,7 @@ if len(jacktrip_clients) == 6:
     if jacktrip_clients[5] != jacktrip_client:
       p.connect_to_right(jackClient, jacktrip_clients[5], jacktrip_client, dry_run)
 
-  # setup darkice
+  print("-- darkice --")
   p.connect_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run)
   p.connect_from_ladspa(jackClient, ladspa_left_1, darkice_port, dry_run)
   p.connect_from_ladspa(jackClient, ladspa_left_2, darkice_port, dry_run)
