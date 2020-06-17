@@ -138,8 +138,8 @@ if len(jacktrip_clients) == 4:
   p.connect_darkice_to_right(jackClient, jacktrip_clients[3], darkice_port, dry_run, jacktrip_clients_stereo[3])
 
 if len(jacktrip_clients) == 5:
-  # We want to only use a minimum number of LADSPA plugins, so do "missing 
-  # person" style mixing - i.e. everyone is panned to the same places
+  # We want to only use a minimum number of LADSPA plugins, so pan everyone to the same places in 
+  # every mix & miss out the loopbacks
   ladspa_soft_left = 'left-50'
   ladspa_soft_right = 'right-50'
   p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_left, dry_run, jacktrip_clients_stereo[1])
@@ -172,8 +172,8 @@ if len(jacktrip_clients) == 5:
   p.connect_darkice_to_right(jackClient, jacktrip_clients[4], darkice_port, dry_run, jacktrip_clients_stereo[4])
 
 if len(jacktrip_clients) == 6:
-  # We want to only use a minimum number of LADSPA plugins, so do "missing 
-  # person" style mixing - i.e. everyone is panned to the same places
+  # We want to only use a minimum number of LADSPA plugins, so pan everyone to the same places in 
+  # every mix & miss out the loopbacks
   ladspa_left_1 = 'left-65'
   ladspa_left_2 = 'left-30'
   ladspa_right_1 = 'right-30'
