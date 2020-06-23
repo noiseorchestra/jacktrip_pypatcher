@@ -3,16 +3,27 @@ import os
 import random
 import jacktrip_pypatcher as p
 
-dry_run = True
+dry_run = False
 jackClient = jack.Client('MadwortAutoPatcher')
 
 # number_of_voices = random.randint(1,5)
 number_of_voices = 5
 
+# RUN THESE FIRST!
+# tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
+hold_music_port = 'lounge-music'
+
 all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
 all_left_ladspa_ports = jackClient.get_ports('left-.*')
 all_right_ladspa_ports = jackClient.get_ports('right-.*')
 darkice_prefix = 'darkice'
+all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
+if dry_run:
+  all_hold_music_ports = []
+
+# TODO: remove - only need to disconnect input ports not output ones!
+# all_darkice_ports = jackClient.get_ports(darkice_prefix + '.*')
+# all_darkice_ports = []
 
 # remove all existing jacktrip connections (hubserver autopatcher)
 # TODO: only remove autopatched connections, not our own connections (HOW?)
@@ -25,6 +36,13 @@ for ladspa_port in all_left_ladspa_ports:
 
 for ladspa_port in all_right_ladspa_ports:
   p.disconnect_all(jackClient, ladspa_port)
+
+for port in all_hold_music_ports:
+  p.disconnect_all(jackClient, port)
+
+# TODO: remove
+# for darkice_port in all_darkice_ports:
+#   p.disconnect_all(jackClient, darkice_port)
 
 # add some new jacktrip connections
 print("=== Creating new connections ===")
@@ -49,7 +67,7 @@ print('clients', jacktrip_clients)
 print('clients (stereo)', jacktrip_clients_stereo)
 
 darkice_ports = list(map(lambda x: x.name.split(':')[0],
-                            jackClient.get_ports(darkice_prefix + ':left')))
+                            jackClient.get_ports(darkice_prefix + '.*:left')))
 
 if dry_run:
   darkice_ports = ['darkice-10545']
@@ -61,17 +79,20 @@ if len(darkice_ports) == 0:
 darkice_port = darkice_ports[0]
 print("darkice port:", darkice_port)
 
-# RUN THESE FIRST!
-# tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
-hold_music_port = 'lounge-music'
-
 if len(jacktrip_clients) < 1:
+  print("-- darkice --")
+  p.connect_mpg123_to_darkice(jackClient, hold_music_port, darkice_port, dry_run)
   os._exit(1)
 
 if len(jacktrip_clients) == 1:
   # patch hold music to the one client
   p.connect_mpg123_to_centre(jackClient, hold_music_port, jacktrip_clients[0], dry_run)
+
+  # also connect loopback
+  p.connect_to_centre(jackClient, jacktrip_clients[0], jacktrip_clients[0], dry_run, jacktrip_clients_stereo[0])
+
   print("-- darkice --")
+  p.connect_mpg123_to_darkice(jackClient, hold_music_port, darkice_port, dry_run)
   p.connect_darkice_to_centre(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
 
 if len(jacktrip_clients) == 2:

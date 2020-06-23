@@ -1,5 +1,7 @@
 # Helper functions for autopatching JackTrip hubserver clients
 
+import jack
+
 def disconnect_all(jack_client, my_port, dry_run = False):
   """disconnect everything from a port"""
   send_ports = jack_client.get_all_connections(my_port)
@@ -9,7 +11,12 @@ def disconnect_all(jack_client, my_port, dry_run = False):
     if send_port.name.startswith('jack_capture'):
       continue
     print('disconnect', my_port.name, 'from', send_port.name)
-    jack_client.disconnect(my_port, send_port)
+    try:
+      jack_client.disconnect(my_port, send_port)
+    except Exception as e:
+      print('error disconnecting, trying the other way round!', e)
+      print('disconnect', send_port.name, 'from', my_port.name)
+      jack_client.disconnect(send_port, my_port)
 
 # Different clients have different characteristics:
 #   * jacktrip clients can have 1 or 2 channels (:receive_n, :send_n)
@@ -28,13 +35,13 @@ def connect_to_centre(jack_client, receive, send, dry_run = False, stereo = Fals
   if stereo:
     try:
       jack_client.connect(receive + ':receive_2', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       jack_client.connect(receive + ':receive_2', send + ':send_1')
       print('error making connection', e)
   else:
     try:
       jack_client.connect(receive + ':receive_1', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       print('error making connection', e)
 
 def connect_mpg123_to_centre(jack_client, mpg123, send, dry_run = False):
@@ -45,7 +52,7 @@ def connect_mpg123_to_centre(jack_client, mpg123, send, dry_run = False):
   jack_client.connect(mpg123 + ':1', send + ':send_1')
   try:
     jack_client.connect(mpg123 + ':2', send + ':send_2')
-  except JackError as e:
+  except Exception as e:
     jack_client.connect(mpg123 + ':2', send + ':send_1')
     print('error making connection', e)
 
@@ -65,13 +72,13 @@ def connect_to_right(jack_client, receive, send, dry_run = False, stereo = False
     return
   try:
     jack_client.connect(receive + ':receive_1', send + ':send_2')
-  except JackError as e:
+  except Exception as e:
     jack_client.connect(receive + ':receive_1', send + ':send_1')
     print('error making connection', e)
   if stereo:
     try:
       jack_client.connect(receive + ':receive_2', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       jack_client.connect(receive + ':receive_2', send + ':send_1')
       print('error making connection', e)
 
@@ -94,7 +101,7 @@ def connect_from_ladspa(jack_client, ladspa, send, dry_run = False):
   jack_client.connect(ladspa + ':Output (Left)', send + ':send_1')
   try:
     jack_client.connect(ladspa + ':Output (Right)', send + ':send_2')
-  except JackError as e:
+  except Exception as e:
     print('error making connection', e, 'trying send_1 instead')
     jack_client.connect(ladspa + ':Output (Right)', send + ':send_1')
 
@@ -109,14 +116,14 @@ def connect_to_soft_left(jack_client, receive, send, dry_run = False, stereo = F
     jack_client.connect(receive + ':receive_2', 'slight-left:Input (Right)')
     try:
       jack_client.connect('slight-left:Output (Right)', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       print('error making connection', e, 'trying send_1 instead')
       jack_client.connect('slight-left:Output (Right)', send + ':send_1')
   else:
     jack_client.connect(receive + ':receive_1', 'slight-left:Input (Right)')
     try:
       jack_client.connect('slight-left:Output (Right)', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       print('error making connection', e, 'trying send_1 instead')
       jack_client.connect('slight-left:Output (Right)', send + ':send_1')
 
@@ -131,14 +138,14 @@ def connect_to_soft_right(jack_client, receive, send, dry_run = False, stereo = 
     jack_client.connect(receive + ':receive_2', 'slight-right:Input (Right)')
     try:
       jack_client.connect('slight-right:Output (Right)', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       print('error making connection', e, 'trying send_1 instead')
       jack_client.connect('slight-right:Output (Right)', send + ':send_1')
   else:
     jack_client.connect(receive + ':receive_1', 'slight-right:Input (Right)')
     try:
       jack_client.connect('slight-right:Output (Right)', send + ':send_2')
-    except JackError as e:
+    except Exception as e:
       print('error making connection', e, 'trying send_1 instead')
       jack_client.connect('slight-right:Output (Right)', send + ':send_1')
 
@@ -152,7 +159,7 @@ def connect_darkice_to_centre(jack_client, receive, send, dry_run = False, stere
   if stereo:
     jack_client.connect(receive + ':receive_2', send + ':right')
   else:
-    jack_client.connect(receive + ':receive_2', send + ':right')
+    jack_client.connect(receive + ':receive_1', send + ':right')
 
 def connect_darkice_to_left(jack_client, receive, send, dry_run = False, stereo = False):
   """connect pair of receive ports to the send ports, left panned"""
@@ -179,3 +186,15 @@ def connect_darkice_from_ladspa(jack_client, ladspa, send, dry_run = False):
     return
   jack_client.connect(ladspa + ':Output (Left)', send + ':left')
   jack_client.connect(ladspa + ':Output (Right)', send + ':right')
+
+def connect_mpg123_to_darkice(jack_client, mpg123, send, dry_run = False):
+  """connect an instance of mpg123-jack to a darkice client"""
+  if dry_run:
+    print("Connect mpg123 centre", mpg123, "to", send)
+    return
+  jack_client.connect(mpg123 + ':1', send + ':left')
+  try:
+    jack_client.connect(mpg123 + ':2', send + ':right')
+  except Exception as e:
+    jack_client.connect(mpg123 + ':2', send + ':left')
+    print('error making connection', e)
