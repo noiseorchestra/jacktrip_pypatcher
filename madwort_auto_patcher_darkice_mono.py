@@ -66,6 +66,10 @@ print("client count:", len(jacktrip_clients))
 print('clients', jacktrip_clients)
 print('clients (stereo)', jacktrip_clients_stereo)
 
+if len(jacktrip_clients) > 3 and len(all_left_ladspa_ports) < 1:
+  print("Start LADSPA plugins please!")
+  os._exit(1)
+
 darkice_ports = list(map(lambda x: x.name.split(':')[0],
                             jackClient.get_ports(darkice_prefix + '.*:left')))
 
