@@ -7,7 +7,7 @@ import subprocess
 import time
 import psutil
 
-dry_run = False
+dry_run = True
 jackClient = jack.Client('MadwortAutoPatcher')
 
 # number_of_voices = random.randint(1,5)
@@ -21,10 +21,6 @@ all_right_ladspa_ports = jackClient.get_ports('right-.*')
 darkice_prefix = 'darkice'
 if dry_run:
   all_hold_music_ports = []
-
-# TODO: remove - only need to disconnect input ports not output ones!
-# all_darkice_ports = jackClient.get_ports(darkice_prefix + '.*')
-# all_darkice_ports = []
 
 # remove all existing jacktrip connections (hubserver autopatcher)
 # TODO: only remove autopatched connections, not our own connections (HOW?)
@@ -40,10 +36,6 @@ for ladspa_port in all_right_ladspa_ports:
 
 for port in all_hold_music_ports:
   p.disconnect_all(jackClient, port)
-
-# TODO: remove
-# for darkice_port in all_darkice_ports:
-#   p.disconnect_all(jackClient, darkice_port)
 
 # add some new jacktrip connections
 print("=== Creating new connections ===")
@@ -69,8 +61,6 @@ print('clients (stereo)', jacktrip_clients_stereo)
 
 print("=== Verify/start supporting software (ladspa, mpg123, darkice) ===")
 lounge_music.start_the_music(jackClient, hold_music_port)
-  print("Start LADSPA plugins please!")
-  os._exit(1)
 
 darkice_ports = list(map(lambda x: x.name.split(':')[0],
                             jackClient.get_ports(darkice_prefix + '.*:left')))
