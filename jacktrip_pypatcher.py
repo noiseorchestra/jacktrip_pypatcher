@@ -11,7 +11,7 @@ dry_run = True
 jackClient = jack.Client('MadwortAutoPatcher')
 
 # number_of_voices = random.randint(1,5)
-number_of_voices = 6
+number_of_voices = 5
 
 hold_music_port = 'lounge-music'
 
@@ -60,7 +60,10 @@ print('clients', jacktrip_clients)
 print('clients (stereo)', jacktrip_clients_stereo)
 
 print("=== Verify/start supporting software (ladspa, mpg123, darkice) ===")
-lounge_music.start_the_music(jackClient, hold_music_port)
+if len(jacktrip_clients) < 2:
+  lounge_music.start_the_music(jackClient, hold_music_port)
+else:
+  lounge_music.kill_the_music(jackClient, hold_music_port)
 
 darkice_ports = list(map(lambda x: x.name.split(':')[0],
                             jackClient.get_ports(darkice_prefix + '.*:left')))
@@ -194,8 +197,8 @@ if len(jacktrip_clients) == 5:
   p.connect_darkice_to_right(jackClient, jacktrip_clients[4], darkice_port, dry_run, jacktrip_clients_stereo[4])
 
 if len(jacktrip_clients) == 6:
-  # We want to only use a minimum number of LADSPA plugins, so pan everyone to the same places in 
-  # every mix & miss out the loopbacks
+  # We want to only use a minimum number of LADSPA plugins, so pan everyone 
+  # to the same places in every mix & miss out the loopbacks
   ladspa_left_1 = 'left-65'
   ladspa_left_2 = 'left-30'
   ladspa_right_1 = 'right-30'
@@ -232,9 +235,10 @@ if len(jacktrip_clients) >= 7:
   print("Not yet implemented")
   # 0 -> -1
   # n-1 -> 1
-  # if n is odd, (n-1)/2 -> 0
+  # if n is odd, (n-1)/2 -> 0 (exact middle)
+  #   also do the fixup that n=5 does to put middle->left/right in the monitor mixes
   # otherwise n*(200/(n-1))
-  # Nb. this should work for 6+
+  # Nb. this should work for 5+
   os._exit(1)
 
 os._exit(0)
