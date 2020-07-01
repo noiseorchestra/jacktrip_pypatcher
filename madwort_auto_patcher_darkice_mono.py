@@ -7,7 +7,7 @@ dry_run = False
 jackClient = jack.Client('MadwortAutoPatcher')
 
 # number_of_voices = random.randint(1,5)
-number_of_voices = 5
+number_of_voices = 6
 
 # RUN THESE FIRST!
 # tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
@@ -52,7 +52,7 @@ if dry_run:
   jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2',
                       '..ffff.192.168.0.3', '..ffff.192.168.0.4',
                       '..ffff.192.168.0.5', '..ffff.192.168.0.6']
-  jacktrip_clients = jacktrip_clients[0:4]
+  jacktrip_clients = jacktrip_clients[0:number_of_voices]
 
 # hard-coded list of client ips that send stereo input
 jacktrip_stereo = []
@@ -237,6 +237,11 @@ if len(jacktrip_clients) == 6:
 
 if len(jacktrip_clients) >= 7:
   print("Not yet implemented")
+  # 0 -> -1
+  # n-1 -> 1
+  # if n is odd, (n-1)/2 -> 0
+  # otherwise n*(200/(n-1))
+  # Nb. this should work for 6+
   os._exit(1)
 
 os._exit(0)
