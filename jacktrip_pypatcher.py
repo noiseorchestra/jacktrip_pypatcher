@@ -2,6 +2,10 @@ import jack
 import os
 import random
 import jack_client_patching as p
+import lounge_music
+import subprocess
+import time
+import psutil
 
 dry_run = False
 jackClient = jack.Client('MadwortAutoPatcher')
@@ -9,15 +13,12 @@ jackClient = jack.Client('MadwortAutoPatcher')
 # number_of_voices = random.randint(1,5)
 number_of_voices = 6
 
-# RUN THESE FIRST!
-# tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
 hold_music_port = 'lounge-music'
 
 all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
 all_left_ladspa_ports = jackClient.get_ports('left-.*')
 all_right_ladspa_ports = jackClient.get_ports('right-.*')
 darkice_prefix = 'darkice'
-all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
 if dry_run:
   all_hold_music_ports = []
 
@@ -66,7 +67,8 @@ print("client count:", len(jacktrip_clients))
 print('clients', jacktrip_clients)
 print('clients (stereo)', jacktrip_clients_stereo)
 
-if len(jacktrip_clients) > 3 and len(all_left_ladspa_ports) < 1:
+print("=== Verify/start supporting software (ladspa, mpg123, darkice) ===")
+lounge_music.start_the_music(jackClient, hold_music_port)
   print("Start LADSPA plugins please!")
   os._exit(1)
 
@@ -83,6 +85,7 @@ if len(darkice_ports) == 0:
 darkice_port = darkice_ports[0]
 print("darkice port:", darkice_port)
 
+print("=== Creating new connections ===")
 if len(jacktrip_clients) < 1:
   print("-- darkice --")
   p.connect_mpg123_to_darkice(jackClient, hold_music_port, darkice_port, dry_run)
