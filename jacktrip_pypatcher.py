@@ -1,196 +1,247 @@
-# Helper functions for autopatching JackTrip hubserver clients
-
 import jack
+import os
+import random
+import jack_client_patching as p
 
-def disconnect_all(jack_client, my_port, dry_run = False):
-  """disconnect everything from a port"""
-  send_ports = jack_client.get_all_connections(my_port)
-  for send_port in send_ports:
-    # do not disconnect from jack_capture ports
-    # they do auto-reconnect, but the disconnection is not reliable
-    if send_port.name.startswith('jack_capture'):
-      continue
-    print('disconnect', my_port.name, 'from', send_port.name)
-    try:
-      jack_client.disconnect(my_port, send_port)
-    except Exception as e:
-      print('error disconnecting, trying the other way round!', e)
-      print('disconnect', send_port.name, 'from', my_port.name)
-      jack_client.disconnect(send_port, my_port)
+dry_run = False
+jackClient = jack.Client('MadwortAutoPatcher')
 
-# Different clients have different characteristics:
-#   * jacktrip clients can have 1 or 2 channels (:receive_n, :send_n)
-#   * jacktrip receive_1 always has input
-#   * jacktrip receive_2 may or may not exist & may or may have input if it does exist
-#   * jacktrip send_1 always exist, but send_2 may not
-#   * mpg123 always sends stereo (:1, :2)
-#   * ng-jackspa always sends & receives stereo (:Input (Left), :Input (Right))
+# number_of_voices = random.randint(1,5)
+number_of_voices = 6
 
-def connect_to_centre(jack_client, receive, send, dry_run = False, stereo = False):
-  """connect pair of receive ports to the send ports, centre panned"""
-  if dry_run:
-    print("Connect centre", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', send + ':send_1')
-  if stereo:
-    try:
-      jack_client.connect(receive + ':receive_2', send + ':send_2')
-    except Exception as e:
-      print('Patching to mono send', send)
-      jack_client.connect(receive + ':receive_2', send + ':send_1')
+# RUN THESE FIRST!
+# tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
+hold_music_port = 'lounge-music'
+
+all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
+all_left_ladspa_ports = jackClient.get_ports('left-.*')
+all_right_ladspa_ports = jackClient.get_ports('right-.*')
+darkice_prefix = 'darkice'
+all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
+if dry_run:
+  all_hold_music_ports = []
+
+# TODO: remove - only need to disconnect input ports not output ones!
+# all_darkice_ports = jackClient.get_ports(darkice_prefix + '.*')
+# all_darkice_ports = []
+
+# remove all existing jacktrip connections (hubserver autopatcher)
+# TODO: only remove autopatched connections, not our own connections (HOW?)
+print("=== Disconnecting existing connections ===")
+for receive_port in all_jacktrip_receive_ports:
+  p.disconnect_all(jackClient, receive_port)
+
+for ladspa_port in all_left_ladspa_ports:
+  p.disconnect_all(jackClient, ladspa_port)
+
+for ladspa_port in all_right_ladspa_ports:
+  p.disconnect_all(jackClient, ladspa_port)
+
+for port in all_hold_music_ports:
+  p.disconnect_all(jackClient, port)
+
+# TODO: remove
+# for darkice_port in all_darkice_ports:
+#   p.disconnect_all(jackClient, darkice_port)
+
+# add some new jacktrip connections
+print("=== Creating new connections ===")
+jacktrip_clients = list(map(lambda x: x.name.split(':')[0],
+                            jackClient.get_ports('.*receive_1')))
+if dry_run:
+  jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2',
+                      '..ffff.192.168.0.3', '..ffff.192.168.0.4',
+                      '..ffff.192.168.0.5', '..ffff.192.168.0.6']
+  jacktrip_clients = jacktrip_clients[0:number_of_voices]
+
+# hard-coded list of client ips that send stereo input
+jacktrip_stereo = []
+
+if dry_run:
+  jacktrip_stereo = ['..ffff.192.168.0.1', '..ffff.192.168.0.6']
+
+jacktrip_clients_stereo = list(map(lambda x: x in jacktrip_stereo, jacktrip_clients))
+
+print("client count:", len(jacktrip_clients))
+print('clients', jacktrip_clients)
+print('clients (stereo)', jacktrip_clients_stereo)
+
+if len(jacktrip_clients) > 3 and len(all_left_ladspa_ports) < 1:
+  print("Start LADSPA plugins please!")
+  os._exit(1)
+
+darkice_ports = list(map(lambda x: x.name.split(':')[0],
+                            jackClient.get_ports(darkice_prefix + '.*:left')))
+
+if dry_run:
+  darkice_ports = ['darkice-10545']
+
+if len(darkice_ports) == 0:
+  print("Start darkice first, please")
+  os._exit(1)
+
+darkice_port = darkice_ports[0]
+print("darkice port:", darkice_port)
+
+if len(jacktrip_clients) < 1:
+  print("-- darkice --")
+  p.connect_mpg123_to_darkice(jackClient, hold_music_port, darkice_port, dry_run)
+  os._exit(1)
+
+if len(jacktrip_clients) == 1:
+  # patch hold music to the one client
+  p.connect_mpg123_to_centre(jackClient, hold_music_port, jacktrip_clients[0], dry_run)
+
+  # also connect loopback
+  p.connect_to_centre(jackClient, jacktrip_clients[0], jacktrip_clients[0], dry_run, jacktrip_clients_stereo[0])
+
+  print("-- darkice --")
+  p.connect_mpg123_to_darkice(jackClient, hold_music_port, darkice_port, dry_run)
+  p.connect_darkice_to_centre(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+
+if len(jacktrip_clients) == 2:
+  soft_pan_and_loopback = False
+
+  if soft_pan_and_loopback:
+    ladspa_soft_left = 'left-65'
+    ladspa_soft_right = 'right-65'
+    p.connect_to_ladspa(jackClient, jacktrip_clients[0], ladspa_soft_left, dry_run, jacktrip_clients_stereo[0])
+    p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_right, dry_run, jacktrip_clients_stereo[1])
+
+    # client 0 - loopback panned left
+    p.connect_from_ladspa(jackClient, ladspa_soft_left, jacktrip_clients[0], dry_run, jacktrip_clients_stereo[0])
+    # client 0 - client 1 panned right
+    p.connect_from_ladspa(jackClient, ladspa_soft_left, jacktrip_clients[1], dry_run, jacktrip_clients_stereo[1])
+
+    # client 1 - client 0 panned left
+    p.connect_from_ladspa(jackClient, ladspa_soft_right, jacktrip_clients[0], dry_run, jacktrip_clients_stereo[0])
+    # client 1 - loopback panned right
+    p.connect_from_ladspa(jackClient, ladspa_soft_right, jacktrip_clients[1], dry_run, jacktrip_clients_stereo[1])
+
+    print("-- darkice --")
+    p.connect_darkice_from_ladspa(jackClient, ladspa_soft_left, darkice_port, dry_run)
+    p.connect_darkice_from_ladspa(jackClient, ladspa_soft_right, darkice_port, dry_run)
   else:
-    try:
-      jack_client.connect(receive + ':receive_1', send + ':send_2')
-    except Exception as e:
-      print('error making connection', e)
+    p.connect_to_centre(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run, jacktrip_clients_stereo[1])
+    p.connect_to_centre(jackClient, jacktrip_clients[0], jacktrip_clients[1], dry_run, jacktrip_clients_stereo[0])
 
-def connect_mpg123_to_centre(jack_client, mpg123, send, dry_run = False):
-  """connect an instance of mpg123-jack to a jacktrip client"""
-  if dry_run:
-    print("Connect mpg123 centre", mpg123, "to", send)
-    return
-  jack_client.connect(mpg123 + ':1', send + ':send_1')
-  try:
-    jack_client.connect(mpg123 + ':2', send + ':send_2')
-  except Exception as e:
-    print('Patching to mono send', send)
-    jack_client.connect(mpg123 + ':2', send + ':send_1')
+    print("-- darkice --")
+    p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+    p.connect_darkice_to_right(jackClient, jacktrip_clients[1], darkice_port, dry_run, jacktrip_clients_stereo[1])
 
-def connect_to_left(jack_client, receive, send, dry_run = False, stereo = False):
-  """connect pair of receive ports to the send ports, left panned"""
-  if dry_run:
-    print("Connect left", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', send + ':send_1')
-  if stereo:
-    jack_client.connect(receive + ':receive_2', send + ':send_1')
+if len(jacktrip_clients) == 3 or len(jacktrip_clients) == 4:
+  p.connect_to_left(jackClient, jacktrip_clients[1], jacktrip_clients[0], dry_run, jacktrip_clients_stereo[1])
+  p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_clients[0], dry_run, jacktrip_clients_stereo[2])
 
-def connect_to_right(jack_client, receive, send, dry_run = False, stereo = False):
-  """connect pair of receive ports to the send ports, right panned"""
-  if dry_run:
-    print("Connect right", receive, "to", send)
-    return
-  try:
-    jack_client.connect(receive + ':receive_1', send + ':send_2')
-  except Exception as e:
-    print('Patching to mono send', send)
-    jack_client.connect(receive + ':receive_1', send + ':send_1')
-  if stereo:
-    try:
-      jack_client.connect(receive + ':receive_2', send + ':send_2')
-    except Exception as e:
-      print('Patching to mono send', send)
-      jack_client.connect(receive + ':receive_2', send + ':send_1')
+  p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[1], dry_run, jacktrip_clients_stereo[0])
+  p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_clients[1], dry_run, jacktrip_clients_stereo[2])
 
-def connect_to_ladspa(jack_client, receive, ladspa, dry_run = False, stereo = False):
-  """connect a pair of receive ports to a ladspa plugin"""
-  if dry_run:
-    print("Connect to ladspa", receive, "to", ladspa)
-    return
-  jack_client.connect(receive + ':receive_1', ladspa + ':Input (Left)')
-  if stereo:
-    jack_client.connect(receive + ':receive_2', ladspa + ':Input (Right)')
-  else:
-    jack_client.connect(receive + ':receive_1', ladspa + ':Input (Right)')
+  p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[2], dry_run, jacktrip_clients_stereo[0])
+  p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[2], dry_run, jacktrip_clients_stereo[1])
 
-def connect_from_ladspa(jack_client, ladspa, send, dry_run = False):
-  """connect a ladspa plugin to a pair of send ports"""
-  if dry_run:
-    print("Connect from ladspa", ladspa, "to", send)
-    return
-  jack_client.connect(ladspa + ':Output (Left)', send + ':send_1')
-  try:
-    jack_client.connect(ladspa + ':Output (Right)', send + ':send_2')
-  except Exception as e:
-    print('Patching to mono send', send)
-    jack_client.connect(ladspa + ':Output (Right)', send + ':send_1')
+if len(jacktrip_clients) == 3:
+  print("-- darkice --")
+  p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+  p.connect_darkice_to_centre(jackClient, jacktrip_clients[1], darkice_port, dry_run, jacktrip_clients_stereo[1])
+  p.connect_darkice_to_right(jackClient, jacktrip_clients[2], darkice_port, dry_run, jacktrip_clients_stereo[2])
 
-def connect_to_soft_left(jack_client, receive, send, dry_run = False, stereo = False):
-  if dry_run:
-    print("Connect soft left", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', 'slight-left:Input (Left)')
-  jack_client.connect('slight-left:Output (Left)', send + ':send_1')
+if len(jacktrip_clients) == 4:
+  # Nb. these are in addition to the above block!
+  p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[0], dry_run, jacktrip_clients_stereo[3])
+  p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[1], dry_run, jacktrip_clients_stereo[3])
+  p.connect_to_centre(jackClient, jacktrip_clients[3], jacktrip_clients[2], dry_run, jacktrip_clients_stereo[3])
 
-  if stereo:
-    jack_client.connect(receive + ':receive_2', 'slight-left:Input (Right)')
-    try:
-      jack_client.connect('slight-left:Output (Right)', send + ':send_2')
-    except Exception as e:
-      print('Patching to mono send', send)
-      jack_client.connect('slight-left:Output (Right)', send + ':send_1')
-  else:
-    jack_client.connect(receive + ':receive_1', 'slight-left:Input (Right)')
-    try:
-      jack_client.connect('slight-left:Output (Right)', send + ':send_2')
-    except Exception as e:
-      print('Patching to mono send', send)
-      jack_client.connect('slight-left:Output (Right)', send + ':send_1')
+  p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_clients[3], dry_run, jacktrip_clients_stereo[0])
+  p.connect_to_right(jackClient, jacktrip_clients[1], jacktrip_clients[3], dry_run, jacktrip_clients_stereo[1])
+  p.connect_to_centre(jackClient, jacktrip_clients[2], jacktrip_clients[3], dry_run, jacktrip_clients_stereo[2])
 
-def connect_to_soft_right(jack_client, receive, send, dry_run = False, stereo = False):
-  if dry_run:
-    print("Connect soft right", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', 'slight-right:Input (Left)')
-  jack_client.connect('slight-right:Output (Left)', send + ':send_1')
+  print("-- darkice --")
+  ladspa_soft_left = 'left-50'
+  ladspa_soft_right = 'right-50'
+  p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_left, dry_run, jacktrip_clients_stereo[1])
+  p.connect_to_ladspa(jackClient, jacktrip_clients[2], ladspa_soft_right, dry_run, jacktrip_clients_stereo[2])
 
-  if stereo:
-    jack_client.connect(receive + ':receive_2', 'slight-right:Input (Right)')
-    try:
-      jack_client.connect('slight-right:Output (Right)', send + ':send_2')
-    except Exception as e:
-      print('Patching to mono send', send)
-      jack_client.connect('slight-right:Output (Right)', send + ':send_1')
-  else:
-    jack_client.connect(receive + ':receive_1', 'slight-right:Input (Right)')
-    try:
-      jack_client.connect('slight-right:Output (Right)', send + ':send_2')
-    except Exception as e:
-      print('Patching to mono send', send)
-      jack_client.connect('slight-right:Output (Right)', send + ':send_1')
+  p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+  p.connect_darkice_from_ladspa(jackClient, ladspa_soft_left, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_soft_right, darkice_port, dry_run)
+  p.connect_darkice_to_right(jackClient, jacktrip_clients[3], darkice_port, dry_run, jacktrip_clients_stereo[3])
 
-# Darkice
-def connect_darkice_to_centre(jack_client, receive, send, dry_run = False, stereo = False):
-  """connect pair of receive ports to a jacktrip client"""
-  if dry_run:
-    print("Connect centre", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', send + ':left')
-  if stereo:
-    jack_client.connect(receive + ':receive_2', send + ':right')
-  else:
-    jack_client.connect(receive + ':receive_1', send + ':right')
+if len(jacktrip_clients) == 5:
+  # We want to only use a minimum number of LADSPA plugins, so pan everyone to the same places in 
+  # every mix & miss out the loopbacks
+  ladspa_soft_left = 'left-50'
+  ladspa_soft_right = 'right-50'
+  p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_soft_left, dry_run, jacktrip_clients_stereo[1])
+  p.connect_to_ladspa(jackClient, jacktrip_clients[3], ladspa_soft_right, dry_run, jacktrip_clients_stereo[3])
 
-def connect_darkice_to_left(jack_client, receive, send, dry_run = False, stereo = False):
-  """connect pair of receive ports to the send ports, left panned"""
-  if dry_run:
-    print("Connect left", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', send + ':left')
-  if stereo:
-    jack_client.connect(receive + ':receive_2', send + ':left')
+  for  jacktrip_client in jacktrip_clients:
+    print("-- jacktrip client:", jacktrip_client, '--')
+    if jacktrip_clients[0] == jacktrip_client:
+      p.connect_to_left(jackClient, jacktrip_clients[2], jacktrip_client, dry_run, jacktrip_clients_stereo[2])
+    else:
+      p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_client, dry_run, jacktrip_clients_stereo[0])
+    if jacktrip_clients[1] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_soft_left, jacktrip_client, dry_run)
+    if (jacktrip_clients[2] != jacktrip_client and
+        jacktrip_clients[0] != jacktrip_client and
+        jacktrip_clients[4] != jacktrip_client):
+      p.connect_to_centre(jackClient, jacktrip_clients[2], jacktrip_client, dry_run, jacktrip_clients_stereo[2])
+    if jacktrip_clients[3] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_soft_right, jacktrip_client, dry_run)
+    if jacktrip_clients[4] == jacktrip_client:
+      p.connect_to_right(jackClient, jacktrip_clients[2], jacktrip_client, dry_run, jacktrip_clients_stereo[2])
+    else:
+      p.connect_to_right(jackClient, jacktrip_clients[4], jacktrip_client, dry_run, jacktrip_clients_stereo[4])
 
-def connect_darkice_to_right(jack_client, receive, send, dry_run = False, stereo = False):
-  """connect pair of receive ports to the send ports, right panned"""
-  if dry_run:
-    print("Connect right", receive, "to", send)
-    return
-  jack_client.connect(receive + ':receive_1', send + ':right')
-  if stereo:
-    jack_client.connect(receive + ':receive_2', send + ':right')
+  print("-- darkice --")
+  p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+  p.connect_darkice_from_ladspa(jackClient, ladspa_soft_left, darkice_port, dry_run)
+  p.connect_darkice_to_centre(jackClient, jacktrip_clients[2], darkice_port, dry_run, jacktrip_clients_stereo[2])
+  p.connect_darkice_from_ladspa(jackClient, ladspa_soft_right, darkice_port, dry_run)
+  p.connect_darkice_to_right(jackClient, jacktrip_clients[4], darkice_port, dry_run, jacktrip_clients_stereo[4])
 
-def connect_darkice_from_ladspa(jack_client, ladspa, send, dry_run = False):
-  """connect a ladspa plugin to a pair of send ports"""
-  if dry_run:
-    print("Connect from ladspa", ladspa, "to", send)
-    return
-  jack_client.connect(ladspa + ':Output (Left)', send + ':left')
-  jack_client.connect(ladspa + ':Output (Right)', send + ':right')
+if len(jacktrip_clients) == 6:
+  # We want to only use a minimum number of LADSPA plugins, so pan everyone to the same places in 
+  # every mix & miss out the loopbacks
+  ladspa_left_1 = 'left-65'
+  ladspa_left_2 = 'left-30'
+  ladspa_right_1 = 'right-30'
+  ladspa_right_2 = 'right-65'
+  p.connect_to_ladspa(jackClient, jacktrip_clients[1], ladspa_left_1, dry_run, jacktrip_clients_stereo[1])
+  p.connect_to_ladspa(jackClient, jacktrip_clients[2], ladspa_left_2, dry_run, jacktrip_clients_stereo[2])
+  p.connect_to_ladspa(jackClient, jacktrip_clients[3], ladspa_right_1, dry_run, jacktrip_clients_stereo[3])
+  p.connect_to_ladspa(jackClient, jacktrip_clients[4], ladspa_right_2, dry_run, jacktrip_clients_stereo[4])
 
-def connect_mpg123_to_darkice(jack_client, mpg123, send, dry_run = False):
-  """connect an instance of mpg123-jack to a darkice client"""
-  if dry_run:
-    print("Connect mpg123 centre", mpg123, "to", send)
-    return
-  jack_client.connect(mpg123 + ':1', send + ':left')
-  jack_client.connect(mpg123 + ':2', send + ':right')
+  for jacktrip_client in jacktrip_clients:
+    print("-- jacktrip client:", jacktrip_client, '--')
+    if jacktrip_clients[0] != jacktrip_client:
+      p.connect_to_left(jackClient, jacktrip_clients[0], jacktrip_client, dry_run, jacktrip_clients_stereo[0])
+    if jacktrip_clients[1] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_left_1, jacktrip_client, dry_run)
+    if jacktrip_clients[2] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_left_2, jacktrip_client, dry_run)
+    if jacktrip_clients[3] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_right_1, jacktrip_client, dry_run)
+    if jacktrip_clients[4] != jacktrip_client:
+      p.connect_from_ladspa(jackClient, ladspa_right_2, jacktrip_client, dry_run)
+    if jacktrip_clients[5] != jacktrip_client:
+      p.connect_to_right(jackClient, jacktrip_clients[5], jacktrip_client, dry_run, jacktrip_clients_stereo[5])
+
+  print("-- darkice --")
+  p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+  p.connect_darkice_from_ladspa(jackClient, ladspa_left_1, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_left_2, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_right_1, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_right_2, darkice_port, dry_run)
+  p.connect_darkice_to_right(jackClient, jacktrip_clients[5], darkice_port, dry_run, jacktrip_clients_stereo[5])
+
+if len(jacktrip_clients) >= 7:
+  print("Not yet implemented")
+  # 0 -> -1
+  # n-1 -> 1
+  # if n is odd, (n-1)/2 -> 0
+  # otherwise n*(200/(n-1))
+  # Nb. this should work for 6+
+  os._exit(1)
+
+os._exit(0)

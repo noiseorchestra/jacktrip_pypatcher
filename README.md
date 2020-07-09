@@ -18,16 +18,13 @@ $ python3 -m pip install JACK-Client --user
 The hubserver will do its own autopatching, which will fight against you a little bit, disable this with e.g. [this patch to disable the built-in autopatcher](https://github.com/jacktrip/jacktrip/pull/70). Otherwise just run the appropriate script, e.g.
 
 ```bash
-$ python3 madwort_auto_patcher.py
+$ python3 jacktrip_pypatcher.py
 ```
 
 ### Modes
 
-* `madwort_auto_patchen_hubserver_mode_2.py` should replicate what the built-in autopatcher does when in `-p2` mode
-* `madwort_auto_patcher.py` should patch a number of mono clients to a stereo mix using ladspa plugins to spread them around the stereo field
-* `madwort_auto_patcher_wide.py` should patch a number of mono clients to a stereo mix by patching them only to hard left or right
-* `madwort_auto_patcher_tomcount.py` is a fun testing script that will patch multiple mpg123 players to a stereo mix
-
+* `jacktrip_pypatcher_mode_2.py` should replicate what the built-in autopatcher does when in `-p2` mode
+* `jacktrip_pypatcher.py` should do all the patching you ever need!
 
 ### LADSPA/Jack plugins
 
