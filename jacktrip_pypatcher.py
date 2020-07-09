@@ -36,8 +36,8 @@ def connect_to_centre(jack_client, receive, send, dry_run = False, stereo = Fals
     try:
       jack_client.connect(receive + ':receive_2', send + ':send_2')
     except Exception as e:
+      print('Patching to mono send', send)
       jack_client.connect(receive + ':receive_2', send + ':send_1')
-      print('error making connection', e)
   else:
     try:
       jack_client.connect(receive + ':receive_1', send + ':send_2')
@@ -53,8 +53,8 @@ def connect_mpg123_to_centre(jack_client, mpg123, send, dry_run = False):
   try:
     jack_client.connect(mpg123 + ':2', send + ':send_2')
   except Exception as e:
+    print('Patching to mono send', send)
     jack_client.connect(mpg123 + ':2', send + ':send_1')
-    print('error making connection', e)
 
 def connect_to_left(jack_client, receive, send, dry_run = False, stereo = False):
   """connect pair of receive ports to the send ports, left panned"""
@@ -73,14 +73,14 @@ def connect_to_right(jack_client, receive, send, dry_run = False, stereo = False
   try:
     jack_client.connect(receive + ':receive_1', send + ':send_2')
   except Exception as e:
+    print('Patching to mono send', send)
     jack_client.connect(receive + ':receive_1', send + ':send_1')
-    print('error making connection', e)
   if stereo:
     try:
       jack_client.connect(receive + ':receive_2', send + ':send_2')
     except Exception as e:
+      print('Patching to mono send', send)
       jack_client.connect(receive + ':receive_2', send + ':send_1')
-      print('error making connection', e)
 
 def connect_to_ladspa(jack_client, receive, ladspa, dry_run = False, stereo = False):
   """connect a pair of receive ports to a ladspa plugin"""
@@ -102,7 +102,7 @@ def connect_from_ladspa(jack_client, ladspa, send, dry_run = False):
   try:
     jack_client.connect(ladspa + ':Output (Right)', send + ':send_2')
   except Exception as e:
-    print('error making connection', e, 'trying send_1 instead')
+    print('Patching to mono send', send)
     jack_client.connect(ladspa + ':Output (Right)', send + ':send_1')
 
 def connect_to_soft_left(jack_client, receive, send, dry_run = False, stereo = False):
@@ -117,14 +117,14 @@ def connect_to_soft_left(jack_client, receive, send, dry_run = False, stereo = F
     try:
       jack_client.connect('slight-left:Output (Right)', send + ':send_2')
     except Exception as e:
-      print('error making connection', e, 'trying send_1 instead')
+      print('Patching to mono send', send)
       jack_client.connect('slight-left:Output (Right)', send + ':send_1')
   else:
     jack_client.connect(receive + ':receive_1', 'slight-left:Input (Right)')
     try:
       jack_client.connect('slight-left:Output (Right)', send + ':send_2')
     except Exception as e:
-      print('error making connection', e, 'trying send_1 instead')
+      print('Patching to mono send', send)
       jack_client.connect('slight-left:Output (Right)', send + ':send_1')
 
 def connect_to_soft_right(jack_client, receive, send, dry_run = False, stereo = False):
@@ -139,14 +139,14 @@ def connect_to_soft_right(jack_client, receive, send, dry_run = False, stereo = 
     try:
       jack_client.connect('slight-right:Output (Right)', send + ':send_2')
     except Exception as e:
-      print('error making connection', e, 'trying send_1 instead')
+      print('Patching to mono send', send)
       jack_client.connect('slight-right:Output (Right)', send + ':send_1')
   else:
     jack_client.connect(receive + ':receive_1', 'slight-right:Input (Right)')
     try:
       jack_client.connect('slight-right:Output (Right)', send + ':send_2')
     except Exception as e:
-      print('error making connection', e, 'trying send_1 instead')
+      print('Patching to mono send', send)
       jack_client.connect('slight-right:Output (Right)', send + ':send_1')
 
 # Darkice
@@ -193,8 +193,4 @@ def connect_mpg123_to_darkice(jack_client, mpg123, send, dry_run = False):
     print("Connect mpg123 centre", mpg123, "to", send)
     return
   jack_client.connect(mpg123 + ':1', send + ':left')
-  try:
-    jack_client.connect(mpg123 + ':2', send + ':right')
-  except Exception as e:
-    jack_client.connect(mpg123 + ':2', send + ':left')
-    print('error making connection', e)
+  jack_client.connect(mpg123 + ':2', send + ':right')
