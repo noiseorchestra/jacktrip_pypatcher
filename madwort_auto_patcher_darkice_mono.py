@@ -228,12 +228,12 @@ if len(jacktrip_clients) == 6:
       p.connect_to_right(jackClient, jacktrip_clients[5], jacktrip_client, dry_run, jacktrip_clients_stereo[5])
 
   print("-- darkice --")
-  p.connect_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
-  p.connect_from_ladspa(jackClient, ladspa_left_1, darkice_port, dry_run)
-  p.connect_from_ladspa(jackClient, ladspa_left_2, darkice_port, dry_run)
-  p.connect_from_ladspa(jackClient, ladspa_right_1, darkice_port, dry_run)
-  p.connect_from_ladspa(jackClient, ladspa_right_2, darkice_port, dry_run)
-  p.connect_to_right(jackClient, jacktrip_clients[5], darkice_port, dry_run, jacktrip_clients_stereo[5])
+  p.connect_darkice_to_left(jackClient, jacktrip_clients[0], darkice_port, dry_run, jacktrip_clients_stereo[0])
+  p.connect_darkice_from_ladspa(jackClient, ladspa_left_1, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_left_2, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_right_1, darkice_port, dry_run)
+  p.connect_darkice_from_ladspa(jackClient, ladspa_right_2, darkice_port, dry_run)
+  p.connect_darkice_to_right(jackClient, jacktrip_clients[5], darkice_port, dry_run, jacktrip_clients_stereo[5])
 
 if len(jacktrip_clients) >= 7:
   print("Not yet implemented")
