@@ -5,6 +5,7 @@ import jack_client_patching as p
 
 def disconnect(jackClient, dry_run, hold_music_port):
   """Disconnect all autopatched ports"""
+  # TODO: only remove autopatched connections, not our own connections (HOW?)
   all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
   all_left_ladspa_ports = jackClient.get_ports('left-.*')
   all_right_ladspa_ports = jackClient.get_ports('right-.*')
@@ -12,8 +13,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
   if dry_run:
     all_hold_music_ports = []
 
-  # TODO: only remove autopatched connections, not our own connections (HOW?)
-  print("=== Disconnecting existing connections ===")
+  # TODO: implement dry_run mode!
   for receive_port in all_jacktrip_receive_ports:
     p.disconnect_all(jackClient, receive_port)
 
@@ -26,23 +26,18 @@ def disconnect(jackClient, dry_run, hold_music_port):
   for port in all_hold_music_ports:
     p.disconnect_all(jackClient, port)
 
-def get_current_clients(jackClient, dry_run, number_of_voices):
+def get_current_clients(jackClient, dry_run):
   """Get an array of client jack port prefixes"""
-  jacktrip_clients = list(map(lambda x: x.name.split(':')[0],
+  return list(map(lambda x: x.name.split(':')[0],
                               jackClient.get_ports('.*receive_1')))
-  if dry_run:
-    jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2',
-                        '..ffff.192.168.0.3', '..ffff.192.168.0.4',
-                        '..ffff.192.168.0.5', '..ffff.192.168.0.6']
-    jacktrip_clients = jacktrip_clients[0:number_of_voices]
-  return jacktrip_clients
 
 def verify_ladspa_plugins(jackClient):
   """Verify that the LADSPA plugins are running and abort if not"""
   all_left_ladspa_ports = jackClient.get_ports('left-.*')
   if len(all_left_ladspa_ports) < 1:
     print("Start LADSPA plugins please!")
-    os._exit(1)
+    # TODO: verify SystemExit is working as intended
+    SystemExit(1)
 
 def get_darkice_port(jackClient, dry_run, darkice_prefix):
   """Get the current darkice jack port prefix"""
@@ -54,38 +49,28 @@ def get_darkice_port(jackClient, dry_run, darkice_prefix):
 
   if len(darkice_ports) == 0:
     print("Start darkice first, please")
-    os._exit(1)
+    SystemExit(1)
 
   return darkice_ports[0]
 
-def main(dry_run = False, number_of_voices = 6):
-  """Autopatch all the things!!"""
-  jackClient = jack.Client('MadwortAutoPatcher')
+def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
+  """Autopatch all the things!"""
+
+  print("=== Clients ===")
+  print("client count:", len(jacktrip_clients))
+  print('clients', jacktrip_clients)
+  print('clients (stereo)', jacktrip_clients_stereo)
 
   # RUN THESE FIRST!
   # tom@noiseaa1:~$ mpg123-jack --name lounge-music --loop -1 ~tom/lounge-music.mp3
   hold_music_port = 'lounge-music'
   darkice_prefix = 'darkice'
 
+  print("=== Disconnecting existing connections ===")
   disconnect(jackClient, dry_run, hold_music_port)
-
-  jacktrip_clients = get_current_clients(jackClient, dry_run, number_of_voices)
 
   # add some new jacktrip connections
   print("=== Creating new connections ===")
-
-  # hard-coded list of client ips that send stereo input
-  # TODO: move this to command-line option / config file
-  jacktrip_stereo = []
-
-  if dry_run:
-    jacktrip_stereo = jacktrip_clients[0:1]
-
-  jacktrip_clients_stereo = list(map(lambda x: x in jacktrip_stereo, jacktrip_clients))
-
-  print("client count:", len(jacktrip_clients))
-  print('clients', jacktrip_clients)
-  print('clients (stereo)', jacktrip_clients_stereo)
 
   if len(jacktrip_clients) > 3:
     verify_ladspa_plugins(jackClient)
@@ -96,7 +81,7 @@ def main(dry_run = False, number_of_voices = 6):
   if len(jacktrip_clients) < 1:
     print("-- darkice --")
     p.connect_mpg123_to_darkice(jackClient, hold_music_port, darkice_port, dry_run)
-    os._exit(1)
+    SystemExit(1)
 
   if len(jacktrip_clients) == 1:
     # patch hold music to the one client
@@ -252,9 +237,21 @@ def main(dry_run = False, number_of_voices = 6):
     # if n is odd, (n-1)/2 -> 0
     # otherwise n*(200/(n-1))
     # Nb. this should work for 6+
-    os._exit(1)
+    SystemExit(1)
 
-  os._exit(0)
+def main(dry_run = False):
+  """Do some setup, then do the autopatch"""
+  jackClient = jack.Client('MadwortAutoPatcher')
+
+  jacktrip_clients = get_current_clients(jackClient, dry_run)
+
+  # hard-coded list of client ips that send stereo input
+  # TODO: move this to command-line option / config file
+  jacktrip_stereo = []
+
+  jacktrip_clients_stereo = list(map(lambda x: x in jacktrip_stereo, jacktrip_clients))
+
+  return autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo)
 
 if __name__ == "__main__":
-  main(False)
+  main()
