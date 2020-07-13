@@ -37,6 +37,27 @@ def get_current_clients(jackClient, dry_run):
     jacktrip_clients = jacktrip_clients[0:number_of_voices]
   return jacktrip_clients
 
+def verify_ladspa_plugins(jackClient):
+  """Verify that the LADSPA plugins are running and abort if not"""
+  all_left_ladspa_ports = jackClient.get_ports('left-.*')
+  if len(all_left_ladspa_ports) < 1:
+    print("Start LADSPA plugins please!")
+    os._exit(1)
+
+def get_darkice_port(jackClient, dry_run, darkice_prefix):
+  """Get the current darkice jack port prefix"""
+  darkice_ports = list(map(lambda x: x.name.split(':')[0],
+                              jackClient.get_ports(darkice_prefix + '.*:left')))
+
+  if dry_run:
+    darkice_ports = ['darkice-10545']
+
+  if len(darkice_ports) == 0:
+    print("Start darkice first, please")
+    os._exit(1)
+
+  return darkice_ports[0]
+
 def main(dry_run = False, number_of_voices = 6):
   """Autopatch all the things!!"""
   jackClient = jack.Client('MadwortAutoPatcher')
@@ -66,22 +87,10 @@ def main(dry_run = False, number_of_voices = 6):
   print('clients', jacktrip_clients)
   print('clients (stereo)', jacktrip_clients_stereo)
 
-  all_left_ladspa_ports = jackClient.get_ports('left-.*')
-  if len(jacktrip_clients) > 3 and len(all_left_ladspa_ports) < 1:
-    print("Start LADSPA plugins please!")
-    os._exit(1)
+  if len(jacktrip_clients) > 3:
+    verify_ladspa_plugins(jackClient)
 
-  darkice_ports = list(map(lambda x: x.name.split(':')[0],
-                              jackClient.get_ports(darkice_prefix + '.*:left')))
-
-  if dry_run:
-    darkice_ports = ['darkice-10545']
-
-  if len(darkice_ports) == 0:
-    print("Start darkice first, please")
-    os._exit(1)
-
-  darkice_port = darkice_ports[0]
+  darkice_port = get_darkice_port(jackClient, dry_run, darkice_prefix)
   print("darkice port:", darkice_port)
 
   if len(jacktrip_clients) < 1:
