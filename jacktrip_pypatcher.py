@@ -26,7 +26,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
   for port in all_hold_music_ports:
     p.disconnect_all(jackClient, port)
 
-def get_current_clients(jackClient, dry_run):
+def get_current_clients(jackClient, dry_run, number_of_voices):
   """Get an array of client jack port prefixes"""
   jacktrip_clients = list(map(lambda x: x.name.split(':')[0],
                               jackClient.get_ports('.*receive_1')))
@@ -69,7 +69,7 @@ def main(dry_run = False, number_of_voices = 6):
 
   disconnect(jackClient, dry_run, hold_music_port)
 
-  jacktrip_clients = get_current_clients(jackClient, dry_run)
+  jacktrip_clients = get_current_clients(jackClient, dry_run, number_of_voices)
 
   # add some new jacktrip connections
   print("=== Creating new connections ===")

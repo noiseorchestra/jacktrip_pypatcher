@@ -11,6 +11,7 @@ $ sudo aptitude install python3-pip
 $ python3 -m pip install setuptools --user
 $ python3 -m pip install cffi --user
 $ python3 -m pip install JACK-Client --user
+$ python3 -m pip install pytest --user
 ```
 
 ## Usage
@@ -60,6 +61,13 @@ right-50:Output (Right)
 #### Usage
 
 To use this autopatcher, you'll need to run `start_plugins.sh` and `stop_plugins.sh` accordingly!
+
+## Run tests
+
+Run tests with:
+```bash
+$ python3 -m pytest
+```
 
 ## Credits
 
