@@ -16,10 +16,16 @@ $ python3 -m pip install pytest --user
 
 ## Usage
 
-The hubserver will do its own autopatching, which will fight against you a little bit, disable this with e.g. [this patch to disable the built-in autopatcher](https://github.com/jacktrip/jacktrip/pull/70). Otherwise just run the appropriate script, e.g.
+The hub server will do its own autopatching, so disable all that by ensuring you're in hub autopatch mode 0 and set the `--nojackportsconnect` flag, e.g.
 
 ```bash
-$ python3 jacktrip_pypatcher.py
+hubserver$ jacktrip -S -p0 --nojackportsconnect
+```
+
+Then re-run this script whenever a client connects/disconnects:
+
+```bash
+hubserver$ python3 jacktrip_pypatcher.py
 ```
 
 ### Modes
