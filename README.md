@@ -45,6 +45,24 @@ hubserver$ python3 jacktrip_pypatcher.py
 * `jacktrip_pypatcher_mode_2.py` should replicate what the built-in autopatcher does when in `-p2` mode
 * `jacktrip_pypatcher.py` should do all the patching you ever need!
 
+### Mono/Stereo clients
+
+The default is that clients send a mono signal (arrives at the hubserver as `receive_1`), and receive a stereo mix (sent from the hubserver as `send_1,2`). These clients should be running jacktrip with `-n2`
+
+#### Mono headphone mix
+
+Some clients would prefer to receive a mono headphone mix, as they can then wear their headphones only on one ear & hear the acoustic sound in their room with their other ear. The easiest thing is for these clients to run jacktrip with `-n1`.
+
+Alternatively they can patch `jacktrip/receive_2` to `system/playback_1` on their local jackd server.
+
+#### Stereo signal
+
+Clients that are sending a stereo signal (e.g. two musicians at one computer, electronic musicians generating stereo output) need to have their ip address added to the [list of stereo clients in the script](https://github.com/madwort/jacktrip_pypatcher/blob/a5e8b56b331f42fc9a2a6d40cce62dc41c9963a9/jacktrip_pypatcher.py#L254) before running the script.
+
+#### Stereo signal and mono headphone mix
+
+Clients should be enabled for stereo signal as above, but obviously they will not be able to run jacktrip with `-n1` so should patch their headphone mix in their local jackd server.
+
 ### LADSPA/Jack plugins
 
 In order to use 5/6 clients, you'll need to have some panning plugins.
