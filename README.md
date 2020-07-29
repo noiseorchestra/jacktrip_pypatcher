@@ -12,6 +12,7 @@ $ python3 -m pip install setuptools --user
 $ python3 -m pip install cffi --user
 $ python3 -m pip install JACK-Client --user
 $ python3 -m pip install pytest --user
+$ python3 -m pip install watchgod --user
 ```
 
 ## Usage
