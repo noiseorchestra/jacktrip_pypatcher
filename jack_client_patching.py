@@ -56,7 +56,11 @@ class JackClientPatching():
     if self.dry_run:
       print("Connect mpg123 centre", mpg123, "to", send)
       return
-    self.jackClient.connect(mpg123 + ':1', send + ':send_1')
+    try:
+      self.jackClient.connect(mpg123 + ':1', send + ':send_1')
+    except jack.JackErrorCode as e:
+      print('Could not find mpg123, not patching ', send)
+      return
     try:
       self.jackClient.connect(mpg123 + ':2', send + ':send_2')
     except Exception as e:
@@ -199,5 +203,9 @@ class JackClientPatching():
     if self.dry_run:
       print("Connect mpg123 centre", mpg123, "to", send)
       return
-    self.jackClient.connect(mpg123 + ':1', send + ':left')
-    self.jackClient.connect(mpg123 + ':2', send + ':right')
+    try:
+      self.jackClient.connect(mpg123 + ':1', send + ':left')
+      self.jackClient.connect(mpg123 + ':2', send + ':right')
+    except jack.JackErrorCode as e:
+      print('Could not find mpg123, not patching ', send)
+      return
