@@ -7,7 +7,9 @@ def run_pypatcher_voice_count(number_of_voices):
 
   jacktrip_clients = ['..ffff.192.168.0.1', '..ffff.192.168.0.2',
                       '..ffff.192.168.0.3', '..ffff.192.168.0.4',
-                      '..ffff.192.168.0.5', '..ffff.192.168.0.6']
+                      '..ffff.192.168.0.5', '..ffff.192.168.0.6',
+                      '..ffff.192.168.0.7', '..ffff.192.168.0.8',
+                    ]
   jacktrip_clients = jacktrip_clients[0:number_of_voices]
 
   jacktrip_stereo = jacktrip_clients[0:1]
@@ -23,3 +25,6 @@ def test_pypatcher2():
 
 def test_pypatcher6():
   run_pypatcher_voice_count(6)
+
+def test_pypatcher8():
+  run_pypatcher_voice_count(8)

@@ -82,6 +82,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
 
   jcp = p.JackClientPatching(jackClient, dry_run)
 
+  max_supported_clients = 6
+  if len(jacktrip_clients) > max_supported_clients:
+    print("Unsupported number of clients, patching", max_supported_clients, "of",
+          len(jacktrip_clients))
+    jacktrip_clients = jacktrip_clients[0:max_supported_clients]
+
   if len(jacktrip_clients) < 1:
     print("-- darkice --")
     jcp.connect_mpg123_to_darkice(hold_music_port, darkice_port)
