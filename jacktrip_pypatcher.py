@@ -82,7 +82,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
 
   jcp = p.JackClientPatching(jackClient, dry_run)
 
-  max_supported_clients = 6
+  max_supported_clients = 11
   if len(jacktrip_clients) > max_supported_clients:
     print("Unsupported number of clients, patching", max_supported_clients, "of",
           len(jacktrip_clients))
@@ -205,48 +205,89 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
     jcp.connect_darkice_from_ladspa(ladspa_soft_right, darkice_port)
     jcp.connect_darkice_to_right(jacktrip_clients[4], darkice_port, jacktrip_clients_stereo[4])
 
-  if len(jacktrip_clients) == 6:
+  if len(jacktrip_clients) > 5:
+    ladspa_left_20 = 'left-20'
+    ladspa_left_40 = 'left-40'
+    ladspa_left_60 = 'left-60'
+    ladspa_left_80 = 'left-80'
+    ladspa_right_20 = 'right-20'
+    ladspa_right_40 = 'right-40'
+    ladspa_right_60 = 'right-60'
+    ladspa_right_80 = 'right-80'
+
+  if len(jacktrip_clients) >= 6:
     # We want to only use a minimum number of LADSPA plugins, so pan everyone to the same places in 
     # every mix & miss out the loopbacks
-    ladspa_left_1 = 'left-65'
-    ladspa_left_2 = 'left-30'
-    ladspa_right_1 = 'right-30'
-    ladspa_right_2 = 'right-65'
-    jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_left_1, jacktrip_clients_stereo[1])
-    jcp.connect_to_ladspa(jacktrip_clients[2], ladspa_left_2, jacktrip_clients_stereo[2])
-    jcp.connect_to_ladspa(jacktrip_clients[3], ladspa_right_1, jacktrip_clients_stereo[3])
-    jcp.connect_to_ladspa(jacktrip_clients[4], ladspa_right_2, jacktrip_clients_stereo[4])
+    jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_left_20, jacktrip_clients_stereo[1])
+    jcp.connect_to_ladspa(jacktrip_clients[2], ladspa_right_20, jacktrip_clients_stereo[2])
+    jcp.connect_to_ladspa(jacktrip_clients[3], ladspa_left_60, jacktrip_clients_stereo[3])
+    jcp.connect_to_ladspa(jacktrip_clients[4], ladspa_right_60, jacktrip_clients_stereo[4])
 
     for jacktrip_client in jacktrip_clients:
       print("-- jacktrip client:", jacktrip_client, '--')
       if jacktrip_clients[0] != jacktrip_client:
         jcp.connect_to_left(jacktrip_clients[0], jacktrip_client, jacktrip_clients_stereo[0])
       if jacktrip_clients[1] != jacktrip_client:
-        jcp.connect_from_ladspa(ladspa_left_1, jacktrip_client)
+        jcp.connect_from_ladspa(ladspa_left_20, jacktrip_client)
       if jacktrip_clients[2] != jacktrip_client:
-        jcp.connect_from_ladspa(ladspa_left_2, jacktrip_client)
+        jcp.connect_from_ladspa(ladspa_right_20, jacktrip_client)
       if jacktrip_clients[3] != jacktrip_client:
-        jcp.connect_from_ladspa(ladspa_right_1, jacktrip_client)
+        jcp.connect_from_ladspa(ladspa_left_60, jacktrip_client)
       if jacktrip_clients[4] != jacktrip_client:
-        jcp.connect_from_ladspa(ladspa_right_2, jacktrip_client)
+        jcp.connect_from_ladspa(ladspa_right_60, jacktrip_client)
       if jacktrip_clients[5] != jacktrip_client:
         jcp.connect_to_right(jacktrip_clients[5], jacktrip_client, jacktrip_clients_stereo[5])
 
     print("-- darkice --")
     jcp.connect_darkice_to_left(jacktrip_clients[0], darkice_port, jacktrip_clients_stereo[0])
-    jcp.connect_darkice_from_ladspa(ladspa_left_1, darkice_port)
-    jcp.connect_darkice_from_ladspa(ladspa_left_2, darkice_port)
-    jcp.connect_darkice_from_ladspa(ladspa_right_1, darkice_port)
-    jcp.connect_darkice_from_ladspa(ladspa_right_2, darkice_port)
+    jcp.connect_darkice_from_ladspa(ladspa_left_20, darkice_port)
+    jcp.connect_darkice_from_ladspa(ladspa_right_20, darkice_port)
+    jcp.connect_darkice_from_ladspa(ladspa_left_60, darkice_port)
+    jcp.connect_darkice_from_ladspa(ladspa_right_60, darkice_port)
     jcp.connect_darkice_to_right(jacktrip_clients[5], darkice_port, jacktrip_clients_stereo[5])
 
-  if len(jacktrip_clients) >= 7:
+  if len(jacktrip_clients) >= 8:
+    jcp.connect_to_ladspa(jacktrip_clients[6], ladspa_left_40, jacktrip_clients_stereo[6])
+    jcp.connect_to_ladspa(jacktrip_clients[7], ladspa_right_40, jacktrip_clients_stereo[7])
+
+    for jacktrip_client in jacktrip_clients:
+      print("-- jacktrip client:", jacktrip_client, '--')
+      if jacktrip_clients[6] != jacktrip_client:
+        jcp.connect_from_ladspa(ladspa_left_40, jacktrip_client)
+      if jacktrip_clients[7] != jacktrip_client:
+        jcp.connect_from_ladspa(ladspa_right_40, jacktrip_client)
+
+    print("-- darkice --")
+    jcp.connect_darkice_from_ladspa(ladspa_left_40, darkice_port)
+    jcp.connect_darkice_from_ladspa(ladspa_right_40, darkice_port)
+
+  if len(jacktrip_clients) >= 10:
+    jcp.connect_to_ladspa(jacktrip_clients[8], ladspa_left_80, jacktrip_clients_stereo[8])
+    jcp.connect_to_ladspa(jacktrip_clients[9], ladspa_right_80, jacktrip_clients_stereo[9])
+
+    for jacktrip_client in jacktrip_clients:
+      print("-- jacktrip client:", jacktrip_client, '--')
+      if jacktrip_clients[8] != jacktrip_client:
+        jcp.connect_from_ladspa(ladspa_left_80, jacktrip_client)
+      if jacktrip_clients[9] != jacktrip_client:
+        jcp.connect_from_ladspa(ladspa_right_80, jacktrip_client)
+
+    print("-- darkice --")
+    jcp.connect_darkice_from_ladspa(ladspa_left_80, darkice_port)
+    jcp.connect_darkice_from_ladspa(ladspa_right_80, darkice_port)
+
+  # Odd numbered client counts from 7-11
+  if (len(jacktrip_clients) >= 6) and (len(jacktrip_clients)%2 == 1):
+    last_client_index = len(jacktrip_clients)-1
+    for jacktrip_client in jacktrip_clients:
+      print("-- jacktrip client:", jacktrip_client, '--')
+      if (jacktrip_clients[last_client_index] != jacktrip_client):
+        jcp.connect_to_centre(jacktrip_clients[last_client_index], jacktrip_client, jacktrip_clients_stereo[last_client_index])
+    print("-- darkice --")
+    jcp.connect_darkice_to_centre(jacktrip_clients[last_client_index], darkice_port, jacktrip_clients_stereo[last_client_index])
+
+  if len(jacktrip_clients) > 11:
     print("Not yet implemented")
-    # 0 -> -1
-    # n-1 -> 1
-    # if n is odd, (n-1)/2 -> 0
-    # otherwise n*(200/(n-1))
-    # Nb. this should work for 6+
     SystemExit(1)
 
 def main(dry_run = False):
