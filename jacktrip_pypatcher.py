@@ -3,6 +3,7 @@ import os
 import psutil
 import random
 import jack_client_patching as p
+import subprocess
 
 def disconnect(jackClient, dry_run, hold_music_port):
   """Disconnect all autopatched ports"""
@@ -60,18 +61,33 @@ def get_darkice_port(jackClient, dry_run, darkice_prefix):
 def darkice_recording_process():
   for proc in psutil.process_iter(['pid', 'name', 'username','cmdline']):
     if(proc.name() == 'jack_capture'):
+      return proc
       if(proc.cmdline()[2] == 'darkice-'):
         return proc
-  return False
+  # return False
 
 def start_darkice_recording():
-  # run `jack_capture --filename-prefix darkice- -S --channels 2 --port darkice\*`
-  return True
+  print("-- recordings --")
+  print("starting")
+  for proc in psutil.process_iter(['pid', 'name', 'username','cmdline']):
+    # print(proc.name())
+    if(proc.name() == 'jack_capture'):
+      print("DADRAGAH")
+  print(darkice_recording_process())
+  print("ARGH")
+  if not darkice_recording_process():
+    mysub = subprocess.Popen(["jack_capture", "--filename-prefix",
+      "darkice-", "-S", "--channels", "2", "--port", "darkice*", "-as"])
+    print(mysub.pid)
 
 def stop_darkice_recording():
+  print("-- recordings --")
   myprocess = darkice_recording_process()
+  print(myprocess)
   if not myprocess:
-    return True
+    print("None running")
+    return
+  print("Stopping process",myprocess.pid())
   myprocess.kill()
 
 def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
