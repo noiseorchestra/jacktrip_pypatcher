@@ -1,5 +1,6 @@
 import jack
 import os
+import psutil
 import random
 import jack_client_patching as p
 
@@ -55,6 +56,24 @@ def get_darkice_port(jackClient, dry_run, darkice_prefix):
 
   return darkice_ports[0]
 
+# return process object of relevant jack_capture, if running
+def darkice_recording_process():
+  for proc in psutil.process_iter(['pid', 'name', 'username','cmdline']):
+    if(proc.name() == 'jack_capture'):
+      if(proc.cmdline()[2] == 'darkice-'):
+        return proc
+  return False
+
+def start_darkice_recording():
+  # run `jack_capture --filename-prefix darkice- -S --channels 2 --port darkice\*`
+  return True
+
+def stop_darkice_recording():
+  myprocess = darkice_recording_process()
+  if not myprocess:
+    return True
+  myprocess.kill()
+
 def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
   """Autopatch all the things!"""
 
@@ -91,7 +110,10 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
   if len(jacktrip_clients) < 1:
     print("-- darkice --")
     jcp.connect_mpg123_to_darkice(hold_music_port, darkice_port)
+    stop_darkice_recording()
     SystemExit(1)
+  else:
+    start_darkice_recording()
 
   if len(jacktrip_clients) == 1:
     # patch hold music to the one client
@@ -289,6 +311,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
   if len(jacktrip_clients) > 11:
     print("Not yet implemented")
     SystemExit(1)
+
+  print("== Finished ==")
 
 def main(dry_run = False):
   """Do some setup, then do the autopatch"""
