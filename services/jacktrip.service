@@ -3,9 +3,9 @@ Description=JackTrip service
 After=jackd.service
 
 [Service]
-Environment=PYTHONUNBUFFERED=1
 ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_jacktrip.sh
-Restart=on-failure
+Restart=always
+RestartSec=2s
 
 # Use a dedicated user to run our service
 User=sam
