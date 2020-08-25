@@ -6,7 +6,7 @@ try:
     command = ['mpg123-jack', '--name', 'lounge-music', '--loop', '-1', '~/lounge-music.mp3']
     mpg123_process = Popen(command, stdout=PIPE, stderr=PIPE)
     while True:
-        print(mpg123_process.stdout)
+        print(mpg123_process.stdout.readline().rstrip(), 'utf-8'))
         sleep(0.1)
     # print output somehow
 except Exception as e:

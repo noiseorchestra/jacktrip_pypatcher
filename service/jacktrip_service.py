@@ -6,7 +6,7 @@ try:
     command = ['jacktrip', '-S', '-p0', '--nojackportsconnect']
     jacktrip_process = Popen(command, stdout=PIPE, stderr=PIPE)
     while True:
-        print(jacktrip_process.stdout)
+        print(jacktrip_process.stdout.readline().rstrip(), 'utf-8')
         sleep(0.1)
     # print output somehow
 except Exception as e:

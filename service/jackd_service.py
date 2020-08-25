@@ -6,7 +6,7 @@ try:
     command = ['jackd', '-R', '-dalsa', '-r48000', '-p256', '-n2', '-s', '-S']
     jack_process = Popen(command, stdout=PIPE, stderr=PIPE)
     while True:
-        print(jack_process.stdout)
+        print(jack_process.stdout.readline().rstrip(), 'utf-8')
         sleep(0.1)
     # print output somehow
 except Exception as e:
