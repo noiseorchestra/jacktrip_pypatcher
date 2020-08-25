@@ -11,6 +11,7 @@ NICKED FROM chatty_client.py
 """
 from __future__ import print_function  # only needed for Python 2.x
 import jack
+from time import sleep
 import jacktrip_pypatcher as jtp
 from pathlib import Path
 
@@ -56,8 +57,5 @@ def port_connect(a, b, connect):
 
 print("activating JACK")
 with client:
-    print("#" * 80)
-    print("press Return to quit")
-    print("#" * 80)
-    input()
-    print("closing JACK")
+    while True:
+        sleep(0.1)
