@@ -3,7 +3,7 @@ Description=mpg123 service
 After=jackd.service
 
 [Service]
-ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_mpg123.py
+ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_mpg123.sh
 Restart=always
 RestartSec=2s
 
