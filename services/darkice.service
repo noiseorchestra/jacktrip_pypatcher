@@ -3,7 +3,7 @@ Description=JackTrip service
 After=jackd.service
 
 [Service]
-ExecStart=darkice -c /etc/darkice.cfg
+ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_darkice.sh
 Restart=always
 RestartSec=2s
 
