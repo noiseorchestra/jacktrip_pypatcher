@@ -1,0 +1,15 @@
+# copy all service files to /etc/systemd/system/ and give correct permissions
+
+sudo cp jackd.service /etc/systemd/system/
+sudo chmod 644 /etc/systemd/system/jackd.service
+sudo chmod u+x /etc/systemd/system/jackd.service
+
+# start all services
+
+$ sudo service icecast2 start
+$ sudo /etc/init.d/darkice start
+$ sudo systemctl start jackd.service
+$ sudo systemctl start mpg123.service
+$ sudo systemctl start jacktrip.service
+
+# start all services
