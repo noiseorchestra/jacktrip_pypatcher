@@ -1,8 +1,8 @@
 # copy all service files to /etc/systemd/system/ and give correct permissions
 
-sudo cp jackd.service /etc/systemd/system/
-sudo chmod 644 /etc/systemd/system/jackd.service
-sudo chmod u+x /etc/systemd/system/jackd.service
+sudo cp pypatcher_darkice.service /etc/systemd/system/
+sudo chmod 644 /etc/systemd/system/pypatcher_darkice.service
+sudo chmod u+x /etc/systemd/system/pypatcher_darkice.service
 
 # start all services
 
