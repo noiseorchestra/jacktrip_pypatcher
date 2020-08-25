@@ -1,0 +1,15 @@
+[Unit]
+Description=JackTrip service
+After=jackd.service
+
+[Service]
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /path/to/script/jacktrip_service.py
+Restart=on-failure
+
+# Use a dedicated user to run our service
+User=sam
+
+[Install]
+
+WantedBy=default.target

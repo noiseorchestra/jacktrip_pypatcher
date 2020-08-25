@@ -1,0 +1,17 @@
+[Unit]
+Description=JACK service
+
+[Service]
+Environment="JACK_NO_AUDIO_RESERVATION=1"
+LimitRTPRIO=infinity
+LimitMEMLOCK=infinity
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /path/to/script/jackd_service.py
+Restart=on-failure
+
+# Use a dedicated user to run our service
+User=sam
+
+[Install]
+
+WantedBy=default.target
