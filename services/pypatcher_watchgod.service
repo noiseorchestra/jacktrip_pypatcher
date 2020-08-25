@@ -1,6 +1,6 @@
 [Unit]
 Description=mpg123 service
-After=jacktrip.service
+After=jacktrip.service darkice.service pypatcher_callback.service
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
