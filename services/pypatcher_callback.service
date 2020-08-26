@@ -1,5 +1,5 @@
 [Unit]
-Description=mpg123 service
+Description=pypatcher_callback service
 After=jacktrip.service
 
 [Service]
