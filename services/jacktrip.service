@@ -3,7 +3,7 @@ Description=JackTrip service
 After=jackd.service
 
 [Service]
-ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_jacktrip.sh
+ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect
 Restart=always
 RestartSec=2s
 

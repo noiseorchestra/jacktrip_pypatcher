@@ -2,13 +2,14 @@
 Description=JACK service
 
 [Service]
-Environment="JACK_NO_AUDIO_RESERVATION=1"
-LimitRTPRIO=infinity
+JACK_NO_AUDIO_RESERVATION=1
+LimitRTPRIO=95
+LimitRTTIME=infinity
 LimitMEMLOCK=infinity
-ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_jackd.sh
+EnvironmentFile=/home/sam/jacktrip_pypatcher_fork/services/config/jackd.conf
+ExecStart=/usr/bin/jackd -d dummy -p $FPP
 Restart=always
 RestartSec=2s
-
 # Use a dedicated user to run our service
 User=sam
 

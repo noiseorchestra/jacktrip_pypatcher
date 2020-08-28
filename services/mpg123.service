@@ -3,7 +3,7 @@ Description=mpg123 service
 After=jackd.service
 
 [Service]
-ExecStart=/home/sam/jacktrip_pypatcher_fork/services/start_mpg123.sh
+ExecStart=/usr/bin/mpg123-jack --name lounge-music --loop -1 ~/lounge-music.mp3
 Restart=always
 RestartSec=2s
 
