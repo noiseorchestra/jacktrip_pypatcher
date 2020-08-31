@@ -4,7 +4,7 @@ After=jackd.service
 Requires=jackd.service
 
 [Service]
-ExecStart=/usr/bin/mpg123-jack --name lounge-music --loop -1 ~/lounge-music.mp3
+ExecStart=/usr/bin/mpg123-jack --name lounge-music --loop -1 /home/sam/lounge-music.mp3
 Restart=always
 RestartSec=2s
 
