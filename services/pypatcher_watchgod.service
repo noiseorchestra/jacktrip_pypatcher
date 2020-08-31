@@ -1,7 +1,7 @@
 [Unit]
 Description=pypatcher_watchgod service
-After=jacktrip.service pypatcher_darkice.service pypatcher_callback.service mpg123.service
-Requires=jacktrip.service pypatcher_darkice.service pypatcher_callback.service mpg123.service
+After=jacktrip.service
+Requires=jacktrip.service
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
@@ -15,4 +15,4 @@ User=sam
 
 [Install]
 
-WantedBy=jacktrip.service pypatcher_darkice.service pypatcher_callback.service mpg123.service
+WantedBy=jacktrip.service
