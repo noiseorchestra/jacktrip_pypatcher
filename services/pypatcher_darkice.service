@@ -13,4 +13,4 @@ User=sam
 
 [Install]
 
-WantedBy=default.target
+WantedBy=jackd.service
