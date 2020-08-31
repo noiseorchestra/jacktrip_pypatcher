@@ -1,6 +1,7 @@
 [Unit]
 Description=mpg123 service
 After=jackd.service
+Requires=jackd.service
 
 [Service]
 ExecStart=/usr/bin/mpg123-jack --name lounge-music --loop -1 ~/lounge-music.mp3

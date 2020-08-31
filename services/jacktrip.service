@@ -1,6 +1,7 @@
 [Unit]
 Description=JackTrip service
 After=jackd.service
+Requires=jackd.service
 
 [Service]
 ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect

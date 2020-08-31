@@ -1,6 +1,7 @@
 [Unit]
 Description=darkice service
 After=jackd.service
+Requires=jackd.service
 
 [Service]
 ExecStart=/usr/bin/darkice -c /etc/darkice.cfg

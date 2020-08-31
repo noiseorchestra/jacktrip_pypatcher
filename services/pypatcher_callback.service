@@ -1,6 +1,7 @@
 [Unit]
 Description=pypatcher_callback service
-After=jacktrip.service
+After=jackd.service jacktrip.service
+Requires=jackd.service jacktrip.service
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
