@@ -3,7 +3,7 @@ Description=JACK service
 PartOf=pypatcher_callback.service
 
 [Service]
-EnvironmentFile=/home/sam/jacktrip_pypatcher_fork/services/config/jackd.conf
+EnvironmentFile=/etc/jacktrip_pypatcher/jackd.conf
 ExecStart=/usr/bin/jackd -d dummy -p $FPP
 Restart=always
 RestartSec=2s
