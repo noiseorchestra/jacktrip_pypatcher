@@ -1,0 +1,15 @@
+[Unit]
+Description=JackTrip service
+After=jackd.service
+
+[Service]
+ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect -z
+Restart=always
+RestartSec=2s
+
+# Use a dedicated user to run our service
+User=sam
+
+[Install]
+
+WantedBy=default.target

@@ -1,0 +1,16 @@
+[Unit]
+Description=darkice service
+After=jackd.service
+Requires=jackd.service
+
+[Service]
+ExecStart=/usr/bin/darkice -c /etc/darkice.cfg
+Restart=always
+RestartSec=2s
+
+# Use a dedicated user to run our service
+User=sam
+
+[Install]
+
+WantedBy=jackd.service
