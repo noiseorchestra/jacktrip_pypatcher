@@ -1,5 +1,6 @@
 import jack
 import os
+import lounge_music
 import random
 import jack_client_patching as p
 
@@ -88,13 +89,14 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
           len(jacktrip_clients))
     jacktrip_clients = jacktrip_clients[0:max_supported_clients]
 
-  if len(jacktrip_clients) < 1:
-    print("-- darkice --")
-    jcp.connect_mpg123_to_darkice(hold_music_port, darkice_port)
+  if len(jacktrip_clients) != 1:
+    # Only play the hold music if there is exactly one person connected!
+    lounge_music.kill_the_music(jackClient, hold_music_port)
     SystemExit(1)
 
   if len(jacktrip_clients) == 1:
-    # patch hold music to the one client
+    # start hold music & patch to the one client
+    lounge_music.start_the_music(jackClient, hold_music_port)
     jcp.connect_mpg123_to_centre(hold_music_port, jacktrip_clients[0])
 
     # also connect loopback
