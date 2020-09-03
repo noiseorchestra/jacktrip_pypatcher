@@ -11,6 +11,10 @@ $ sudo aptitude install python3-pip
 $ python3 -m pip install -r requirements.txt --user
 ```
 
+### Services
+
+Systemd service files are in `./services`, see the [README.md](./services/README.md) there.
+
 ## Usage
 
 The hub server will do its own autopatching, so disable all that by ensuring you're in hub autopatch mode 0 and set the `--nojackportsconnect` flag, e.g.
