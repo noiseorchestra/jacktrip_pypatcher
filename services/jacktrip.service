@@ -3,7 +3,7 @@ Description=JackTrip service
 After=jackd.service
 
 [Service]
-ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect
+ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect -z
 Restart=always
 RestartSec=2s
 
