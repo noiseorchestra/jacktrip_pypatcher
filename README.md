@@ -23,10 +23,10 @@ The hub server will do its own autopatching, so disable all that by ensuring you
 hubserver$ jacktrip -S -p0 --nojackportsconnect
 ```
 
-Start the lounge music (if applicable):
+Ensure the lounge music path is correct (if applicable):
 
 ```bash
-hubserver$ mpg123-jack --name lounge-music --loop -1 ~/lounge-music.mp3
+hubserver$ REMOVED! ~/lounge-music.mp3
 ```
 
 Start the LADSPA plugins (if you are expecting more than 5 clients):
