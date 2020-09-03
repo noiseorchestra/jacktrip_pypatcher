@@ -8,11 +8,7 @@ To use this on Ubuntu 18, you'll need to install jackclient-python's dependencie
 
 ```bash
 $ sudo aptitude install python3-pip
-$ python3 -m pip install setuptools --user
-$ python3 -m pip install cffi --user
-$ python3 -m pip install JACK-Client --user
-$ python3 -m pip install pytest --user
-$ python3 -m pip install watchgod --user
+$ python3 -m pip install -r requirements.txt --user
 ```
 
 ## Usage
