@@ -17,13 +17,23 @@ Systemd service files are in `./services`, see the [README.md](./services/README
 
 ## Usage
 
+### hub server
+
 The hub server will do its own autopatching, so disable all that by ensuring you're in hub autopatch mode 0 and set the `--nojackportsconnect` flag, e.g.
 
 ```bash
 hubserver$ jacktrip -S -p0 --nojackportsconnect
 ```
 
-Ensure that you have some lounge music path at the currently hard-coded path in [lounge_music.py](./lounge_music.py), currently `/home/same/lounge-music.mp3`.
+You can also start this using the service definitions above!
+
+### hard-coded paths
+
+* Ensure that you have some lounge music path at the currently hard-coded path in [lounge_music.py](./lounge_music.py), currently `/home/sam/lounge-music.mp3`.
+
+* Ensure that you have write access to the currently hard-coded path in [stereo_recording.py](./stereo_recording.py), currently `/home/sam/`. Nb. files will have filenames with prefix `darkice-`, e.g. `darkice-01.wav`.
+
+### more stuff
 
 Start the LADSPA plugins (if you are expecting more than 5 clients):
 
