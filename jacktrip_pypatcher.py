@@ -302,7 +302,11 @@ def main(dry_run = False):
 
   jacktrip_clients_stereo = list(map(lambda x: x in jacktrip_stereo, jacktrip_clients))
 
-  return autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo)
+  autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo)
+
+  jackClient.deactivate()
+  jackClient.close()
+  
 
 if __name__ == "__main__":
   main()
