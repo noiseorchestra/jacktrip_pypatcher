@@ -7,7 +7,7 @@ import time
 
 def start_the_music(jackClient, port, debug = True):
   """start looping the hold music, if it isn't already playing"""
-  hold_music_file_path = "/home/tom/lounge-music.mp3"
+  hold_music_file_path = "/home/sam/lounge-music.mp3"
 
   all_hold_music_ports = jackClient.get_ports(port + '.*')
 
