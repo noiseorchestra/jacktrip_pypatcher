@@ -1,6 +1,7 @@
 import jack
 import os
 import lounge_music
+import stereo_recording
 import random
 import jack_client_patching as p
 
@@ -88,6 +89,11 @@ def autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo):
     print("Unsupported number of clients, patching", max_supported_clients, "of",
           len(jacktrip_clients))
     jacktrip_clients = jacktrip_clients[0:max_supported_clients]
+
+  if len(jacktrip_clients) > 0:
+    stereo_recording.start()
+  else:
+    stereo_recording.stop()
 
   if len(jacktrip_clients) != 1:
     # Only play the hold music if there is exactly one person connected!
