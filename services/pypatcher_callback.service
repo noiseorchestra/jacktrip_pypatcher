@@ -5,8 +5,8 @@ Requires=jacktrip.service
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/usr/bin/python3 -u /home/sam/jacktrip_pypatcher_fork/patcher_callback.py
-WorkingDirectory=/home/sam/jacktrip_pypatcher_fork/
+ExecStart=/usr/bin/python3 -u /home/sam/jacktrip_pypatcher/patcher_callback.py
+WorkingDirectory=/home/sam/jacktrip_pypatcher/
 Restart=always
 RestartSec=2s
 
