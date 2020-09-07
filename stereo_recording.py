@@ -21,7 +21,7 @@ def start():
   else: 
     print("starting...")
     mysub = subprocess.Popen(["jack_capture", "--filename-prefix",
-    recording_path_prefix, "-S", "--channels", "2", "--port", "darkice*", "-as"])
+    recording_path_prefix, "-S", "--channels", "2", "--port", "darkice*", "--daemon"])
     print("Recording started, process num: ", mysub.pid)
 
 def stop():
