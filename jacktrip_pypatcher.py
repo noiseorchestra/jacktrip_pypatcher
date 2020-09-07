@@ -308,7 +308,7 @@ def main(dry_run = False):
   # TODO: move this to command-line option / config file
   jacktrip_stereo = []
 
-  jacktrip_clients_stereo = list(map(lambda x: x in jacktrip_stereo, jacktrip_clients))
+  jacktrip_clients_stereo = list(map(lambda x: True, jacktrip_clients))
 
   autopatch(jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo)
 
