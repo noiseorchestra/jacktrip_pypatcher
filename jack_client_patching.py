@@ -41,15 +41,21 @@ class JackClientPatching():
     self.jackClient.connect(receive + ':receive_1', send + ':send_1')
     if stereo:
       try:
+        print('Patching stereo clients')
         self.jackClient.connect(receive + ':receive_2', send + ':send_2')
       except Exception as e:
-        print('Patching to mono send', send)
-        self.jackClient.connect(receive + ':receive_2', send + ':send_1')
-    else:
-      try:
-        self.jackClient.connect(receive + ':receive_1', send + ':send_2')
-      except Exception as e:
-        print('error making connection', e)
+        print('Could not patch', receive + ':receive_2 to', send + ':send_2')
+        try:
+          print('Patching mono client to stereo client')
+          self.jackClient.connect(receive + ':receive_1', send + ':send_2')
+        except Exception as e:
+          print('Could not patch', receive + ':receive_1 to', send + ':send_2')
+          try:
+            print('Patching stereo client to mono client')
+            self.jackClient.connect(receive + ':receive_2', send + ':send_1')
+          except Exception as e:
+            print('Could not patch', receive + ':receive_2 to', send + ':send_1')
+            print('error making connection', e)
 
   def connect_mpg123_to_centre(self, mpg123, send):
     """connect an instance of mpg123-jack to a jacktrip client"""
@@ -74,7 +80,10 @@ class JackClientPatching():
       return
     self.jackClient.connect(receive + ':receive_1', send + ':send_1')
     if stereo:
-      self.jackClient.connect(receive + ':receive_2', send + ':send_1')
+      try:
+        self.jackClient.connect(receive + ':receive_2', send + ':send_1')
+      except Exception as e:
+        print('Could not patch', receive + ':receive_2 to', send + ':send_1')
 
   def connect_to_right(self, receive, send, stereo = False):
     """connect pair of receive ports to the send ports, right panned"""
@@ -168,7 +177,11 @@ class JackClientPatching():
       return
     self.jackClient.connect(receive + ':receive_1', send + ':left')
     if stereo:
-      self.jackClient.connect(receive + ':receive_2', send + ':right')
+      try:
+        self.jackClient.connect(receive + ':receive_2', send + ':right')
+      except Exception as e:
+        print('Patching mono client to', send)
+        self.jackClient.connect(receive + ':receive_1', send + ':right')
     else:
       self.jackClient.connect(receive + ':receive_1', send + ':right')
 
@@ -179,7 +192,11 @@ class JackClientPatching():
       return
     self.jackClient.connect(receive + ':receive_1', send + ':left')
     if stereo:
-      self.jackClient.connect(receive + ':receive_2', send + ':left')
+      try:
+        self.jackClient.connect(receive + ':receive_2', send + ':left')
+      except Exception as e:
+        print('Patching mono client to', send)
+        self.jackClient.connect(receive + ':receive_1', send + ':left')
 
   def connect_darkice_to_right(self, receive, send, stereo = False):
     """connect pair of receive ports to the send ports, right panned"""
@@ -188,7 +205,11 @@ class JackClientPatching():
       return
     self.jackClient.connect(receive + ':receive_1', send + ':right')
     if stereo:
-      self.jackClient.connect(receive + ':receive_2', send + ':right')
+      try:
+        self.jackClient.connect(receive + ':receive_2', send + ':right')
+      except Exception as e:
+        print('Patching mono client to', send)
+        self.jackClient.connect(receive + ':receive_1', send + ':right')
 
   def connect_darkice_from_ladspa(self, ladspa, send):
     """connect a ladspa plugin to a pair of send ports"""
