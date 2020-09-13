@@ -140,38 +140,6 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_to_soft_left(self, receive, send):
-    if self.dry_run:
-      print("Connect soft left", receive, "to", send)
-      return
-
-    receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
-    send_ports = self.jackClient.get_ports(send + ':send_.*')
-    ladspa_inputs = self.jackClient.get_ports('slight-left:Input.*')
-    ladspa_outputs = self.jackClient.get_ports('slight-left:Output.*')
-
-    try:
-      self.connect_ports(receive_ports, ladspa_inputs)
-      self.connect_ports(ladspa_outputs, send_ports)
-    except Exception as e:
-      print('error making connection', e)
-
-  def connect_to_soft_right(self, receive, send):
-    if self.dry_run:
-      print("Connect soft right", receive, "to", send)
-      return
-
-    receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
-    send_ports = self.jackClient.get_ports(send + ':send_.*')
-    ladspa_inputs = self.jackClient.get_ports('slight-right:Input.*')
-    ladspa_outputs = self.jackClient.get_ports('slight-right:Output.*')
-
-    try:
-      self.connect_ports(receive_ports, ladspa_inputs)
-      self.connect_ports(ladspa_outputs, send_ports)
-    except Exception as e:
-      print('error making connection', e)
-
   def connect_darkice_to_centre(self, receive, send):
     if self.dry_run:
       print("Connect centre", receive, "to", send)
@@ -184,7 +152,6 @@ class JackClientPatching():
       self.connect_ports(receive_ports, send_ports)
     except Exception as e:
       print('error making connection', e)
-
 
   def connect_darkice_to_left(self, receive, send):
     """connect pair of receive ports to the send ports, left panned"""
