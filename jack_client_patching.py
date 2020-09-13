@@ -53,7 +53,7 @@ class JackClientPatching():
       self.connect(receive_ports[0], send_ports[0])
 
 
-  def connect_to_centre(self, receive, send, stereo = False):
+  def connect_to_centre(self, receive, send):
     """connect receive port/s to centre send"""
     if self.dry_run:
       print("Connect centre", receive, "to", send)
@@ -81,7 +81,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_to_left(self, receive, send, stereo = False):
+  def connect_to_left(self, receive, send):
     """connect receive port/s to left send"""
     if self.dry_run:
       print("Connect left", receive, "to", send)
@@ -95,7 +95,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_to_right(self, receive, send, stereo = False):
+  def connect_to_right(self, receive, send):
     """connect receive port/s to right send"""
     if self.dry_run:
       print("Connect right", receive, "to", send)
@@ -112,7 +112,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_to_ladspa(self, receive, ladspa, stereo = False):
+  def connect_to_ladspa(self, receive, ladspa):
     """connect receive port/s to a ladspa plugin"""
     if self.dry_run:
       print("Connect to ladspa", receive, "to", ladspa)
@@ -140,7 +140,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_to_soft_left(self, receive, send, stereo = False):
+  def connect_to_soft_left(self, receive, send):
     if self.dry_run:
       print("Connect soft left", receive, "to", send)
       return
@@ -156,7 +156,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_to_soft_right(self, receive, send, stereo = False):
+  def connect_to_soft_right(self, receive, send):
     if self.dry_run:
       print("Connect soft right", receive, "to", send)
       return
@@ -172,7 +172,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_darkice_to_centre(self, receive, send, stereo = False):
+  def connect_darkice_to_centre(self, receive, send):
     if self.dry_run:
       print("Connect centre", receive, "to", send)
       return
@@ -186,7 +186,7 @@ class JackClientPatching():
       print('error making connection', e)
 
 
-  def connect_darkice_to_left(self, receive, send, stereo = False):
+  def connect_darkice_to_left(self, receive, send):
     """connect pair of receive ports to the send ports, left panned"""
     if self.dry_run:
       print("Connect left", receive, "to", send)
@@ -200,7 +200,7 @@ class JackClientPatching():
     except Exception as e:
       print('error making connection', e)
 
-  def connect_darkice_to_right(self, receive, send, stereo = False):
+  def connect_darkice_to_right(self, receive, send):
     """connect pair of receive ports to the send ports, right panned"""
     if self.dry_run:
       print("Connect right", receive, "to", send)
