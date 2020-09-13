@@ -48,10 +48,11 @@ class JackClientPatching():
       print('Connecting Mono receive to Stereo send')
       self.jackClient.connect(receive_ports[0], send_ports[0])
       self.jackClient.connect(receive_ports[0], send_ports[1])
-    else:
+    if not receive_stereo and not send_stereo:
       print('Connecting Mono receive to Mono send')
       self.connect(receive_ports[0], send_ports[0])
-
+    else:
+      print("Could not connect ports")
 
   def connect_to_centre(self, receive, send):
     """connect receive port/s to centre send"""
@@ -62,10 +63,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
     send_ports = self.jackClient.get_ports(send + ':send_.*')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_mpg123_to_centre(self, mpg123, send):
     """connect an instance of mpg123-jack to a jacktrip client"""
@@ -76,10 +74,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(mpg123 + ':.*')
     send_ports = self.jackClient.get_ports(send + ':send_.*')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_to_left(self, receive, send):
     """connect receive port/s to left send"""
@@ -90,10 +85,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
     send_ports = self.jackClient.get_ports(send + ':send_1')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_to_right(self, receive, send):
     """connect receive port/s to right send"""
@@ -107,10 +99,7 @@ class JackClientPatching():
     if len(send_ports) == 2:
       send_ports = [send_ports[1]]
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_to_ladspa(self, receive, ladspa):
     """connect receive port/s to a ladspa plugin"""
@@ -121,10 +110,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
     send_ports = self.jackClient.get_ports(ladspa + ':Input.*')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_from_ladspa(self, ladspa, send):
     """connect a ladspa plugin to send port/s"""
@@ -135,10 +121,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(ladspa + ':Output.*')
     send_ports = self.jackClient.get_ports(send + ':send_.*')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_darkice_to_centre(self, receive, send):
     if self.dry_run:
@@ -148,10 +131,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
     send_ports = self.jackClient.get_ports(send + '.*')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_darkice_to_left(self, receive, send):
     """connect pair of receive ports to the send ports, left panned"""
@@ -162,10 +142,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
     send_ports = self.jackClient.get_ports(send + ':left')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_darkice_to_right(self, receive, send):
     """connect pair of receive ports to the send ports, right panned"""
@@ -176,10 +153,7 @@ class JackClientPatching():
     receive_ports = self.jackClient.get_ports(receive + ':receive_.*')
     send_ports = self.jackClient.get_ports(send + ':right')
 
-    try:
-      self.connect_ports(receive_ports, send_ports)
-    except Exception as e:
-      print('error making connection', e)
+    self.connect_ports(receive_ports, send_ports)
 
   def connect_darkice_from_ladspa(self, ladspa, send):
     """connect a ladspa plugin to a pair of send ports"""
