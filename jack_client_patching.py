@@ -50,7 +50,7 @@ class JackClientPatching():
       self.jackClient.connect(receive_ports[0], send_ports[1])
     if not receive_stereo and not send_stereo:
       print('Connecting Mono receive to Mono send')
-      self.connect(receive_ports[0], send_ports[0])
+      self.jackClient.connect(receive_ports[0], send_ports[0])
     else:
       print("Could not connect ports")
 
