@@ -36,23 +36,26 @@ class JackClientPatching():
     receive_stereo = True if len(receive_ports) == 2 else False
     send_stereo = True if len(send_ports) == 2 else False
 
-    if receive_stereo and send_stereo:
-      print('Connecting Stereo receive to Stereo send')
-      self.jackClient.connect(receive_ports[0], send_ports[0])
-      self.jackClient.connect(receive_ports[1], send_ports[1])
-    elif receive_stereo and not send_stereo:
-      print('Connecting Stereo receive to Mono send')
-      self.jackClient.connect(receive_ports[0], send_ports[0])
-      self.jackClient.connect(receive_ports[1], send_ports[0])
-    elif not receive_stereo and send_stereo:
-      print('Connecting Mono receive to Stereo send')
-      self.jackClient.connect(receive_ports[0], send_ports[0])
-      self.jackClient.connect(receive_ports[0], send_ports[1])
-    elif not receive_stereo and not send_stereo:
-      print('Connecting Mono receive to Mono send')
-      self.jackClient.connect(receive_ports[0], send_ports[0])
-    else:
-      print("Could not connect ports")
+    try:
+      if receive_stereo and send_stereo:
+        print('Connecting Stereo receive to Stereo send')
+        self.jackClient.connect(receive_ports[0], send_ports[0])
+        self.jackClient.connect(receive_ports[1], send_ports[1])
+      elif receive_stereo and not send_stereo:
+        print('Connecting Stereo receive to Mono send')
+        self.jackClient.connect(receive_ports[0], send_ports[0])
+        self.jackClient.connect(receive_ports[1], send_ports[0])
+      elif not receive_stereo and send_stereo:
+        print('Connecting Mono receive to Stereo send')
+        self.jackClient.connect(receive_ports[0], send_ports[0])
+        self.jackClient.connect(receive_ports[0], send_ports[1])
+      elif not receive_stereo and not send_stereo:
+        print('Connecting Mono receive to Mono send')
+        self.jackClient.connect(receive_ports[0], send_ports[0])
+      else:
+        print("Could not connect ports")
+    except Exception as e:
+      print('Error connecting ports:', e)
 
   def connect_to_centre(self, receive, send):
     """connect receive port/s to centre send"""
