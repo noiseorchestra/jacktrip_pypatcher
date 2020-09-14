@@ -112,34 +112,13 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
   if len(jacktrip_clients) == 2:
-    soft_pan_and_loopback = False
 
-    if soft_pan_and_loopback:
-      ladspa_soft_left = 'left-65'
-      ladspa_soft_right = 'right-65'
-      jcp.connect_to_ladspa(jacktrip_clients[0], ladspa_soft_left)
-      jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_soft_right)
+    jcp.connect_to_centre(jacktrip_clients[1], jacktrip_clients[0])
+    jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
 
-      # client 0 - loopback panned left
-      jcp.connect_from_ladspa(ladspa_soft_left, jacktrip_clients[0])
-      # client 0 - client 1 panned right
-      jcp.connect_from_ladspa(ladspa_soft_left, jacktrip_clients[1])
-
-      # client 1 - client 0 panned left
-      jcp.connect_from_ladspa(ladspa_soft_right, jacktrip_clients[0])
-      # client 1 - loopback panned right
-      jcp.connect_from_ladspa(ladspa_soft_right, jacktrip_clients[1])
-
-      print("-- darkice --")
-      jcp.connect_darkice_from_ladspa(ladspa_soft_left, darkice_port)
-      jcp.connect_darkice_from_ladspa(ladspa_soft_right, darkice_port)
-    else:
-      jcp.connect_to_centre(jacktrip_clients[1], jacktrip_clients[0])
-      jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
-
-      print("-- darkice --")
-      jcp.connect_darkice_to_left(jacktrip_clients[0], darkice_port)
-      jcp.connect_darkice_to_right(jacktrip_clients[1], darkice_port)
+    print("-- darkice --")
+    jcp.connect_darkice_to_left(jacktrip_clients[0], darkice_port)
+    jcp.connect_darkice_to_right(jacktrip_clients[1], darkice_port)
 
   if len(jacktrip_clients) == 3 or len(jacktrip_clients) == 4:
     jcp.connect_to_left(jacktrip_clients[1], jacktrip_clients[0])
