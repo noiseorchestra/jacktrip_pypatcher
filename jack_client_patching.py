@@ -40,6 +40,10 @@ class JackClientPatching():
   def connect_ports(self, receive_ports, send_ports):
     print('Connecting', receive_ports, 'to', send_ports)
 
+    if len(receive_ports) or len(send_ports) == 0:
+      print('Not connecting, both clients must have valid ports')
+      return
+
     receive_stereo = True if len(receive_ports) == 2 else False
     send_stereo = True if len(send_ports) == 2 else False
 
