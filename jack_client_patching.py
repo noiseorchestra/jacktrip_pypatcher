@@ -155,7 +155,7 @@ class JackClientPatching():
       return
 
     r_ports, s_ports = self.get_ports(ladspa + ':Output.*', send + '.*')
-    self.jackClient.connect(r_ports, s_ports)
+    self.connect_ports(r_ports, s_ports)
 
   def connect_mpg123_to_darkice(self, mpg123, send):
     """connect an instance of mpg123-jack to a darkice client"""
@@ -164,7 +164,7 @@ class JackClientPatching():
       return
     try:
       r_ports, s_ports = self.get_ports(mpg123 + '.*', send + '.*')
-      self.jackClient.connect(r_ports, s_ports)
+      self.connect_ports(r_ports, s_ports)
     except jack.JackErrorCode as e:
       print('Could not find mpg123, not patching ', send)
       return
