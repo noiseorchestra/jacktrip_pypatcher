@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NG_JACKSPA_PATH=~tom/ng-jackspa
+NG_JACKSPA_PATH=~sam/ng-jackspa
 
 # For 5 clients
 $NG_JACKSPA_PATH/jackspa-cli -j left-50 -i '0:0:0:-0.5:0:0' /usr/lib/ladspa/inv_input.so 3301 &
