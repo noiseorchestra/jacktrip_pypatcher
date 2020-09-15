@@ -12,7 +12,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
   all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
   all_left_ladspa_ports = jackClient.get_ports('left-.*')
   all_right_ladspa_ports = jackClient.get_ports('right-.*')
-  ladspa_centre_port = jackClient.get_ports('centre-.*')
+  ladspa_centre_port = jackClient.get_ports('centre.*')
   all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
   if dry_run:
     all_hold_music_ports = []
@@ -29,7 +29,8 @@ def disconnect(jackClient, dry_run, hold_music_port):
   for ladspa_port in all_right_ladspa_ports:
     jcp.disconnect_all(ladspa_port)
 
-  jcp.disconnect_all(ladspa_centre_port)
+  for ladspa_port in ladspa_centre_port:
+    jcp.disconnect_all(ladspa_port)
 
   for port in all_hold_music_ports:
     jcp.disconnect_all(port)
@@ -137,8 +138,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
 
     print("-- darkice --")
-    jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_left_45)
-    jcp.connect_to_ladspa(jacktrip_clients[2], ladspa_right_45)
+    jcp.connect_to_ladspa(jacktrip_clients[0], ladspa_left_45)
+    jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_right_45)
 
     jcp.connect_darkice_from_ladspa(ladspa_left_45, darkice_port)
     jcp.connect_darkice_from_ladspa(ladspa_right_45, darkice_port)
