@@ -25,11 +25,6 @@ class JackClientPatching():
         print('disconnect', send_port.name, 'from', my_port.name)
         self.jackClient.disconnect(send_port, my_port)
 
-  # TODO:
-  #   * Probably better to just pass the jack clients directly into these methods
-  #   * Check naming makes sense
-  #   * I think some of these could be removed if we have some more generic and reusable methods
-
   def get_ports(self, receive, send):
 
     receive_ports = self.jackClient.get_ports(receive)
@@ -84,28 +79,6 @@ class JackClientPatching():
       return
 
     r_ports, s_ports = self.get_ports(mpg123 + ':.*', send + ':send_.*')
-    self.connect_ports(r_ports, s_ports)
-
-  def connect_to_left(self, receive, send):
-    """connect receive port/s to left send"""
-    if self.dry_run:
-      print("Connect left", receive, "to", send)
-      return
-
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + ':send_1')
-    self.connect_ports(r_ports, s_ports)
-
-  def connect_to_right(self, receive, send):
-    """connect receive port/s to right send"""
-    if self.dry_run:
-      print("Connect right", receive, "to", send)
-      return
-
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + ':send_.*')
-
-    if len(s_ports) == 2:
-      s_ports = [s_ports[1]]
-
     self.connect_ports(r_ports, s_ports)
 
   def connect_to_ladspa(self, receive, ladspa):
