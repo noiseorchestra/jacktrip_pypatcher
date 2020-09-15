@@ -23,7 +23,7 @@ def start_the_music(jackClient, port, debug = True):
   hold_music_proc = subprocess.Popen(["mpg123-jack", "--name", port,
     "--no-control","-q","--loop","-1",hold_music_file_path])
   # wait for the jack client to register
-  time.sleep(1)
+  time.sleep(2)
 
   if debug:
     all_hold_music_ports = jackClient.get_ports(port + '.*')
