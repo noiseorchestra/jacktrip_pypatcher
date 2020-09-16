@@ -15,4 +15,4 @@ User=sam
 
 [Install]
 
-WantedBy=jacktrip.service
+WantedBy=jackd.service
