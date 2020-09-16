@@ -104,7 +104,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     lounge_music.start_the_music(jackClient, hold_music_port)
 
     all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
-    if all_hold_music_ports == 0:
+    if len(all_hold_music_ports) == 0:
       count = 0
       while count < 3:
         lounge_music.start_the_music(jackClient, hold_music_port)
