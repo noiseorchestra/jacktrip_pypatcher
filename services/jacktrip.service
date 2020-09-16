@@ -1,5 +1,6 @@
 [Unit]
 Description=JackTrip service
+Requires=jackd.service
 After=jackd.service
 
 [Service]
