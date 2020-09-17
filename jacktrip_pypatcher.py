@@ -37,7 +37,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
 
 def connect_all(jcp, jacktrip_clients, ladspa_ports):
   for i, ladspa_port in enumerate(ladspa_ports):
-    jcp.connect_from_ladspa(jacktrip_clients[i], ladspa_port)
+    jcp.connect_to_ladspa(jacktrip_clients[i], ladspa_port)
     for jacktrip_client in jacktrip_clients:
       if jacktrip_client == jacktrip_clients[i]:
           continue
