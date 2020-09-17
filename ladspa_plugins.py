@@ -25,11 +25,11 @@ def start_plugins_2(jackClient, debug = True):
     print("Start ladspa plugins for 2 - 5 clients")
 
   subprocess.Popen([jackspa_path, '-j', 'ladspa-left-30', '-i', '0:0:0:-0.30:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
-  subprocess.Popen([jackspa_path, '-j', 'ladspa-right-30', '-i', '0:0:0:-0.30:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
+  subprocess.Popen([jackspa_path, '-j', 'ladspa-right-30', '-i', '0:0:0:0.30:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
   subprocess.Popen([jackspa_path, '-j', 'ladspa-left-60', '-i', '0:0:0:-0.60:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
-  subprocess.Popen([jackspa_path, '-j', 'ladspa-right-60', '-i', '0:0:0:-0.60:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
+  subprocess.Popen([jackspa_path, '-j', 'ladspa-right-60', '-i', '0:0:0:0.60:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
   subprocess.Popen([jackspa_path, '-j', 'ladspa-left-45', '-i', '0:0:0:-0.45:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
-  subprocess.Popen([jackspa_path, '-j', 'ladspa-right-45', '-i', '0:0:0:-0.45:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
+  subprocess.Popen([jackspa_path, '-j', 'ladspa-right-45', '-i', '0:0:0:0.45:0:0', '/usr/lib/ladspa/inv_input.so', '3301'])
   time.sleep(0.5)
 
   if debug:
