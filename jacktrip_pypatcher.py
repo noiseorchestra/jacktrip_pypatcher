@@ -187,7 +187,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     jcp.connect_darkice_from_ladspa(ladspa_left_45, darkice_port)
     jcp.connect_darkice_from_ladspa(ladspa_right_45, darkice_port)
-    jcp.connect_darkice_to_centre(jacktrip_clients[2], darkice_port)
+    jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
   if len(jacktrip_clients) == 4:
 
