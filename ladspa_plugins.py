@@ -11,7 +11,7 @@ def kill_plugins(jackClient, debug = True):
   if debug:
     print("Kill ladspa plugins")
 
-  subprocess.Popen(['killall', 'jackspa-cli'])
+  subprocess.call(['killall', 'jackspa-cli'])
   time.sleep(0.1)
 
   if debug:

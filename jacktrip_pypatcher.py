@@ -11,7 +11,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
   """Disconnect all autopatched ports"""
   # TODO: only remove autopatched connections, not our own connections (HOW?)
   all_jacktrip_receive_ports = jackClient.get_ports('.*receive.*')
-  all_ladspa_ports = jackClient.get_ports('left-.*')
+  all_ladspa_ports = jackClient.get_ports('ladspa-.*')
   all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
   if dry_run:
     all_hold_music_ports = []
