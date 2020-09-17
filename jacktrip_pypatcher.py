@@ -41,7 +41,8 @@ def connect_all(jcp, jacktrip_clients, ladspa_ports):
     for jacktrip_client in jacktrip_clients:
       if jacktrip_client == jacktrip_clients[i]:
           continue
-      jcp.connect_from_ladspa(ladspa_port, jacktrip_client)
+      else:
+        jcp.connect_from_ladspa(ladspa_port, jacktrip_client)
 
 def get_current_clients(jackClient, dry_run):
   """Get an array of client jack port prefixes"""
