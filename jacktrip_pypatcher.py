@@ -142,18 +142,10 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
   if len(jacktrip_clients) == 2:
-<<<<<<< HEAD
-
-=======
->>>>>>> ladspa-panning-everywhere
     jcp.connect_to_centre(jacktrip_clients[1], jacktrip_clients[0])
     jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
 
     print("-- darkice --")
-<<<<<<< HEAD
-    jcp.connect_darkice_to_left(jacktrip_clients[0], darkice_port)
-    jcp.connect_darkice_to_right(jacktrip_clients[1], darkice_port)
-=======
     jcp.connect_to_ladspa(jacktrip_clients[0], ladspa_left_45)
     jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_right_45)
 
@@ -169,7 +161,6 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     jcp.connect_from_ladspa(ladspa_left_30, jacktrip_clients[0])
     jcp.connect_from_ladspa(ladspa_right_30, jacktrip_clients[0])
->>>>>>> ladspa-panning-everywhere
 
     jcp.connect_to_ladspa(jacktrip_clients[0], ladspa_left_45)
     jcp.connect_to_ladspa(jacktrip_clients[2], ladspa_right_45)
