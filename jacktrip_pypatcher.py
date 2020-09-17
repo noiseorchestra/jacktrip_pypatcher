@@ -91,18 +91,19 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   print("=== Start LADSPA plugins ===")
 
-  all_ladspa_input_clients = jackClient.get_ports('ladspa-.*:Input (Left)')
+  all_ladspa_ports = jackClient.get_ports('ladspa-.*')
+  print("Current ladspa ports: ", len(all_ladspa_ports))
 
-  if len(jacktrip_clients) <= 1 and len(all_ladspa_input_clients) > 0:
+  if len(jacktrip_clients) <= 1 and len(all_ladspa_ports) > 0:
     ladspa_plugins.kill_plugins(jackClient)
 
-  if len(jacktrip_clients) >= 2 and len(all_ladspa_input_clients) < 6:
+  if len(jacktrip_clients) >= 2 and len(all_ladspa_ports) < 24:
     ladspa_plugins.start_plugins_2(jackClient)
 
-  if len(jacktrip_clients) >= 5 and len(all_ladspa_input_clients) < 9:
+  if len(jacktrip_clients) >= 5 and len(all_ladspa_ports) < 32:
     ladspa_plugins.start_plugins_5(jackClient)
 
-  if len(jacktrip_clients) >= 10 and len(all_ladspa_input_clients) < 11:
+  if len(jacktrip_clients) >= 10 and len(all_ladspa_ports) < 40:
     ladspa_plugins.start_plugins_10(jackClient)
 
   print("=== Creating new connections ===")
