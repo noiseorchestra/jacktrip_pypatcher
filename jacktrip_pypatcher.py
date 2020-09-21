@@ -29,6 +29,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
     jcp.disconnect_all(port)
 
 def connect_all(jcp, jacktrip_clients, ladspa_ports):
+  """Connect all JackTrip clients to a list of ladspa ports"""
   for i, ladspa_port in enumerate(ladspa_ports):
     jcp.connect_to_ladspa(jacktrip_clients[i], ladspa_port)
     for jacktrip_client in jacktrip_clients:
@@ -135,6 +136,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     all_hold_music_ports = jackClient.get_ports(hold_music_port + '.*')
     if len(all_hold_music_ports) == 0:
+      # this is a crude fix because mpg123 wasn't always starting
+      # expect we won't need this with the server upgrade as audio
+      # processing is much less error prone
       count = 0
       while count < 3:
         lounge_music.start_the_music(jackClient, hold_music_port)
@@ -191,9 +195,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 4:
 
-    ladspa_ports = [ladspa_left_30,
-                    ladspa_right_30,
-                    ladspa_left_45,
+    ladspa_ports = [ladspa_left_30, ladspa_right_30, ladspa_left_45,
                     ladspa_right_45]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
@@ -204,11 +206,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 5:
 
-    ladspa_ports = [ladspa_centre,
-                    ladspa_left_30,
-                    ladspa_right_30,
-                    ladspa_left_45,
-                    ladspa_right_45]
+    ladspa_ports = [ladspa_centre, ladspa_left_30, ladspa_right_30,
+                    ladspa_left_45, ladspa_right_45]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
 
@@ -218,12 +217,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 6:
 
-    ladspa_ports = [ladspa_left_15,
-                    ladspa_right_15,
-                    ladspa_left_45,
-                    ladspa_right_45,
-                    ladspa_left_60,
-                    ladspa_right_60]
+    ladspa_ports = [ladspa_left_15, ladspa_right_15, ladspa_left_45,
+                    ladspa_right_45, ladspa_left_60, ladspa_right_60]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
 
@@ -233,12 +228,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 7:
 
-    ladspa_ports = [ladspa_centre,
-                    ladspa_left_15,
-                    ladspa_right_15,
-                    ladspa_left_45,
-                    ladspa_right_45,
-                    ladspa_left_60,
+    ladspa_ports = [ladspa_centre, ladspa_left_15, ladspa_right_15,
+                    ladspa_left_45, ladspa_right_45, ladspa_left_60,
                     ladspa_right_60]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
@@ -249,14 +240,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 8:
 
-    ladspa_ports = [ladspa_left_15,
-                    ladspa_right_15,
-                    ladspa_left_30,
-                    ladspa_right_30,
-                    ladspa_left_45,
-                    ladspa_right_45,
-                    ladspa_left_60,
-                    ladspa_right_60]
+    ladspa_ports = [ladspa_left_15, ladspa_right_15, ladspa_left_30,
+                    ladspa_right_30, ladspa_left_45, ladspa_right_45,
+                    ladspa_left_60, ladspa_right_60]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
 
@@ -266,15 +252,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 9:
 
-    ladspa_ports = [ladspa_centre,
-                    ladspa_left_15,
-                    ladspa_right_15,
-                    ladspa_left_30,
-                    ladspa_right_30,
-                    ladspa_left_45,
-                    ladspa_right_45,
-                    ladspa_left_60,
-                    ladspa_right_60]
+    ladspa_ports = [ladspa_centre, ladspa_left_15, ladspa_right_15,
+                    ladspa_left_30, ladspa_right_30, ladspa_left_45,
+                    ladspa_right_45, ladspa_left_60, ladspa_right_60]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
 
@@ -284,15 +264,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 10:
 
-    ladspa_ports = [ladspa_left_15,
-                    ladspa_right_15,
-                    ladspa_left_30,
-                    ladspa_right_30,
-                    ladspa_left_45,
-                    ladspa_right_45,
-                    ladspa_left_60,
-                    ladspa_right_60,
-                    ladspa_left_75,
+    ladspa_ports = [ladspa_left_15, ladspa_right_15, ladspa_left_30,
+                    ladspa_right_30, ladspa_left_45, ladspa_right_45,
+                    ladspa_left_60, ladspa_right_60, ladspa_left_75,
                     ladspa_right_75]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
@@ -303,17 +277,10 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
   if len(jacktrip_clients) == 11:
 
-    ladspa_ports = [ladspa_centre,
-                    ladspa_left_15,
-                    ladspa_right_15,
-                    ladspa_left_30,
-                    ladspa_right_30,
-                    ladspa_left_45,
-                    ladspa_right_45,
-                    ladspa_left_60,
-                    ladspa_right_60,
-                    ladspa_left_75,
-                    ladspa_right_75]
+    ladspa_ports = [ladspa_centre, ladspa_left_15, ladspa_right_15,
+                    ladspa_left_30, ladspa_right_30, ladspa_left_45,
+                    ladspa_right_45, ladspa_left_60, ladspa_right_60,
+                    ladspa_left_75, ladspa_right_75]
 
     connect_all(jcp, jacktrip_clients, ladspa_ports)
 

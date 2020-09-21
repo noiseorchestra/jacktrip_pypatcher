@@ -26,13 +26,14 @@ class JackClientPatching():
         self.jackClient.disconnect(send_port, my_port)
 
   def get_ports(self, receive, send):
-
+    """Helper function to get receive and send ports"""
     receive_ports = self.jackClient.get_ports(receive)
     send_ports = self.jackClient.get_ports(send)
 
     return receive_ports, send_ports
 
   def connect_ports(self, receive_ports, send_ports):
+    """Connect a pair of stereo or mono ports"""
     print('Connecting', receive_ports, 'to', send_ports)
 
     if (len(receive_ports) == 0) or (len(send_ports) == 0):
@@ -100,29 +101,12 @@ class JackClientPatching():
     self.connect_ports(r_ports, s_ports)
 
   def connect_darkice_to_centre(self, receive, send):
+    """Connect to darkice centre panned"""
     if self.dry_run:
       print("Connect centre", receive, "to", send)
       return
 
     r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + '.*')
-    self.connect_ports(r_ports, s_ports)
-
-  def connect_darkice_to_left(self, receive, send):
-    """connect pair of receive ports to the send ports, left panned"""
-    if self.dry_run:
-      print("Connect left", receive, "to", send)
-      return
-
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + ':left')
-    self.connect_ports(r_ports, s_ports)
-
-  def connect_darkice_to_right(self, receive, send):
-    """connect pair of receive ports to the send ports, right panned"""
-    if self.dry_run:
-      print("Connect right", receive, "to", send)
-      return
-
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + ':right')
     self.connect_ports(r_ports, s_ports)
 
   def connect_darkice_from_ladspa(self, ladspa, send):
