@@ -19,7 +19,7 @@ def kill_plugins(jackClient, debug = True):
     print('Running ladspa plugins:', all_plugins)
 
 def start_plugins_2(jackClient, debug = True):
-  """start ladspa plugins for number of clients"""
+  """start ladspa plugins for 2 and above clients of clients"""
 
   if debug:
     print("Start ladspa plugins for 2 - 5 clients")
@@ -39,7 +39,7 @@ def start_plugins_2(jackClient, debug = True):
 
 
 def start_plugins_5(jackClient, debug = True):
-  """start ladspa plugins for number of clients"""
+  """start ladspa plugins for 5 and above clients"""
 
   if debug:
     print("Start ladspa plugins for 5 - 9 clients")
@@ -54,7 +54,7 @@ def start_plugins_5(jackClient, debug = True):
     print('Running ladspa plugins:', all_plugins)
 
 def start_plugins_10(jackClient, debug = True):
-  """start ladspa plugins for number of clients"""
+  """start ladspa plugins for 10 and above clients"""
 
   if debug:
     print("Start ladspa plugins for 10 - 11 clients")

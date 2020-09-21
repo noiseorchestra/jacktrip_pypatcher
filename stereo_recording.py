@@ -18,7 +18,7 @@ def start():
   print("-- recordings --")
   if darkice_process():
     print("already started!")
-  else: 
+  else:
     print("starting...")
     mysub = subprocess.Popen(["jack_capture", "--filename-prefix",
     recording_path_prefix, "-S", "--channels", "2", "--port", "darkice*", "--daemon"])
@@ -32,4 +32,3 @@ def stop():
     return
   print("Stopping recording process num:", myprocess.pid)
   myprocess.kill()
-  
