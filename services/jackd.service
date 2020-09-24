@@ -1,6 +1,6 @@
 [Unit]
 Description=JACK service
-PartOf=pypatcher_callback.service
+PartOf=pypatcher_callback.service jacktrip.service
 
 [Service]
 LimitRTPRIO=infinity
