@@ -42,18 +42,21 @@ if client.status.name_not_unique:
 
 print("registering callbacks")
 
+
 @client.set_client_registration_callback
 def client_registration(name, register):
     print("client", repr(name), ["unregistered", "registered"][register])
-    print(name, " starts with '..'? (therefore JT client?)", name.startswith('..'))
-    if name.startswith('..'):
-      print("touching")
-      touch_path = Path('/var/tmp/jacktrip_pypatcher')
-      touch_path.touch()
+    print(name, " starts with '..'? (therefore JT client?)", name.startswith(".."))
+    if name.startswith(".."):
+        print("touching")
+        touch_path = Path("/var/tmp/jacktrip_pypatcher")
+        touch_path.touch()
+
 
 @client.set_port_connect_callback
 def port_connect(a, b, connect):
     print(["disconnected", "connected"][connect], a, "and", b)
+
 
 print("activating JACK")
 with client:
