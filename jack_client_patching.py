@@ -44,25 +44,23 @@ class JackClientPatching():
       print('Not connecting, both clients must have valid ports')
       return
 
-    receive_stereo = True if len(receive_ports) == 2 else False
-    send_stereo = True if len(send_ports) == 2 else False
+    receive_stereo = (len(receive_ports) == 2)
+    send_stereo = (len(send_ports) == 2)
 
     try:
+      # we always connect receive_port[0] to send_port[0]
+      self.jackClient.connect(receive_ports[0], send_ports[0])
       if receive_stereo and send_stereo:
         print('Connecting Stereo receive to Stereo send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
         self.jackClient.connect(receive_ports[1], send_ports[1])
       elif receive_stereo and not send_stereo:
         print('Connecting Stereo receive to Mono send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
         self.jackClient.connect(receive_ports[1], send_ports[0])
       elif not receive_stereo and send_stereo:
         print('Connecting Mono receive to Stereo send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
         self.jackClient.connect(receive_ports[0], send_ports[1])
       elif not receive_stereo and not send_stereo:
         print('Connecting Mono receive to Mono send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
       else:
         print("Could not connect ports")
     except Exception as e:
