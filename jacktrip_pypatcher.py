@@ -8,6 +8,7 @@ from itertools import product
 import ladspa_plugins
 
 
+
 def disconnect(jackClient, dry_run, hold_music_port):
     """Disconnect all autopatched ports"""
     # TODO: only remove autopatched connections, not our own connections (HOW?)

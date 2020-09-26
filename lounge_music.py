@@ -34,7 +34,7 @@ def start_the_music(jackClient, port, debug=True):
         ]
     )
     # wait for the jack client to register
-    time.sleep(1)
+    time.sleep(2)
 
     if debug:
         all_hold_music_ports = jackClient.get_ports(port + ".*")
