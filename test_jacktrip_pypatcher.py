@@ -23,16 +23,10 @@ def run_pypatcher_voice_count(number_of_voices):
     jacktrip_clients = jacktrip_clients[0:number_of_voices]
 
     jacktrip_stereo = jacktrip_clients[0:1]
-    jacktrip_clients_stereo = list(map(lambda x: True, jacktrip_clients))
 
     # TODO: hacky way to use pytest - we know this assertion will fail, but at the moment
     # we can just inspect the stdout
-    assert (
-        jacktrip_pypatcher.autopatch(
-            jackClient, dry_run, jacktrip_clients, jacktrip_clients_stereo
-        )
-        == True
-    )
+    assert jacktrip_pypatcher.autopatch(jackClient, dry_run, jacktrip_clients) == True
 
 
 # TODO: when we have actual tests, we can use a loop here
