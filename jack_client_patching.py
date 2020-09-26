@@ -119,6 +119,7 @@ class JackClientPatching:
         self.connect_ports(receive + ":receive_.*", send + ".*")
 
     def connect_darkice_to_left(self, receive, send):
+
         """connect pair of receive ports to the send ports, left panned"""
         if self.dry_run:
             print("Connect left", receive, "to", send)
