@@ -2,130 +2,132 @@
 
 import jack
 
-class JackClientPatching():
-  """Helper object to do all the jack client patching"""
-  def __init__(self, jackClient, dry_run):
-    super(JackClientPatching, self).__init__()
-    self.jackClient = jackClient
-    self.dry_run = dry_run
 
-  def disconnect_all(self, my_port):
-    """disconnect everything from a port"""
-    send_ports = self.jackClient.get_all_connections(my_port)
-    for send_port in send_ports:
-      # do not disconnect from jack_capture ports
-      # they do auto-reconnect, but the disconnection is not reliable
-      if send_port.name.startswith('jack_capture'):
-        continue
-      print('disconnect', my_port.name, 'from', send_port.name)
-      try:
-        self.jackClient.disconnect(my_port, send_port)
-      except Exception as e:
-        print('error disconnecting, trying the other way round!', e)
-        print('disconnect', send_port.name, 'from', my_port.name)
-        self.jackClient.disconnect(send_port, my_port)
+class JackClientPatching:
+    """Helper object to do all the jack client patching"""
 
-  def get_ports(self, receive, send):
-    """Helper function to get receive and send ports"""
-    receive_ports = self.jackClient.get_ports(receive)
-    send_ports = self.jackClient.get_ports(send)
+    def __init__(self, jackClient, dry_run):
+        super(JackClientPatching, self).__init__()
+        self.jackClient = jackClient
+        self.dry_run = dry_run
 
-    return receive_ports, send_ports
+    def disconnect_all(self, my_port):
+        """disconnect everything from a port"""
+        send_ports = self.jackClient.get_all_connections(my_port)
+        for send_port in send_ports:
+            # do not disconnect from jack_capture ports
+            # they do auto-reconnect, but the disconnection is not reliable
+            if send_port.name.startswith("jack_capture"):
+                continue
+            print("disconnect", my_port.name, "from", send_port.name)
+            try:
+                self.jackClient.disconnect(my_port, send_port)
+            except Exception as e:
+                print("error disconnecting, trying the other way round!", e)
+                print("disconnect", send_port.name, "from", my_port.name)
+                self.jackClient.disconnect(send_port, my_port)
 
-  def connect_ports(self, receive_ports, send_ports):
-    """Connect a pair of stereo or mono ports"""
-    print('Connecting', receive_ports, 'to', send_ports)
+    def get_ports(self, receive, send):
+        """Helper function to get receive and send ports"""
+        receive_ports = self.jackClient.get_ports(receive)
+        send_ports = self.jackClient.get_ports(send)
 
-    if (len(receive_ports) == 0) or (len(send_ports) == 0):
-      print('Not connecting, both clients must have valid ports')
-      return
+        return receive_ports, send_ports
 
-    receive_stereo = True if len(receive_ports) == 2 else False
-    send_stereo = True if len(send_ports) == 2 else False
+    def connect_ports(self, receive_ports, send_ports):
+        """Connect a pair of stereo or mono ports"""
+        print("Connecting", receive_ports, "to", send_ports)
 
-    try:
-      if receive_stereo and send_stereo:
-        print('Connecting Stereo receive to Stereo send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
-        self.jackClient.connect(receive_ports[1], send_ports[1])
-      elif receive_stereo and not send_stereo:
-        print('Connecting Stereo receive to Mono send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
-        self.jackClient.connect(receive_ports[1], send_ports[0])
-      elif not receive_stereo and send_stereo:
-        print('Connecting Mono receive to Stereo send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
-        self.jackClient.connect(receive_ports[0], send_ports[1])
-      elif not receive_stereo and not send_stereo:
-        print('Connecting Mono receive to Mono send')
-        self.jackClient.connect(receive_ports[0], send_ports[0])
-      else:
-        print("Could not connect ports")
-    except Exception as e:
-      print('Error connecting ports:', e)
+        if (len(receive_ports) == 0) or (len(send_ports) == 0):
+            print("Not connecting, both clients must have valid ports")
+            return
 
-  def connect_to_centre(self, receive, send):
-    """connect receive port/s to centre send"""
-    if self.dry_run:
-      print("Connect centre", receive, "to", send)
-      return
+        receive_stereo = True if len(receive_ports) == 2 else False
+        send_stereo = True if len(send_ports) == 2 else False
 
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + ':send_.*')
-    self.connect_ports(r_ports, s_ports)
+        try:
+            if receive_stereo and send_stereo:
+                print("Connecting Stereo receive to Stereo send")
+                self.jackClient.connect(receive_ports[0], send_ports[0])
+                self.jackClient.connect(receive_ports[1], send_ports[1])
+            elif receive_stereo and not send_stereo:
+                print("Connecting Stereo receive to Mono send")
+                self.jackClient.connect(receive_ports[0], send_ports[0])
+                self.jackClient.connect(receive_ports[1], send_ports[0])
+            elif not receive_stereo and send_stereo:
+                print("Connecting Mono receive to Stereo send")
+                self.jackClient.connect(receive_ports[0], send_ports[0])
+                self.jackClient.connect(receive_ports[0], send_ports[1])
+            elif not receive_stereo and not send_stereo:
+                print("Connecting Mono receive to Mono send")
+                self.jackClient.connect(receive_ports[0], send_ports[0])
+            else:
+                print("Could not connect ports")
+        except Exception as e:
+            print("Error connecting ports:", e)
 
-  def connect_mpg123_to_centre(self, mpg123, send):
-    """connect an instance of mpg123-jack to a jacktrip client"""
-    if self.dry_run:
-      print("Connect mpg123 centre", mpg123, "to", send)
-      return
+    def connect_to_centre(self, receive, send):
+        """connect receive port/s to centre send"""
+        if self.dry_run:
+            print("Connect centre", receive, "to", send)
+            return
 
-    r_ports, s_ports = self.get_ports(mpg123 + ':.*', send + ':send_.*')
-    self.connect_ports(r_ports, s_ports)
+        r_ports, s_ports = self.get_ports(receive + ":receive_.*", send + ":send_.*")
+        self.connect_ports(r_ports, s_ports)
 
-  def connect_to_ladspa(self, receive, ladspa):
-    """connect receive port/s to a ladspa plugin"""
-    if self.dry_run:
-      print("Connect to ladspa", receive, "to", ladspa)
-      return
+    def connect_mpg123_to_centre(self, mpg123, send):
+        """connect an instance of mpg123-jack to a jacktrip client"""
+        if self.dry_run:
+            print("Connect mpg123 centre", mpg123, "to", send)
+            return
 
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', ladspa + ':Input.*')
-    self.connect_ports(r_ports, s_ports)
+        r_ports, s_ports = self.get_ports(mpg123 + ":.*", send + ":send_.*")
+        self.connect_ports(r_ports, s_ports)
 
-  def connect_from_ladspa(self, ladspa, send):
-    """connect a ladspa plugin to send port/s"""
-    if self.dry_run:
-      print("Connect from ladspa", ladspa, "to", send)
-      return
+    def connect_to_ladspa(self, receive, ladspa):
+        """connect receive port/s to a ladspa plugin"""
+        if self.dry_run:
+            print("Connect to ladspa", receive, "to", ladspa)
+            return
 
-    r_ports, s_ports = self.get_ports(ladspa + ':Output.*', send + ':send_.*')
-    self.connect_ports(r_ports, s_ports)
+        r_ports, s_ports = self.get_ports(receive + ":receive_.*", ladspa + ":Input.*")
+        self.connect_ports(r_ports, s_ports)
 
-  def connect_darkice_to_centre(self, receive, send):
-    """Connect to darkice centre panned"""
-    if self.dry_run:
-      print("Connect centre", receive, "to", send)
-      return
+    def connect_from_ladspa(self, ladspa, send):
+        """connect a ladspa plugin to send port/s"""
+        if self.dry_run:
+            print("Connect from ladspa", ladspa, "to", send)
+            return
 
-    r_ports, s_ports = self.get_ports(receive + ':receive_.*', send + '.*')
-    self.connect_ports(r_ports, s_ports)
+        r_ports, s_ports = self.get_ports(ladspa + ":Output.*", send + ":send_.*")
+        self.connect_ports(r_ports, s_ports)
 
-  def connect_darkice_from_ladspa(self, ladspa, send):
-    """connect a ladspa plugin to a pair of send ports"""
-    if self.dry_run:
-      print("Connect from ladspa", ladspa, "to", send)
-      return
+    def connect_darkice_to_centre(self, receive, send):
+        """Connect to darkice centre panned"""
+        if self.dry_run:
+            print("Connect centre", receive, "to", send)
+            return
 
-    r_ports, s_ports = self.get_ports(ladspa + ':Output.*', send + '.*')
-    self.connect_ports(r_ports, s_ports)
+        r_ports, s_ports = self.get_ports(receive + ":receive_.*", send + ".*")
+        self.connect_ports(r_ports, s_ports)
 
-  def connect_mpg123_to_darkice(self, mpg123, send):
-    """connect an instance of mpg123-jack to a darkice client"""
-    if self.dry_run:
-      print("Connect mpg123 centre", mpg123, "to", send)
-      return
-    try:
-      r_ports, s_ports = self.get_ports(mpg123 + '.*', send + '.*')
-      self.connect_ports(r_ports, s_ports)
-    except jack.JackErrorCode as e:
-      print('Could not find mpg123, not patching ', send)
-      return
+    def connect_darkice_from_ladspa(self, ladspa, send):
+        """connect a ladspa plugin to a pair of send ports"""
+        if self.dry_run:
+            print("Connect from ladspa", ladspa, "to", send)
+            return
+
+        r_ports, s_ports = self.get_ports(ladspa + ":Output.*", send + ".*")
+        self.connect_ports(r_ports, s_ports)
+
+    def connect_mpg123_to_darkice(self, mpg123, send):
+        """connect an instance of mpg123-jack to a darkice client"""
+        if self.dry_run:
+            print("Connect mpg123 centre", mpg123, "to", send)
+            return
+        try:
+            r_ports, s_ports = self.get_ports(mpg123 + ".*", send + ".*")
+            self.connect_ports(r_ports, s_ports)
+        except jack.JackErrorCode as e:
+            print("Could not find mpg123, not patching ", send)
+            return
