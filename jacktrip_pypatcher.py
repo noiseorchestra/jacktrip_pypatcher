@@ -1,12 +1,8 @@
 import jack
-import os
 import lounge_music
 import stereo_recording
-import random
 import jack_client_patching as p
-from itertools import product
 import ladspa_plugins
-
 
 
 def disconnect(jackClient, dry_run, hold_music_port):
