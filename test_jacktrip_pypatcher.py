@@ -1,6 +1,30 @@
 import jack
 import jacktrip_pypatcher
+import ladspa_plugins
 
+def test_generate_subprocess_cmd(position=0.3):
+
+    cmd = ["/home/sam/ng-jackspa/jackspa-cli",
+           "-j",
+           "ladspa-right-30",
+           "-i",
+           "0:0:0:0.3:0:0",
+           "/usr/lib/ladspa/inv_input.so",
+           "3301",
+           ]
+
+    assert ladspa_plugins.generate_subprocess_cmd(position) == cmd
+
+def test_get_ladspa_ports():
+
+    panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
+    port_names = ["ladspa-centre",
+                  "ladspa-left-30",
+                  "ladspa-right-30",
+                  "ladspa-left-60",
+                  "ladspa-right-60"]
+
+    assert jacktrip_pypatcher.get_ladspa_port_names(panning_positions) == port_names
 
 def run_pypatcher_voice_count(number_of_voices):
     jackClient = jack.Client("TestAutoPatcher")
