@@ -6,6 +6,25 @@ import time
 jackspa_path = "/home/sam/ng-jackspa/jackspa-cli"
 
 
+def get_panning_positions(number_of_clients, all_panning_positions):
+  if number_of_clients == 4:
+    return all_panning_positions[3:7]
+  if number_of_clients == 5:
+    return [all_panning_positions[0]] + all_panning_positions[3:7]
+  if number_of_clients == 6:
+    return all_panning_positions[1:3] + all_panning_positions[5:9]
+  if number_of_clients == 7:
+    return all_panning_positions[0:3] + all_panning_positions[5:9]
+  if number_of_clients == 8:
+    return all_panning_positions[1:9]
+  if number_of_clients == 9:
+    return all_panning_positions[0:9]
+  if number_of_clients == 10:
+    return all_panning_positions[1:11]
+  if number_of_clients == 11:
+    return all_panning_positions[0:11]
+
+
 def generate_port_name(panning_position):
     """Returns a ladspa port name"""
     if panning_position == 0:
@@ -23,6 +42,12 @@ def get_port(jackClient, panning_position):
     if port_name not in [port.name for port in all_ladspa_ports]:
         start_plugin(jackClient, panning_position)
     return port_name
+
+
+def get_ports(jackClient, no_of_clients, all_panning_positions):
+    panning_positions = get_panning_positions(no_of_clients, all_panning_positions)
+    ladspa_ports = [get_port(jackClient, position) for position in panning_positions]
+    return ladspa_ports
 
 
 def generate_subprocess_cmd(panning_position):
