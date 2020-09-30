@@ -1,6 +1,6 @@
 import jack
 import jacktrip_pypatcher
-import ladspa_plugins
+import ladspa_plugins as ladspa
 
 def test_generate_subprocess_cmd(position=0.3):
 
@@ -13,7 +13,7 @@ def test_generate_subprocess_cmd(position=0.3):
            "3301",
            ]
 
-    assert ladspa_plugins.generate_subprocess_cmd(position) == cmd
+    assert ladspa.generate_subprocess_cmd(position) == cmd
 
 def test_get_ladspa_ports():
 
@@ -24,7 +24,7 @@ def test_get_ladspa_ports():
                   "ladspa-left-60",
                   "ladspa-right-60"]
 
-    assert map(jacktrip_pypatcher.get_ladspa_port, panning_positions) == port_names
+    assert map(ladspa.generate_port_name, panning_positions) == port_names
 
 def run_pypatcher_voice_count(number_of_voices):
     jackClient = jack.Client("TestAutoPatcher")

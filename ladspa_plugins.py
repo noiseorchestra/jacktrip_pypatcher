@@ -2,28 +2,36 @@
 
 import subprocess
 import time
-import jacktrip_pypatcher as jp
 
 jackspa_path = "/home/sam/ng-jackspa/jackspa-cli"
 
 
-def get_port(position):
+def generate_port_name(panning_position):
     """Returns a ladspa port name"""
-    if position == 0:
+    if panning_position == 0:
         return "ladspa-centre"
-    elif position < 0:
-        return "ladspa-left-" + str(int(abs(position*100)))
+    elif panning_position < 0:
+        return "ladspa-left-" + str(int(abs(panning_position*100)))
     else:
-        return "ladspa-right-" + str(int(position*100))
+        return "ladspa-right-" + str(int(panning_position*100))
 
 
-def generate_subprocess_cmd(position):
-  port_name = jp.get_ladspa_port_name(position)
+def get_port(jackClient, panning_position):
+    """Start a ladspa plugin if it isn't running and return port name"""
+    port_name = generate_port_name(panning_position)
+    all_ladspa_ports = jackClient.get_ports("ladspa-.*")
+    if port_name not in [port.name for port in all_ladspa_ports]:
+        start_plugin(jackClient, panning_position)
+    return port_name
+
+
+def generate_subprocess_cmd(panning_position):
+  port_name = get_port(panning_position)
   return [jackspa_path,
           "-j",
           port_name,
           "-i",
-          "0:0:0:" + str(position) + ":0:0",
+          "0:0:0:" + str(panning_position) + ":0:0",
           "/usr/lib/ladspa/inv_input.so",
           "3301",
           ]
@@ -43,15 +51,14 @@ def kill_plugins(jackClient, debug=True):
         print("Running ladspa plugins:", all_plugins)
 
 
-def start_plugins(jackClient, panning_positions, debug=True):
+def start_plugin(jackClient, panning_position, debug=True):
     """start ladspa plugins for 2 and above clients of clients"""
 
     if debug:
         print("Start ladspa plugins for 2 - 5 clients")
 
-    for position in panning_positions:
-        cmd = generate_subprocess_cmd(position)
-        subprocess.Popen(cmd)
+    cmd = generate_subprocess_cmd(panning_position)
+    subprocess.Popen(cmd)
     time.sleep(0.5)
 
     if debug:
