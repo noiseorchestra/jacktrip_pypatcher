@@ -1,4 +1,5 @@
 import jack
+import time
 import lounge_music
 import stereo_recording
 import jack_client_patching as p
@@ -183,6 +184,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
             while count < 3:
                 lounge_music.start_the_music(jackClient, hold_music_port)
                 count += 1
+                time.sleep(0.5)
 
         jcp.connect_mpg123_to_centre(hold_music_port, jacktrip_clients[0])
 
