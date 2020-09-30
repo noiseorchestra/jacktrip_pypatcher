@@ -7,6 +7,16 @@ import jacktrip_pypatcher as jp
 jackspa_path = "/home/sam/ng-jackspa/jackspa-cli"
 
 
+def get_port(position):
+    """Returns a ladspa port name"""
+    if position == 0:
+        return "ladspa-centre"
+    elif position < 0:
+        return "ladspa-left-" + str(int(abs(position*100)))
+    else:
+        return "ladspa-right-" + str(int(position*100))
+
+
 def generate_subprocess_cmd(position):
   port_name = jp.get_ladspa_port_name(position)
   return [jackspa_path,
