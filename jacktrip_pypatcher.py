@@ -84,8 +84,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     hold_music_port = "lounge-music"
     darkice_prefix = "darkice"
 
-    panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
-                         0.45, -0.6, 0.6, -0.75, 0.75]
+    pan_pos = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
+               0.45, -0.6, 0.6, -0.75, 0.75]
 
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, hold_music_port)
@@ -155,43 +155,43 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
 
         print("-- darkice --")
-        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa.get_port(jackClient, panning_positions[5]))
-        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa.get_port(jackClient, panning_positions[6]))
+        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa.get_port(jackClient, pan_pos[5]))
+        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa.get_port(jackClient, pan_pos[6]))
 
-        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, panning_positions[5]), darkice_port)
-        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, panning_positions[6]), darkice_port)
+        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, pan_pos[5]), darkice_port)
+        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, pan_pos[6]), darkice_port)
 
     if len(jacktrip_clients) == 3:
         # Connections for 3 clients are a bit special as we need to make sure the L-R
         # balance for each client is even (not two peers in one channel)
 
-        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa.get_port(jackClient, panning_positions[3]))
-        jcp.connect_to_ladspa(jacktrip_clients[2], ladspa.get_port(jackClient, panning_positions[4]))
+        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa.get_port(jackClient, pan_pos[3]))
+        jcp.connect_to_ladspa(jacktrip_clients[2], ladspa.get_port(jackClient, pan_pos[4]))
 
-        jcp.connect_from_ladspa(ladspa.get_port(jackClient, panning_positions[3]), jacktrip_clients[0])
-        jcp.connect_from_ladspa(ladspa.get_port(jackClient, panning_positions[4]), jacktrip_clients[0])
+        jcp.connect_from_ladspa(ladspa.get_port(jackClient, pan_pos[3]), jacktrip_clients[0])
+        jcp.connect_from_ladspa(ladspa.get_port(jackClient, pan_pos[4]), jacktrip_clients[0])
 
-        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa.get_port(jackClient, panning_positions[5]))
-        jcp.connect_to_ladspa(jacktrip_clients[2], ladspa.get_port(jackClient, panning_positions[6]))
+        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa.get_port(jackClient, pan_pos[5]))
+        jcp.connect_to_ladspa(jacktrip_clients[2], ladspa.get_port(jackClient, pan_pos[6]))
 
-        jcp.connect_from_ladspa(ladspa.get_port(jackClient, panning_positions[5]), jacktrip_clients[1])
-        jcp.connect_from_ladspa(ladspa.get_port(jackClient, panning_positions[6]), jacktrip_clients[1])
+        jcp.connect_from_ladspa(ladspa.get_port(jackClient, pan_pos[5]), jacktrip_clients[1])
+        jcp.connect_from_ladspa(ladspa.get_port(jackClient, pan_pos[6]), jacktrip_clients[1])
 
-        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa.get_port(jackClient, panning_positions[7]))
-        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa.get_port(jackClient, panning_positions[8]))
+        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa.get_port(jackClient, pan_pos[7]))
+        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa.get_port(jackClient, pan_pos[8]))
 
-        jcp.connect_from_ladspa(ladspa.get_port(jackClient, panning_positions[7]), jacktrip_clients[2])
-        jcp.connect_from_ladspa(ladspa.get_port(jackClient, panning_positions[8]), jacktrip_clients[2])
+        jcp.connect_from_ladspa(ladspa.get_port(jackClient, pan_pos[7]), jacktrip_clients[2])
+        jcp.connect_from_ladspa(ladspa.get_port(jackClient, pan_pos[8]), jacktrip_clients[2])
 
         print("-- darkice --")
 
-        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, panning_positions[5]), darkice_port)
-        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, panning_positions[6]), darkice_port)
+        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, pan_pos[5]), darkice_port)
+        jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, pan_pos[6]), darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
     if len(jacktrip_clients) == 4:
 
-        ladspa_ports = [ladspa.get_port(jackClient, p) for p in panning_positions[3:7]]
+        ladspa_ports = [ladspa.get_port(jackClient, p) for p in pan_pos[3:7]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -201,7 +201,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) == 5:
 
         ladspa_ports = [ladspa.get_port(jackClient, p) for p in
-                        [panning_positions[0]] + panning_positions[3:7]]
+                        [pan_pos[0]] + pan_pos[3:7]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -211,7 +211,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) == 6:
 
         ladspa_ports = [ladspa.get_port(jackClient, p) for p in
-                        panning_positions[1:3] + panning_positions[5:9]]
+                        pan_pos[1:3] + pan_pos[5:9]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -221,7 +221,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) == 7:
 
         ladspa_ports = [ladspa.get_port(jackClient, p) for p in
-                        panning_positions[0:3] + panning_positions[5:9]]
+                        pan_pos[0:3] + pan_pos[5:9]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -230,7 +230,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 8:
 
-        ladspa_ports = [ladspa.get_port(jackClient, p) for p in panning_positions[1:9]]
+        ladspa_ports = [ladspa.get_port(jackClient, p) for p in pan_pos[1:9]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -239,7 +239,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 9:
 
-        ladspa_ports = [ladspa.get_port(jackClient, p) for p in panning_positions[0:9]]
+        ladspa_ports = [ladspa.get_port(jackClient, p) for p in pan_pos[0:9]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -248,7 +248,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 10:
 
-        ladspa_ports = [ladspa.get_port(jackClient, p) for p in panning_positions[1:11]]
+        ladspa_ports = [ladspa.get_port(jackClient, p) for p in pan_pos[1:11]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -257,7 +257,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 11:
 
-        ladspa_ports = [ladspa.get_port(jackClient, p) for p in panning_positions[0:11]]
+        ladspa_ports = [ladspa.get_port(jackClient, p) for p in pan_pos[0:11]]
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
