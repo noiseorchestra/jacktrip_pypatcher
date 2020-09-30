@@ -24,7 +24,7 @@ def test_get_ladspa_ports():
                   "ladspa-left-60",
                   "ladspa-right-60"]
 
-    assert jacktrip_pypatcher.get_ladspa_port_names(panning_positions) == port_names
+    assert map(jacktrip_pypatcher.get_ladspa_port, panning_positions) == port_names
 
 def run_pypatcher_voice_count(number_of_voices):
     jackClient = jack.Client("TestAutoPatcher")
