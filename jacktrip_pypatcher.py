@@ -74,15 +74,6 @@ def get_darkice_port(jackClient, dry_run, darkice_prefix):
     return darkice_ports[0]
 
 
-def patch_session(jcp, jacktrip_clients, all_panning_positions, darkice_port):
-    ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_panning_positions)
-    connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-    print("-- darkice --")
-    for ladspa_port in ladspa_ports:
-        jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
@@ -94,7 +85,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     darkice_prefix = "darkice"
 
     all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
-               0.45, -0.6, 0.6, -0.75, 0.75]
+                             0.45, -0.6, 0.6, -0.75, 0.75]
 
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, hold_music_port)
@@ -199,7 +190,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
-        patch_session(jcp, jacktrip_clients, all_panning_positions, darkice_port)
+        ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_panning_positions)
+        connect_all(jcp, jacktrip_clients, ladspa_ports)
+
+        print("-- darkice --")
+        for ladspa_port in ladspa_ports:
+            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
 
     if len(jacktrip_clients) > 11:
         print("Not yet implemented")
