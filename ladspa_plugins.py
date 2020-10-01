@@ -35,18 +35,20 @@ def generate_port_name(panning_position):
         return "ladspa-right-" + str(int(panning_position*100))
 
 
-def get_port(jackClient, panning_position):
+def get_port(jackClient, panning_position, all_ladspa_ports, dry_run=False):
     """Start a ladspa plugin if it isn't running and return port name"""
     port_name = generate_port_name(panning_position)
-    all_ladspa_ports = jackClient.get_ports("ladspa-.*")
     if port_name not in [port.name for port in all_ladspa_ports]:
-        start_plugin(jackClient, panning_position)
+        print("No ladspa port for panning position", panning_position)
+        print("Starting", port_name, "now")
+        if not dry_run:
+            start_plugin(jackClient, panning_position)
     return port_name
 
 
-def get_ports(jackClient, no_of_clients, all_panning_positions):
+def get_ports(jackClient, no_of_clients, all_panning_positions, all_ladspa_ports, dry_run=False):
     panning_positions = get_panning_positions(no_of_clients, all_panning_positions)
-    ladspa_ports = [get_port(jackClient, position) for position in panning_positions]
+    ladspa_ports = [get_port(jackClient, position, all_ladspa_ports, dry_run) for position in panning_positions]
     return ladspa_ports
 
 
