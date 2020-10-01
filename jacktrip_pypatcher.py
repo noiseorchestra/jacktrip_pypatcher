@@ -74,6 +74,15 @@ def get_darkice_port(jackClient, dry_run, darkice_prefix):
     return darkice_ports[0]
 
 
+def patch_session(jcp, jacktrip_clients, all_panning_positions, darkice_port):
+    ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_panning_positions)
+    connect_all(jcp, jacktrip_clients, ladspa_ports)
+
+    print("-- darkice --")
+    for ladspa_port in ladspa_ports:
+        jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
+
+
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
@@ -189,82 +198,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_darkice_from_ladspa(ladspa.get_port(jackClient, all_panning_positions[6]), darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
-    if len(jacktrip_clients) == 4:
-
-        ladspa_ports = ladspa.get_ports(4, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 5:
-
-        ladspa_ports = ladspa.get_ports(5, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 6:
-
-        ladspa_ports = ladspa.get_ports(6, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 7:
-
-        ladspa_ports = ladspa.get_ports(7, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 8:
-
-        ladspa_ports = ladspa.get_ports(8, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 9:
-
-        ladspa_ports = ladspa.get_ports(9, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 10:
-
-        ladspa_ports = ladspa.get_ports(10, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
-
-    if len(jacktrip_clients) == 11:
-
-        ladspa_ports = ladspa.get_ports(11, all_panning_positions)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
+    if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
+        patch_session(jcp, jacktrip_clients, all_panning_positions, darkice_port)
 
     if len(jacktrip_clients) > 11:
         print("Not yet implemented")
         SystemExit(1)
-
 
 def main(dry_run=True):
     """Do some setup, then do the autopatch"""
