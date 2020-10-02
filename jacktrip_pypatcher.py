@@ -211,7 +211,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         print("Not yet implemented")
         SystemExit(1)
 
-def main(dry_run=True):
+def main(dry_run=False):
     """Do some setup, then do the autopatch"""
     jackClient = jack.Client("MadwortAutoPatcher")
 
