@@ -149,13 +149,15 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_mpg123_to_darkice(hold_music_port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
-    # ports needed for 2 & 3 client sessions
-    ladspa_port_3 = ladspa.get_port(jackClient, all_panning_positions[3], all_ladspa_ports)
-    ladspa_port_4 = ladspa.get_port(jackClient, all_panning_positions[4], all_ladspa_ports)
-    ladspa_port_5 = ladspa.get_port(jackClient, all_panning_positions[5], all_ladspa_ports)
-    ladspa_port_6 = ladspa.get_port(jackClient, all_panning_positions[6], all_ladspa_ports)
-    ladspa_port_7 = ladspa.get_port(jackClient, all_panning_positions[7], all_ladspa_ports)
-    ladspa_port_8 = ladspa.get_port(jackClient, all_panning_positions[8], all_ladspa_ports)
+    if len(jacktrip_clients) == 2 or len(jacktrip_clients) == 3:
+
+        # ports needed for 2 & 3 client sessions
+        ladspa_port_3 = ladspa.get_port(jackClient, all_panning_positions[3], all_ladspa_ports)
+        ladspa_port_4 = ladspa.get_port(jackClient, all_panning_positions[4], all_ladspa_ports)
+        ladspa_port_5 = ladspa.get_port(jackClient, all_panning_positions[5], all_ladspa_ports)
+        ladspa_port_6 = ladspa.get_port(jackClient, all_panning_positions[6], all_ladspa_ports)
+        ladspa_port_7 = ladspa.get_port(jackClient, all_panning_positions[7], all_ladspa_ports)
+        ladspa_port_8 = ladspa.get_port(jackClient, all_panning_positions[8], all_ladspa_ports)
 
     if len(jacktrip_clients) == 2:
 
