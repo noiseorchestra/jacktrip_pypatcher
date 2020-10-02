@@ -81,9 +81,6 @@ def kill_plugins(jackClient, debug=True):
 def start_plugin(jackClient, panning_position, debug=True):
     """start ladspa plugins for 2 and above clients of clients"""
 
-    if debug:
-        print("Start ladspa plugins")
-
     cmd = generate_subprocess_cmd(panning_position)
     subprocess.Popen(cmd)
     time.sleep(0.5)
