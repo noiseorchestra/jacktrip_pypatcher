@@ -53,7 +53,7 @@ def get_ports(jackClient, no_of_clients, all_panning_positions, all_ladspa_ports
 
 
 def generate_subprocess_cmd(panning_position):
-  port_name = get_port(panning_position)
+  port_name = generate_port_name(panning_position)
   return [jackspa_path,
           "-j",
           port_name,
@@ -82,7 +82,7 @@ def start_plugin(jackClient, panning_position, debug=True):
     """start ladspa plugins for 2 and above clients of clients"""
 
     if debug:
-        print("Start ladspa plugins for 2 - 5 clients")
+        print("Start ladspa plugins")
 
     cmd = generate_subprocess_cmd(panning_position)
     subprocess.Popen(cmd)
