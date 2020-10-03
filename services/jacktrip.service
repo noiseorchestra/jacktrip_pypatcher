@@ -4,7 +4,11 @@ Requires=jackd.service
 After=jackd.service
 
 [Service]
-ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect -z
+LimitRTPRIO=infinity
+LimitMEMLOCK=infinity
+LimitRTTIME=infinity
+EnvironmentFile=/etc/jacktrip_pypatcher/jacktrip.conf
+ExecStart=/usr/bin/jacktrip -S -p0 --nojackportsconnect -z -q $Q
 Restart=always
 RestartSec=2s
 
