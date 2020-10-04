@@ -128,17 +128,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) == 1:
         # start hold music & patch to the one client
         lounge_music.start_the_music(jackClient, hold_music_port)
-
-        all_hold_music_ports = jackClient.get_ports(hold_music_port + ".*")
-        if len(all_hold_music_ports) == 0:
-            # this is a crude fix because mpg123 wasn't always starting
-            # expect we won't need this with the server upgrade as audio
-            # processing is much less error prone
-            count = 0
-            while count < 3:
-                lounge_music.start_the_music(jackClient, hold_music_port)
-                count += 1
-                time.sleep(0.5)
+        lounge_music.check_the_music(jackClient, hold_music_port)
 
         jcp.connect_mpg123_to_centre(hold_music_port, jacktrip_clients[0])
 

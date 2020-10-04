@@ -64,3 +64,13 @@ def kill_the_music(jackClient, port, debug=True):
     if debug:
         all_hold_music_ports = jackClient.get_ports(port + ".*")
         print(len(all_hold_music_ports))
+
+
+def check_the_music(jackClient, hold_music_port):
+    all_hold_music_ports = jackClient.get_ports(hold_music_port + ".*")
+    if len(all_hold_music_ports) == 0:
+        count = 0
+        while count < 3:
+            start_the_music(jackClient, hold_music_port)
+            count += 1
+            time.sleep(0.5)
