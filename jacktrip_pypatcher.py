@@ -5,14 +5,14 @@ import jack_client_patching as p
 import ladspa_plugins as ladspa
 from lounge_music import LoungeMusic
 
-def disconnect(jackClient, dry_run, hold_music_port):
+def disconnect(jackClient, dry_run, lounge_music_port):
     """Disconnect all autopatched ports"""
     # TODO: only remove autopatched connections, not our own connections (HOW?)
     all_jacktrip_receive_ports = jackClient.get_ports(".*receive.*")
     all_ladspa_ports = jackClient.get_ports("ladspa-.*")
-    all_hold_music_ports = jackClient.get_ports(hold_music_port + ".*")
+    all_lounge_music_ports = jackClient.get_ports(lounge_music_port + ".*")
     if dry_run:
-        all_hold_music_ports = []
+        all_lounge_music_ports = []
 
     jcp = p.JackClientPatching(jackClient, dry_run)
 
@@ -23,7 +23,7 @@ def disconnect(jackClient, dry_run, hold_music_port):
     for ladspa_port in all_ladspa_ports:
         jcp.disconnect_all(ladspa_port)
 
-    for port in all_hold_music_ports:
+    for port in all_lounge_music_ports:
         jcp.disconnect_all(port)
 
 
@@ -81,14 +81,13 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("clients", jacktrip_clients)
 
     lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
-    hold_music_port = lounge_music.port
     darkice_prefix = "darkice"
 
     all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
                              0.45, -0.6, 0.6, -0.75, 0.75]
 
     print("=== Disconnecting existing connections ===")
-    disconnect(jackClient, dry_run, hold_music_port)
+    disconnect(jackClient, dry_run, lounge_music.port)
 
     print("=== Start LADSPA plugins ===")
 
@@ -129,13 +128,13 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         # start hold music & patch to the one client
         lounge_music.start_the_music_with_retries()
 
-        jcp.connect_mpg123_to_centre(hold_music_port, jacktrip_clients[0])
+        jcp.connect_mpg123_to_centre(lounge_music.port, jacktrip_clients[0])
 
         # also connect loopback
         jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
 
         print("-- darkice --")
-        jcp.connect_mpg123_to_darkice(hold_music_port, darkice_port)
+        jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
     if len(jacktrip_clients) == 2 or len(jacktrip_clients) == 3:
