@@ -55,25 +55,6 @@ def verify_ladspa_plugins(jackClient):
         SystemExit(1)
 
 
-def get_darkice_port(jackClient, dry_run, darkice_prefix):
-    """Get the current darkice jack port prefix"""
-    darkice_ports = list(
-        map(
-            lambda x: x.name.split(":")[0],
-            jackClient.get_ports(darkice_prefix + ".*:left"),
-        )
-    )
-
-    if dry_run:
-        darkice_ports = ["darkice-10545"]
-
-    if len(darkice_ports) == 0:
-        print("Start darkice first, please")
-        SystemExit(1)
-
-    return darkice_ports[0]
-
-
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
@@ -82,7 +63,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("clients", jacktrip_clients)
 
     hold_music_port = "lounge-music"
-    darkice_prefix = "darkice"
+    darkice = new Darkice(jackClient, "darkice")
 
     all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
                              0.45, -0.6, 0.6, -0.75, 0.75]
@@ -100,7 +81,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     print("=== Creating new connections ===")
 
-    darkice_port = get_darkice_port(jackClient, dry_run, darkice_prefix)
+    darkice_port = darkice.get_port(dry_run)
     print("darkice port:", darkice_port)
 
     jcp = p.JackClientPatching(jackClient, dry_run)
