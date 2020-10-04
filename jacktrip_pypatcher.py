@@ -1,10 +1,9 @@
 import jack
 import time
-import lounge_music
 import stereo_recording
 import jack_client_patching as p
 import ladspa_plugins as ladspa
-
+from lounge_music import LoungeMusic
 
 def disconnect(jackClient, dry_run, hold_music_port):
     """Disconnect all autopatched ports"""
@@ -81,7 +80,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("client count:", len(jacktrip_clients))
     print("clients", jacktrip_clients)
 
-    hold_music_port = "lounge-music"
+    lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
+    hold_music_port = lounge_music.port
     darkice_prefix = "darkice"
 
     all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
@@ -127,8 +127,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 1:
         # start hold music & patch to the one client
-        lounge_music.start_the_music(jackClient, hold_music_port)
-        lounge_music.check_the_music(jackClient, hold_music_port)
+        lounge_music.start_the_music_with_retries(jackClient, hold_music_port)
 
         jcp.connect_mpg123_to_centre(hold_music_port, jacktrip_clients[0])
 
