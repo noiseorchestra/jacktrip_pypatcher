@@ -143,7 +143,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 2 or len(jacktrip_clients) == 3:
 
-        panning_positions = get_panning_positions(len(jacktrip_clients), all_panning_positions)
+        panning_positions = ladspa.get_panning_positions(len(jacktrip_clients), all_panning_positions)
 
         # ports needed for 2 & 3 client sessions
         # if we like this method we can add the positions to all_panning_positions

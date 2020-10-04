@@ -9,7 +9,7 @@ jackspa_path = "/home/sam/ng-jackspa/jackspa-cli"
 def get_panning_positions(number_of_clients, all_panning_positions):
   if number_of_clients == 2 or number_of_clients == 3:
     return [all_panning_positions[5], (all_panning_positions[5]-0.01),
-      all_panning_positions[6], (all_panning_positions[6]+0.01)]
+            all_panning_positions[6], (all_panning_positions[6]+0.01)]
   if number_of_clients == 4:
     return all_panning_positions[3:7]
   if number_of_clients == 5:
