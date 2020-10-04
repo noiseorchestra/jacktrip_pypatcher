@@ -28,24 +28,6 @@ def disconnect(jackClient, dry_run, hold_music_port):
         jcp.disconnect_all(port)
 
 
-def connect_all(jcp, jacktrip_clients, ladspa_ports):
-    """Connect all JackTrip clients to a list of ladspa ports"""
-    for i, ladspa_port in enumerate(ladspa_ports):
-        jcp.connect_to_ladspa(jacktrip_clients[i], ladspa_port)
-        for jacktrip_client in jacktrip_clients:
-            if jacktrip_client == jacktrip_clients[i]:
-                continue
-            else:
-                jcp.connect_from_ladspa(ladspa_port, jacktrip_client)
-
-
-def get_current_clients(jackClient, dry_run):
-    """Get an array of client jack port prefixes"""
-    return list(
-        map(lambda x: x.name.split(":")[0], jackClient.get_ports(".*receive_1"))
-    )
-
-
 def verify_ladspa_plugins(jackClient):
     """Verify that the LADSPA plugins are running and abort if not"""
     all_left_ladspa_ports = jackClient.get_ports("ladspa-left-.*")
@@ -196,7 +178,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
         ladspa_ports = ladspa.get_ports(jackClient, len(jacktrip_clients), all_panning_positions, all_ladspa_ports)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
+        jcp.connect_all(jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
         for ladspa_port in ladspa_ports:
@@ -209,10 +191,11 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 def main(dry_run=False):
     """Do some setup, then do the autopatch"""
     jackClient = jack.Client("MadwortAutoPatcher")
+    jcp = p.JackClientPatching(jackClient, dry_run)
 
-    jacktrip_clients = get_current_clients(jackClient, dry_run)
+    jacktrip_clients = jcp.get_current_clients(jackClient, dry_run)
 
-    autopatch(jackClient, dry_run, jacktrip_clients)
+    autopatch(jcp, jackClient, dry_run, jacktrip_clients)
 
     jackClient.deactivate()
     jackClient.close()

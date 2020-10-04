@@ -11,6 +11,11 @@ class JackClientPatching:
         self.jackClient = jackClient
         self.dry_run = dry_run
 
+    def get_current_clients(jackClient, dry_run):
+        """Get an array of client jack port prefixes"""
+        return list(
+            map(lambda x: x.name.split(":")[0], jackClient.get_ports(".*receive_1")))
+
     def disconnect_all(self, my_port):
         """disconnect everything from a port"""
         send_ports = self.jackClient.get_all_connections(my_port)
@@ -26,11 +31,6 @@ class JackClientPatching:
                 print("error disconnecting, trying the other way round!", e)
                 print("disconnect", send_port.name, "from", my_port.name)
                 self.jackClient.disconnect(send_port, my_port)
-
-    # TODO:
-    #   * Probably better to just pass the jack clients directly into these methods
-    #   * Check naming makes sense
-    #   * I think some of these could be removed if we have some more generic and reusable methods
 
     def connect_ports(self, receive, send):
 
@@ -62,6 +62,16 @@ class JackClientPatching:
                 print("Connecting Mono receive to Mono send")
         except Exception as e:
             print("Error connecting ports:", e)
+
+    def connect_all(self, jacktrip_clients, ladspa_ports):
+        """Connect all JackTrip clients to a list of ladspa ports"""
+        for i, ladspa_port in enumerate(ladspa_ports):
+            self.connect_to_ladspa(jacktrip_clients[i], ladspa_port)
+            for jacktrip_client in jacktrip_clients:
+                if jacktrip_client == jacktrip_clients[i]:
+                    continue
+                else:
+                    self.connect_from_ladspa(ladspa_port, jacktrip_client)
 
     def connect_to_centre(self, receive, send):
         """connect receive port/s to centre send"""
