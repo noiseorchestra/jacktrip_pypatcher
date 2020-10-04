@@ -48,7 +48,7 @@ def start_the_music_with_retries(jackClient, hold_music, debug=True):
     # TODO: change to `mpg123.bin -o jack`
     subprocess.Popen(cmd)
     # wait for the jack client to register
-    time.sleep(2)
+    time.sleep(0.5)
 
     check_the_music(jackClient, hold_music, hold_music_file_path)
 
