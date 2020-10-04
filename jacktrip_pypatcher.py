@@ -65,8 +65,19 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     hold_music_port = "lounge-music"
     darkice = Darkice(jackClient, "darkice")
 
-    all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
-                             0.45, -0.6, 0.6, -0.75, 0.75]
+    all_panning_positions = [
+        0,
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
 
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, hold_music_port)
@@ -134,9 +145,13 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
         # ports needed for 2 & 3 client sessions
         # if we like this method we can add the positions to all_panning_positions
-        ladspa_mid_left_1 = ladspa.get_port(jackClient, all_panning_positions[5], all_ladspa_ports)
+        ladspa_mid_left_1 = ladspa.get_port(
+            jackClient, all_panning_positions[5], all_ladspa_ports
+        )
         ladspa_mid_left_2 = ladspa.get_port(jackClient, -0.46, all_ladspa_ports)
-        ladspa_mid_right_1 = ladspa.get_port(jackClient, all_panning_positions[6], all_ladspa_ports)
+        ladspa_mid_right_1 = ladspa.get_port(
+            jackClient, all_panning_positions[6], all_ladspa_ports
+        )
         ladspa_mid_right_2 = ladspa.get_port(jackClient, 0.46, all_ladspa_ports)
 
     if len(jacktrip_clients) == 2:
@@ -176,7 +191,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
-        ladspa_ports = ladspa.get_ports(jackClient, len(jacktrip_clients), all_panning_positions, all_ladspa_ports)
+        ladspa_ports = ladspa.get_ports(
+            jackClient, len(jacktrip_clients), all_panning_positions, all_ladspa_ports
+        )
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -186,6 +203,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) > 11:
         print("Not yet implemented")
         SystemExit(1)
+
 
 def main(dry_run=False):
     """Do some setup, then do the autopatch"""
