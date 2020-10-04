@@ -4,7 +4,7 @@ import lounge_music
 import stereo_recording
 import jack_client_patching as p
 import ladspa_plugins as ladspa
-
+from darkice import Darkice
 
 def disconnect(jackClient, dry_run, hold_music_port):
     """Disconnect all autopatched ports"""
