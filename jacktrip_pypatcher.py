@@ -162,8 +162,6 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 2:
 
-        ladspa_positions = ladspa.get_panning_positions(len(jacktrip_clients))
-
         jcp.connect_to_centre(jacktrip_clients[1], jacktrip_clients[0])
         jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
 
