@@ -63,7 +63,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("clients", jacktrip_clients)
 
     hold_music_port = "lounge-music"
-    darkice = new Darkice(jackClient, "darkice")
+    darkice = Darkice(jackClient, "darkice")
 
     all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
                              0.45, -0.6, 0.6, -0.75, 0.75]
