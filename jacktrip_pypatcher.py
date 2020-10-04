@@ -122,12 +122,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) != 1:
         # Only play the hold music if there is exactly one person connected!
-        lounge_music.kill_the_music(jackClient, hold_music_port)
+        lounge_music.kill_the_music()
         SystemExit(1)
 
     if len(jacktrip_clients) == 1:
         # start hold music & patch to the one client
-        lounge_music.start_the_music_with_retries(jackClient, hold_music_port)
+        lounge_music.start_the_music_with_retries()
 
         jcp.connect_mpg123_to_centre(hold_music_port, jacktrip_clients[0])
 
