@@ -1,9 +1,8 @@
-import jack
-import jacktrip_pypatcher
-import ladspa_plugins as ladspa
-
+from ladspa_plugins import LadspaPlugins
 
 def test_generate_subprocess_cmd(position=0.3):
+
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [])
 
     cmd = [
         "/home/sam/ng-jackspa/jackspa-cli",
@@ -20,6 +19,7 @@ def test_generate_subprocess_cmd(position=0.3):
 
 def test_generate_port_name():
 
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [])
     panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
     port_names = [
         "ladspa-centre",
@@ -40,8 +40,7 @@ def test_get_and_check_port():
         def __init__(self, name):
             self.name = name
 
-    jackClient = None
-    dry_run = True
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [])
     panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
     all_existing_ladspa_ports = [LadspaClient("ladspa-centre")]
 
@@ -54,7 +53,7 @@ def test_get_and_check_port():
     ]
 
     assert [
-        ladspa.get_port(jackClient, position, all_existing_ladspa_ports, dry_run=True)
+        ladspa.get_port(position, all_existing_ladspa_ports, dry_run=True)
         for position in panning_positions
     ] == result
 
@@ -65,8 +64,6 @@ def test_get_ports():
         def __init__(self, name):
             self.name = name
 
-    jackClient = None
-    dry_run = True
     all_panning_positions = [
         0,
         -0.15,
@@ -80,19 +77,18 @@ def test_get_ports():
         -0.75,
         0.75,
     ]
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions)
     no_of_clients = 4
-    all_existing_ladspa_ports = [LadspaClient("ladspa-centre")]
+    all_existing_ladspa_ports = [LadspaClient("ladspa-centre"), LadspaClient("ladspa-left-30")]
     panning_positions = [
         ladspa.generate_port_name(position) for position in all_panning_positions[3:7]
     ]
 
     assert (
         ladspa.get_ports(
-            jackClient,
             no_of_clients,
-            all_panning_positions,
             all_existing_ladspa_ports,
-            dry_run,
+            dry_run=True,
         )
         == panning_positions
     )
