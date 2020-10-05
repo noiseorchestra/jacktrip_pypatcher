@@ -11,11 +11,6 @@ class LadspaPlugins(object):
         self.jackspa_path = jackspa_path
         self.all_positions = all_positions
 
-    # we could set this as an attribute and have a get_and_set() method when
-    # we need to refresh the list, but this might get confusing
-    def get_all_ports(self):
-        return self.jackClient.get_ports("ladspa-.*")
-
     def get_panning_positions(self, number_of_clients):
       if number_of_clients == 2 or number_of_clients == 3:
         return [self.all_positions[5], (self.all_positions[5]-0.01),
@@ -46,19 +41,19 @@ class LadspaPlugins(object):
         else:
             return "ladspa-right-" + str(int(panning_position*100))
 
-    def get_port(self, panning_position, dry_run=False):
+    def get_port(self, panning_position, all_ladspa_ports, dry_run=False):
         """Start a ladspa plugin if it isn't running and return port name"""
         port_name = self.generate_port_name(panning_position)
-        if port_name not in [port.name.split(":")[0] for port in self.get_all_ports()]:
+        if port_name not in [port.name.split(":")[0] for port in all_ladspa_ports]:
             print("No ladspa port for panning position", panning_position)
             print("Starting", port_name, "now")
             if not dry_run:
                 self.start_plugin(panning_position)
         return port_name
 
-    def get_ports(self, no_of_clients, dry_run=False):
+    def get_ports(self, no_of_clients, all_ladspa_ports, dry_run=False):
         panning_positions = self.get_panning_positions(no_of_clients)
-        ladspa_ports = [self.get_port(position, dry_run) for position in panning_positions]
+        ladspa_ports = [self.get_port(position, all_ladspa_ports, dry_run) for position in panning_positions]
         return ladspa_ports
 
     def generate_subprocess_cmd(self, panning_position):
@@ -82,7 +77,8 @@ class LadspaPlugins(object):
         time.sleep(0.5)
 
         if debug:
-            print("Running ladspa plugins:", self.get_all_ports())
+            all_plugins = self.jackClient.get_ports("ladspa.*")
+            print("Running ladspa plugins:", all_plugins)
 
     def start_plugin(self, panning_position, debug=True):
         """start ladspa plugins for 2 and above clients of clients"""
@@ -92,4 +88,5 @@ class LadspaPlugins(object):
         time.sleep(0.5)
 
         if debug:
-            print("Running ladspa plugins:", self.get_all_ports())
+            all_plugins = self.jackClient.get_ports("ladspa.*")
+            print("Running ladspa plugins:", all_plugins)
