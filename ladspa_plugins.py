@@ -7,8 +7,8 @@ class LadspaPlugins(object):
 
     def __init__(self, jackClient, jackspa_path, all_positions):
         super(LadspaPlugins, self).__init__()
-        self.jackspa_path = jackspa_path
         self.jackClient = jackClient
+        self.jackspa_path = jackspa_path
         self.all_positions = all_positions
 
     def get_panning_positions(self, number_of_clients):
