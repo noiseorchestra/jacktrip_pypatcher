@@ -4,6 +4,7 @@ import stereo_recording
 import jack_client_patching as p
 import ladspa_plugins as ladspa
 from lounge_music import LoungeMusic
+from darkice import Darkice
 
 def disconnect(jackClient, dry_run, lounge_music_port):
     """Disconnect all autopatched ports"""
@@ -54,25 +55,6 @@ def verify_ladspa_plugins(jackClient):
         SystemExit(1)
 
 
-def get_darkice_port(jackClient, dry_run, darkice_prefix):
-    """Get the current darkice jack port prefix"""
-    darkice_ports = list(
-        map(
-            lambda x: x.name.split(":")[0],
-            jackClient.get_ports(darkice_prefix + ".*:left"),
-        )
-    )
-
-    if dry_run:
-        darkice_ports = ["darkice-10545"]
-
-    if len(darkice_ports) == 0:
-        print("Start darkice first, please")
-        SystemExit(1)
-
-    return darkice_ports[0]
-
-
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
@@ -81,10 +63,21 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("clients", jacktrip_clients)
 
     lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
-    darkice_prefix = "darkice"
+    darkice = Darkice(jackClient, "darkice")
 
-    all_panning_positions = [0, -0.15, 0.15, -0.3, 0.3, -0.45,
-                             0.45, -0.6, 0.6, -0.75, 0.75]
+    all_panning_positions = [
+        0,
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
 
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, lounge_music.port)
@@ -99,12 +92,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     print("=== Creating new connections ===")
 
-    darkice_port = get_darkice_port(jackClient, dry_run, darkice_prefix)
+    darkice_port = darkice.get_port(dry_run)
     print("darkice port:", darkice_port)
 
     jcp = p.JackClientPatching(jackClient, dry_run)
 
-    max_supported_clients = 11
+    max_supported_clients = len(all_panning_positions)
     if len(jacktrip_clients) > max_supported_clients:
         print(
             "Unsupported number of clients, patching",
@@ -139,12 +132,14 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 2 or len(jacktrip_clients) == 3:
 
+        panning_positions = ladspa.get_panning_positions(len(jacktrip_clients), all_panning_positions)
+
         # ports needed for 2 & 3 client sessions
         # if we like this method we can add the positions to all_panning_positions
-        ladspa_mid_left_1 = ladspa.get_port(jackClient, all_panning_positions[5], all_ladspa_ports)
-        ladspa_mid_left_2 = ladspa.get_port(jackClient, -0.46, all_ladspa_ports)
-        ladspa_mid_right_1 = ladspa.get_port(jackClient, all_panning_positions[6], all_ladspa_ports)
-        ladspa_mid_right_2 = ladspa.get_port(jackClient, 0.46, all_ladspa_ports)
+        ladspa_mid_left_1 = ladspa.get_port(jackClient, panning_positions[0], all_ladspa_ports)
+        ladspa_mid_left_2 = ladspa.get_port(jackClient, panning_positions[1], all_ladspa_ports)
+        ladspa_mid_right_1 = ladspa.get_port(jackClient, panning_positions[2], all_ladspa_ports)
+        ladspa_mid_right_2 = ladspa.get_port(jackClient, panning_positions[3], all_ladspa_ports)
 
     if len(jacktrip_clients) == 2:
 
@@ -183,7 +178,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
-        ladspa_ports = ladspa.get_ports(jackClient, len(jacktrip_clients), all_panning_positions, all_ladspa_ports)
+        ladspa_ports = ladspa.get_ports(
+            jackClient, len(jacktrip_clients), all_panning_positions, all_ladspa_ports
+        )
         connect_all(jcp, jacktrip_clients, ladspa_ports)
 
         print("-- darkice --")
@@ -193,6 +190,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) > 11:
         print("Not yet implemented")
         SystemExit(1)
+
 
 def main(dry_run=False):
     """Do some setup, then do the autopatch"""
