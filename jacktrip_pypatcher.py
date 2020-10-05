@@ -48,15 +48,6 @@ def get_current_clients(jackClient, dry_run):
     )
 
 
-def verify_ladspa_plugins(jackClient):
-    """Verify that the LADSPA plugins are running and abort if not"""
-    all_left_ladspa_ports = jackClient.get_ports("ladspa-left-.*")
-    if len(all_left_ladspa_ports) < 1:
-        print("Start LADSPA plugins please!")
-        # TODO: verify SystemExit is working as intended
-        SystemExit(1)
-
-
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
