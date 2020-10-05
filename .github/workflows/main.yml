@@ -16,4 +16,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - run: python -m black .
-    - run: python -m pytest test_ladspa_plugins.py
+    - run: python -m pytest test_ladspa_plugin.py
