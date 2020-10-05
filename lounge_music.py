@@ -30,7 +30,7 @@ class LoungeMusic(object):
         """Return all lounge_music ports"""
         return self.jackClient.get_ports(self.port + ".*")
 
-    def start_the_music_with_retries(self, debug=True):
+    def start_the_music_with_retries(self, retries=3, debug=True):
         """start looping the hold music, if it isn't already playing"""
 
         if len(self.get_all_ports()) > 0:
@@ -42,13 +42,13 @@ class LoungeMusic(object):
             print("Start the lounge music please!")
 
         port_count = len(self.get_all_ports())
-        retries = 3
+        retry_count = 3
 
         while port_count == 0:
-            if retries == 0:
+            if retry_count == retries:
                 print("Loung music could not start!")
                 break
-            retries -= 1
+            retry_count += 1
             subprocess.Popen(self.get_command())
             time.sleep(0.5)
             port_count = len(self.get_all_ports())
