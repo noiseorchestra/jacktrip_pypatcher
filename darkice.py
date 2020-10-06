@@ -2,7 +2,7 @@ class Darkice(object):
     """Darkice patching stuff"""
 
     def __init__(self, jackClient, port_prefix):
-        super(DarkIce, self).__init__()
+        super(Darkice, self).__init__()
         self.port_prefix = port_prefix
         self.jackClient = jackClient
 
