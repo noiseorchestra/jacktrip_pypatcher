@@ -11,7 +11,7 @@ class Darkice(object):
         darkice_ports = list(
             map(
                 lambda x: x.name.split(":")[0],
-                self.jackClient.get_ports(self.darkice_prefix + ".*:left"),
+                self.jackClient.get_ports(self.port_prefix + ".*:left"),
             )
         )
 
