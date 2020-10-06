@@ -70,7 +70,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     hold_music_port = "lounge-music"
     darkice = Darkice(jackClient, "darkice")
-    ladspa = LadspaPlugins(jackClient, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions)
+    ladspa = LadspaPlugins(
+        jackClient,
+        "/home/sam/ng-jackspa/jackspa-cli",
+        all_panning_positions,
+        dry_run
+    )
 
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, hold_music_port)
