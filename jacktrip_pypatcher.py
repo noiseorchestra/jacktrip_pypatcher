@@ -92,7 +92,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     print("=== Creating new connections ===")
 
-    darkice_port = darkice.get_port(dry_run)
+    darkice_port = darkice.get_port()
     print("darkice port:", darkice_port)
 
     jcp = p.JackClientPatching(jackClient, dry_run)

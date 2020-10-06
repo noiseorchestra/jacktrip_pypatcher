@@ -7,7 +7,7 @@ class Darkice(object):
         self.jackClient = jackClient
         self.dry_run = dry_run
 
-    def get_port(self, dry_run):
+    def get_port(self):
         """Get the current darkice jack port prefix"""
 
         if self.dry_run:
