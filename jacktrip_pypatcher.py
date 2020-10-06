@@ -63,7 +63,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("clients", jacktrip_clients)
 
     lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
-    darkice = Darkice(jackClient, "darkice")
+    darkice = Darkice(jackClient, "darkice", dry_run)
 
     all_panning_positions = [
         0,
