@@ -1,8 +1,9 @@
-import stereo_recording
+from stereo_recording import StereoRecording
 
-def test_get_command():
 
-    recording_path_prefix = "/home/sam/darkice-"
+def test_generate_subprocess_cmd():
+
+    stereo_recording = StereoRecording("/home/sam/darkice-", dry_run=True)
     cmd = [
         "jack_capture",
         "--filename-prefix",
@@ -15,4 +16,4 @@ def test_get_command():
         "--daemon",
     ]
 
-    assert stereo_recording.get_command(recording_path_prefix) == cmd
+    assert stereo_recording.generate_subprocess_cmd() == cmd

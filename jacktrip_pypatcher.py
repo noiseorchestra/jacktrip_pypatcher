@@ -1,6 +1,6 @@
 import jack
 import time
-import stereo_recording
+from stereo_recording import StereoRecording
 import jack_client_patching as p
 import ladspa_plugins as ladspa
 from lounge_music import LoungeMusic
@@ -64,7 +64,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
     darkice = Darkice(jackClient, "darkice")
-    recording_path_prefix = "/home/sam/darkice-"
+    stereo_recording = StereoRecording("/home/sam/darkice-", dry_run)
 
     all_panning_positions = [
         0,
@@ -109,9 +109,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jacktrip_clients = jacktrip_clients[0:max_supported_clients]
 
     if len(jacktrip_clients) > 0:
-        stereo_recording.start(dry_run)
+        stereo_recording.start()
     else:
-        stereo_recording.stop(dry_run)
+        stereo_recording.stop()
 
     if len(jacktrip_clients) != 1:
         # Only play the hold music if there is exactly one person connected!
