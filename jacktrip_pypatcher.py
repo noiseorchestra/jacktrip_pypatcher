@@ -125,10 +125,10 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
         # ports needed for 2 & 3 client sessions
         # if we like this method we can add the positions to all_panning_positions
-        ladspa_mid_left_1 = ladspa.get_port(jackClient, panning_positions[0], all_ladspa_ports)
-        ladspa_mid_left_2 = ladspa.get_port(jackClient, panning_positions[1], all_ladspa_ports)
-        ladspa_mid_right_1 = ladspa.get_port(jackClient, panning_positions[2], all_ladspa_ports)
-        ladspa_mid_right_2 = ladspa.get_port(jackClient, panning_positions[3], all_ladspa_ports)
+        ladspa_mid_left_1 = ladspa.get_port(jackClient, panning_positions[0], all_ladspa_ports, dry_run)
+        ladspa_mid_left_2 = ladspa.get_port(jackClient, panning_positions[1], all_ladspa_ports, dry_run)
+        ladspa_mid_right_1 = ladspa.get_port(jackClient, panning_positions[2], all_ladspa_ports, dry_run)
+        ladspa_mid_right_2 = ladspa.get_port(jackClient, panning_positions[3], all_ladspa_ports, dry_run)
 
     if len(jacktrip_clients) == 2:
 
