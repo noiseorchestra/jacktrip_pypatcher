@@ -2,7 +2,7 @@ from ladspa_plugins import LadspaPlugins
 
 def test_generate_subprocess_cmd(position=0.3):
 
-    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [])
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
 
     cmd = [
         "/home/sam/ng-jackspa/jackspa-cli",
@@ -19,7 +19,7 @@ def test_generate_subprocess_cmd(position=0.3):
 
 def test_generate_port_name():
 
-    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [])
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
     panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
     port_names = [
         "ladspa-centre",
@@ -40,7 +40,7 @@ def test_get_and_check_port():
         def __init__(self, name):
             self.name = name
 
-    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [])
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
     panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
     all_existing_ladspa_ports = [LadspaClient("ladspa-centre")]
 
@@ -53,7 +53,7 @@ def test_get_and_check_port():
     ]
 
     assert [
-        ladspa.get_port(position, all_existing_ladspa_ports, dry_run=True)
+        ladspa.get_port(position, all_existing_ladspa_ports)
         for position in panning_positions
     ] == result
 
@@ -77,7 +77,7 @@ def test_get_ports():
         -0.75,
         0.75,
     ]
-    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions)
+    ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run=True)
     no_of_clients = 4
     all_existing_ladspa_ports = [LadspaClient("ladspa-centre"), LadspaClient("ladspa-left-30")]
     panning_positions = [
@@ -88,7 +88,6 @@ def test_get_ports():
         ladspa.get_ports(
             no_of_clients,
             all_existing_ladspa_ports,
-            dry_run=True,
         )
         == panning_positions
     )

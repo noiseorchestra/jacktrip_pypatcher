@@ -5,11 +5,12 @@ import time
 class LadspaPlugins(object):
     """LadspaPlugins patching stuff"""
 
-    def __init__(self, jackClient, jackspa_path, all_positions):
+    def __init__(self, jackClient, jackspa_path, all_positions, dry_run=False):
         super(LadspaPlugins, self).__init__()
         self.jackClient = jackClient
         self.jackspa_path = jackspa_path
         self.all_positions = all_positions
+        self.dry_run = dry_run
 
     def get_panning_positions(self, number_of_clients):
       if number_of_clients == 2 or number_of_clients == 3:
@@ -41,19 +42,18 @@ class LadspaPlugins(object):
         else:
             return "ladspa-right-" + str(int(panning_position*100))
 
-    def get_port(self, panning_position, all_ladspa_ports, dry_run=False):
+    def get_port(self, panning_position, all_ladspa_ports):
         """Start a ladspa plugin if it isn't running and return port name"""
         port_name = self.generate_port_name(panning_position)
         if port_name not in [port.name.split(":")[0] for port in all_ladspa_ports]:
             print("No ladspa port for panning position", panning_position)
             print("Starting", port_name, "now")
-            if not dry_run:
-                self.start_plugin(panning_position)
+            self.start_plugin(panning_position)
         return port_name
 
-    def get_ports(self, no_of_clients, all_ladspa_ports, dry_run=False):
+    def get_ports(self, no_of_clients, all_ladspa_ports):
         panning_positions = self.get_panning_positions(no_of_clients)
-        ladspa_ports = [self.get_port(position, all_ladspa_ports, dry_run) for position in panning_positions]
+        ladspa_ports = [self.get_port(position, all_ladspa_ports) for position in panning_positions]
         return ladspa_ports
 
     def generate_subprocess_cmd(self, panning_position):
@@ -67,26 +67,23 @@ class LadspaPlugins(object):
               "3301",
               ]
 
-    def kill_plugins(self, debug=True):
+    def kill_plugins(self):
         """kill ladspa plugins"""
 
-        if debug:
+        if self.dry_run:
             print("Kill ladspa plugins")
+            return
 
         subprocess.call(["killall", "jackspa-cli"])
         time.sleep(0.5)
 
-        if debug:
-            all_plugins = self.jackClient.get_ports("ladspa.*")
-            print("Running ladspa plugins:", all_plugins)
-
-    def start_plugin(self, panning_position, debug=True):
+    def start_plugin(self, panning_position):
         """start ladspa plugins for 2 and above clients of clients"""
+
+        if self.dry_run:
+            print("Start ladspa plugin for position:", panning_position)
+            return
 
         cmd = self.generate_subprocess_cmd(panning_position)
         subprocess.Popen(cmd)
         time.sleep(0.5)
-
-        if debug:
-            all_plugins = self.jackClient.get_ports("ladspa.*")
-            print("Running ladspa plugins:", all_plugins)
