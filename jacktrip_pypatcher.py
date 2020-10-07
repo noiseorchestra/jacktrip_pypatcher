@@ -1,6 +1,6 @@
 import jack
 import time
-import stereo_recording
+from stereo_recording import StereoRecording
 import jack_client_patching as p
 from ladspa_plugins import LadspaPlugins
 from lounge_music import LoungeMusic
@@ -67,6 +67,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     ]
 
     lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
+    stereo_recording = StereoRecording("/home/sam/darkice-", dry_run)
     darkice = Darkice(jackClient, "darkice", dry_run)
     ladspa = LadspaPlugins(
         jackClient,

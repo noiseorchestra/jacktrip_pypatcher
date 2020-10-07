@@ -17,3 +17,4 @@ jobs:
         pip install -r requirements.txt
     - run: python -m black .
     - run: python -m pytest test_ladspa_plugins.py
+    - run: python -m pytest test_stereo_recording.py
