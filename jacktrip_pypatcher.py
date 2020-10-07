@@ -6,6 +6,7 @@ from ladspa_plugins import LadspaPlugins
 from lounge_music import LoungeMusic
 from darkice import Darkice
 
+
 def disconnect(jackClient, dry_run, lounge_music_port):
     """Disconnect all autopatched ports"""
     # TODO: only remove autopatched connections, not our own connections (HOW?)
@@ -70,10 +71,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     stereo_recording = StereoRecording("/home/sam/darkice-", dry_run)
     darkice = Darkice(jackClient, "darkice", dry_run)
     ladspa = LadspaPlugins(
-        jackClient,
-        "/home/sam/ng-jackspa/jackspa-cli",
-        all_panning_positions,
-        dry_run
+        jackClient, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run
     )
 
     print("=== Disconnecting existing connections ===")
