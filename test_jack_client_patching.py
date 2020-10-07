@@ -14,29 +14,29 @@ def test_set_all_connections():
         "ladspa-left-30",
         "ladspa-right-30",
         "ladspa-left-60",
-        "ladspa-right-60"
+        "ladspa-right-60",
     ]
 
     connections_to_ladspa = [
-        ('..ffff.192.168.0.1', 'ladspa-left-30'),
-        ('..ffff.192.168.0.2', 'ladspa-right-30'),
-        ('..ffff.192.168.0.3', 'ladspa-left-60'),
-        ('..ffff.192.168.0.4', 'ladspa-right-60'),
+        ("..ffff.192.168.0.1", "ladspa-left-30"),
+        ("..ffff.192.168.0.2", "ladspa-right-30"),
+        ("..ffff.192.168.0.3", "ladspa-left-60"),
+        ("..ffff.192.168.0.4", "ladspa-right-60"),
     ]
 
     connections_from_ladspa = [
-        ('ladspa-left-30', '..ffff.192.168.0.2'),
-        ('ladspa-left-30', '..ffff.192.168.0.3'),
-        ('ladspa-left-30', '..ffff.192.168.0.4'),
-        ('ladspa-right-30', '..ffff.192.168.0.1'),
-        ('ladspa-right-30', '..ffff.192.168.0.3'),
-        ('ladspa-right-30', '..ffff.192.168.0.4'),
-        ('ladspa-left-60', '..ffff.192.168.0.1'),
-        ('ladspa-left-60', '..ffff.192.168.0.2'),
-        ('ladspa-left-60', '..ffff.192.168.0.4'),
-        ('ladspa-right-60', '..ffff.192.168.0.1'),
-        ('ladspa-right-60', '..ffff.192.168.0.2'),
-        ('ladspa-right-60', '..ffff.192.168.0.3'),
+        ("ladspa-left-30", "..ffff.192.168.0.2"),
+        ("ladspa-left-30", "..ffff.192.168.0.3"),
+        ("ladspa-left-30", "..ffff.192.168.0.4"),
+        ("ladspa-right-30", "..ffff.192.168.0.1"),
+        ("ladspa-right-30", "..ffff.192.168.0.3"),
+        ("ladspa-right-30", "..ffff.192.168.0.4"),
+        ("ladspa-left-60", "..ffff.192.168.0.1"),
+        ("ladspa-left-60", "..ffff.192.168.0.2"),
+        ("ladspa-left-60", "..ffff.192.168.0.4"),
+        ("ladspa-right-60", "..ffff.192.168.0.1"),
+        ("ladspa-right-60", "..ffff.192.168.0.2"),
+        ("ladspa-right-60", "..ffff.192.168.0.3"),
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
