@@ -13,6 +13,9 @@ class JackClientPatching:
 
     def disconnect_all(self, my_port):
         """disconnect everything from a port"""
+        if self.dry_run:
+            print("Disconnect all ports (except jack_capture) from", my_port)
+            return
         send_ports = self.jackClient.get_all_connections(my_port)
         for send_port in send_ports:
             # do not disconnect from jack_capture ports
@@ -26,11 +29,6 @@ class JackClientPatching:
                 print("error disconnecting, trying the other way round!", e)
                 print("disconnect", send_port.name, "from", my_port.name)
                 self.jackClient.disconnect(send_port, my_port)
-
-    # TODO:
-    #   * Probably better to just pass the jack clients directly into these methods
-    #   * Check naming makes sense
-    #   * I think some of these could be removed if we have some more generic and reusable methods
 
     def connect_ports(self, receive, send):
 

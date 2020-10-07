@@ -1,66 +1,79 @@
-# Helper functions for the lounge music
-
-import jack
 import psutil
 import subprocess
 import time
 
 
-def start_the_music(jackClient, port, debug=True):
-    """start looping the hold music, if it isn't already playing"""
-    hold_music_file_path = "/home/sam/lounge-music.mp3"
+class LoungeMusic(object):
+    """Lounge music patching stuff"""
 
-    all_hold_music_ports = jackClient.get_ports(port + ".*")
+    def __init__(self, jackClient, port, file_path):
+        super(LoungeMusic, self).__init__()
+        self.jackClient = jackClient
+        self.port = port
+        self.file_path = file_path
+        self.debug = False
 
-    if len(all_hold_music_ports) > 0:
-        if debug:
-            print("Lounge music already playing!")
-        return
-
-    if debug:
-        print("Start the lounge music please!")
-
-    # TODO: change to `mpg123.bin -o jack`
-    hold_music_proc = subprocess.Popen(
-        [
+    def get_command(self):
+        """Get the command to start mpg123"""
+        return [
             "mpg123-jack",
             "--name",
-            port,
+            self.port,
             "--no-control",
             "-q",
             "--loop",
             "-1",
-            hold_music_file_path,
+            self.file_path,
         ]
-    )
-    # wait for the jack client to register
-    time.sleep(2)
 
-    if debug:
-        all_hold_music_ports = jackClient.get_ports(port + ".*")
-        print(len(all_hold_music_ports))
+    def get_all_ports(self):
+        """Return all lounge_music ports"""
+        return self.jackClient.get_ports(self.port + ".*")
 
+    def start_the_music_with_retries(self, retries=3, debug=True):
+        """start looping the hold music, if it isn't already playing"""
 
-def kill_the_music(jackClient, port, debug=True):
-    """kill the hold music, if it's playing"""
-    all_hold_music_ports = jackClient.get_ports(port + ".*")
+        if len(self.get_all_ports()) > 0:
+            if debug:
+                print("Lounge music already playing!")
+            return
 
-    if len(all_hold_music_ports) == 0:
         if debug:
-            print("Lounge music is not playing!")
-        return
+            print("Start the lounge music please!")
 
-    if debug:
-        print("Kill the lounge music please!")
+        port_count = len(self.get_all_ports())
+        retry_count = 3
 
-    for proc in psutil.process_iter():
-        if "mpg123.bin" in proc.name():
-            if port in proc.cmdline():
-                print("Killing lounge music process id: ", proc.pid)
-                proc.terminate()
-                # proc.wait()
-    time.sleep(0.1)
+        while port_count == 0:
+            if retry_count == retries:
+                print("Loung music could not start!")
+                break
+            retry_count += 1
+            subprocess.Popen(self.get_command())
+            time.sleep(0.5)
+            port_count = len(self.get_all_ports())
 
-    if debug:
-        all_hold_music_ports = jackClient.get_ports(port + ".*")
-        print(len(all_hold_music_ports))
+        if debug:
+            print(len(self.get_all_ports()))
+
+    def kill_the_music(self, debug=True):
+        """kill the hold music, if it's playing"""
+
+        if len(self.get_all_ports()) == 0:
+            if debug:
+                print("Lounge music is not playing!")
+            return
+
+        if debug:
+            print("Kill the lounge music please!")
+
+        for proc in psutil.process_iter():
+            if "mpg123.bin" in proc.name():
+                if self.port in proc.cmdline():
+                    print("Killing lounge music process id: ", proc.pid)
+                    proc.terminate()
+
+        time.sleep(0.1)
+
+        if debug:
+            print(len(self.get_all_ports()))
