@@ -33,7 +33,6 @@ class StereoRecording(object):
                 if proc.cmdline()[2] == "darkice-":
                     return proc
 
-
     def start(self):
         if self.dry_run:
             print("Start recording if not running already")
@@ -45,7 +44,6 @@ class StereoRecording(object):
             print("starting...")
             mysub = subprocess.Popen(self.generate_subprocess_cmd())
             print("Recording started, process num: ", mysub.pid)
-
 
     def stop(self):
         if self.dry_run:

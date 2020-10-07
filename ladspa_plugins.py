@@ -13,34 +13,38 @@ class LadspaPlugins(object):
         self.dry_run = dry_run
 
     def get_panning_positions(self, number_of_clients):
-      if number_of_clients == 2 or number_of_clients == 3:
-        return [self.all_positions[5], (self.all_positions[5]-0.01),
-                self.all_positions[6], (self.all_positions[6]+0.01)]
-      if number_of_clients == 4:
-        return self.all_positions[3:7]
-      if number_of_clients == 5:
-        return [self.all_positions[0]] + self.all_positions[3:7]
-      if number_of_clients == 6:
-        return self.all_positions[1:3] + self.all_positions[5:9]
-      if number_of_clients == 7:
-        return self.all_positions[0:3] + self.all_positions[5:9]
-      if number_of_clients == 8:
-        return self.all_positions[1:9]
-      if number_of_clients == 9:
-        return self.all_positions[0:9]
-      if number_of_clients == 10:
-        return self.all_positions[1:11]
-      if number_of_clients == 11:
-        return self.all_positions[0:11]
+        if number_of_clients == 2 or number_of_clients == 3:
+            return [
+                self.all_positions[5],
+                (self.all_positions[5] - 0.01),
+                self.all_positions[6],
+                (self.all_positions[6] + 0.01),
+            ]
+        if number_of_clients == 4:
+            return self.all_positions[3:7]
+        if number_of_clients == 5:
+            return [self.all_positions[0]] + self.all_positions[3:7]
+        if number_of_clients == 6:
+            return self.all_positions[1:3] + self.all_positions[5:9]
+        if number_of_clients == 7:
+            return self.all_positions[0:3] + self.all_positions[5:9]
+        if number_of_clients == 8:
+            return self.all_positions[1:9]
+        if number_of_clients == 9:
+            return self.all_positions[0:9]
+        if number_of_clients == 10:
+            return self.all_positions[1:11]
+        if number_of_clients == 11:
+            return self.all_positions[0:11]
 
     def generate_port_name(self, panning_position):
         """Returns a ladspa port name"""
         if panning_position == 0:
             return "ladspa-centre"
         elif panning_position < 0:
-            return "ladspa-left-" + str(int(abs(panning_position*100)))
+            return "ladspa-left-" + str(int(abs(panning_position * 100)))
         else:
-            return "ladspa-right-" + str(int(panning_position*100))
+            return "ladspa-right-" + str(int(panning_position * 100))
 
     def get_port(self, panning_position, all_ladspa_ports):
         """Start a ladspa plugin if it isn't running and return port name"""
@@ -53,19 +57,22 @@ class LadspaPlugins(object):
 
     def get_ports(self, no_of_clients, all_ladspa_ports):
         panning_positions = self.get_panning_positions(no_of_clients)
-        ladspa_ports = [self.get_port(position, all_ladspa_ports) for position in panning_positions]
+        ladspa_ports = [
+            self.get_port(position, all_ladspa_ports) for position in panning_positions
+        ]
         return ladspa_ports
 
     def generate_subprocess_cmd(self, panning_position):
-      port_name = self.generate_port_name(panning_position)
-      return [self.jackspa_path,
-              "-j",
-              port_name,
-              "-i",
-              "0:0:0:" + str(panning_position) + ":0:0",
-              "/usr/lib/ladspa/inv_input.so",
-              "3301",
-              ]
+        port_name = self.generate_port_name(panning_position)
+        return [
+            self.jackspa_path,
+            "-j",
+            port_name,
+            "-i",
+            "0:0:0:" + str(panning_position) + ":0:0",
+            "/usr/lib/ladspa/inv_input.so",
+            "3301",
+        ]
 
     def kill_plugins(self):
         """kill ladspa plugins"""
