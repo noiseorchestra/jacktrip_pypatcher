@@ -1,10 +1,11 @@
 import jack
 import time
-import stereo_recording
+from stereo_recording import StereoRecording
 import jack_client_patching as p
-import ladspa_plugins as ladspa
+from ladspa_plugins import LadspaPlugins
 from lounge_music import LoungeMusic
 from darkice import Darkice
+
 
 def disconnect(jackClient, dry_run, lounge_music_port):
     """Disconnect all autopatched ports"""
@@ -17,7 +18,6 @@ def disconnect(jackClient, dry_run, lounge_music_port):
 
     jcp = p.JackClientPatching(jackClient, dry_run)
 
-    # TODO: implement dry_run mode!
     for receive_port in all_jacktrip_receive_ports:
         jcp.disconnect_all(receive_port)
 
@@ -35,24 +35,12 @@ def get_current_clients(jackClient, dry_run):
     )
 
 
-def verify_ladspa_plugins(jackClient):
-    """Verify that the LADSPA plugins are running and abort if not"""
-    all_left_ladspa_ports = jackClient.get_ports("ladspa-left-.*")
-    if len(all_left_ladspa_ports) < 1:
-        print("Start LADSPA plugins please!")
-        # TODO: verify SystemExit is working as intended
-        SystemExit(1)
-
-
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
     print("=== Clients ===")
     print("client count:", len(jacktrip_clients))
     print("clients", jacktrip_clients)
-
-    lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
-    darkice = Darkice(jackClient, "darkice")
 
     all_panning_positions = [
         0,
@@ -68,6 +56,13 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         0.75,
     ]
 
+    lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
+    stereo_recording = StereoRecording("/home/sam/darkice-", dry_run)
+    darkice = Darkice(jackClient, "darkice", dry_run)
+    ladspa = LadspaPlugins(
+        jackClient, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run
+    )
+
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, lounge_music.port)
 
@@ -77,16 +72,16 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("Current ladspa ports: ", len(all_ladspa_ports))
 
     if len(jacktrip_clients) <= 1 and len(all_ladspa_ports) > 0:
-        ladspa.kill_plugins(jackClient)
+        ladspa.kill_plugins()
 
     print("=== Creating new connections ===")
 
-    darkice_port = darkice.get_port(dry_run)
+    darkice_port = darkice.get_port()
     print("darkice port:", darkice_port)
 
     jcp = p.JackClientPatching(jackClient, dry_run)
 
-    max_supported_clients = len(all_panning_positions)
+    max_supported_clients = len(ladspa.panning_positions)
     if len(jacktrip_clients) > max_supported_clients:
         print(
             "Unsupported number of clients, patching",
@@ -121,14 +116,14 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 2 or len(jacktrip_clients) == 3:
 
-        panning_positions = ladspa.get_panning_positions(len(jacktrip_clients), all_panning_positions)
+        panning_positions = ladspa.get_panning_positions(len(jacktrip_clients))
 
         # ports needed for 2 & 3 client sessions
         # if we like this method we can add the positions to all_panning_positions
-        ladspa_mid_left_1 = ladspa.get_port(jackClient, panning_positions[0], all_ladspa_ports)
-        ladspa_mid_left_2 = ladspa.get_port(jackClient, panning_positions[1], all_ladspa_ports)
-        ladspa_mid_right_1 = ladspa.get_port(jackClient, panning_positions[2], all_ladspa_ports)
-        ladspa_mid_right_2 = ladspa.get_port(jackClient, panning_positions[3], all_ladspa_ports)
+        ladspa_mid_left_1 = ladspa.get_port(panning_positions[0], all_ladspa_ports)
+        ladspa_mid_left_2 = ladspa.get_port(panning_positions[1], all_ladspa_ports)
+        ladspa_mid_right_1 = ladspa.get_port(panning_positions[2], all_ladspa_ports)
+        ladspa_mid_right_2 = ladspa.get_port(panning_positions[3], all_ladspa_ports)
 
     if len(jacktrip_clients) == 2:
 
@@ -167,9 +162,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
 
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
-        ladspa_ports = ladspa.get_ports(
-            jackClient, len(jacktrip_clients), all_panning_positions, all_ladspa_ports
-        )
+        ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
         jcp.set_all_connections(jacktrip_clients, ladspa_ports)
         jcp.make_all_connections()
 

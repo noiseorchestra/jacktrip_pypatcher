@@ -15,6 +15,9 @@ class JackClientPatching:
 
     def disconnect_all(self, my_port):
         """disconnect everything from a port"""
+        if self.dry_run:
+            print("Disconnect all ports (except jack_capture) from", my_port)
+            return
         send_ports = self.jackClient.get_all_connections(my_port)
         for send_port in send_ports:
             # do not disconnect from jack_capture ports
