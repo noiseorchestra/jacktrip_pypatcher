@@ -17,7 +17,6 @@ def disconnect(jackClient, dry_run, lounge_music_port):
 
     jcp = p.JackClientPatching(jackClient, dry_run)
 
-    # TODO: implement dry_run mode!
     for receive_port in all_jacktrip_receive_ports:
         jcp.disconnect_all(receive_port)
 
