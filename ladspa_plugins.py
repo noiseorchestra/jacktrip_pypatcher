@@ -61,7 +61,7 @@ def generate_subprocess_cmd(panning_position):
           "-j",
           port_name,
           "-i",
-          "0:0:0:" + str(panning_position) + ":0:0",
+          "0:0:-2:" + str(panning_position) + ":0:0",
           "/usr/lib/ladspa/inv_input.so",
           "3301",
           ]
