@@ -1,4 +1,5 @@
 from ladspa_plugins import LadspaPlugins
+from unittest.mock import Mock
 
 
 def test_generate_subprocess_cmd(position=0.3):
@@ -37,13 +38,11 @@ def test_generate_port_name():
 
 # run pytest with -rP flag to see stdout logs showing which ports need to be started
 def test_get_and_check_port():
-    class LadspaClient:
-        def __init__(self, name):
-            self.name = name
-
     ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
     panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
-    all_existing_ladspa_ports = [LadspaClient("ladspa-centre")]
+    ladspa_clients = Mock()
+    ladspa_clients.name = "ladspa-centre"
+    all_existing_ladspa_ports = [ladspa_clients]
 
     result = [
         "ladspa-centre",
@@ -61,10 +60,6 @@ def test_get_and_check_port():
 
 # run pytest with -rP flag to see stdout logs showing which ports need to be started
 def test_get_ports():
-    class LadspaClient:
-        def __init__(self, name):
-            self.name = name
-
     all_panning_positions = [
         0,
         -0.15,
@@ -82,9 +77,14 @@ def test_get_ports():
         None, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run=True
     )
     no_of_clients = 4
+    centre_mock = Mock()
+    centre_mock.name = "ladspa-centre"
+    left_mock = Mock()
+    left_mock.name = "ladspa-left-30"
+
     all_existing_ladspa_ports = [
-        LadspaClient("ladspa-centre"),
-        LadspaClient("ladspa-left-30"),
+        centre_mock,
+        left_mock,
     ]
     panning_positions = [
         ladspa.generate_port_name(position) for position in all_panning_positions[3:7]
