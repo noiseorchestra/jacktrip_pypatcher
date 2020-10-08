@@ -81,7 +81,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     jcp = p.JackClientPatching(jackClient, dry_run)
 
-    max_supported_clients = len(ladspa.panning_positions)
+    max_supported_clients = len(ladspa.all_positions)
     if len(jacktrip_clients) > max_supported_clients:
         print(
             "Unsupported number of clients, patching",
