@@ -1,4 +1,3 @@
-import jack
 import jacktrip_pypatcher
 import ladspa_plugins as ladspa
 from unittest.mock import Mock
