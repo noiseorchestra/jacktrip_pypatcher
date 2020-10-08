@@ -40,9 +40,8 @@ def test_generate_port_name():
 def test_get_and_check_port():
     ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
     panning_positions = [0, -0.3, 0.3, -0.6, 0.6]
-    ladspa_client = Mock()
-    ladspa_client.name = "ladspa-centre"
-    all_existing_ladspa_ports = [ladspa_client]
+    all_existing_ladspa_ports = [Mock()]
+    all_existing_ladspa_ports[0].name = "ladspa-centre"
 
     result = [
         "ladspa-centre",
