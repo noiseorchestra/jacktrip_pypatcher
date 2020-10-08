@@ -28,17 +28,6 @@ def disconnect(jackClient, dry_run, lounge_music_port):
         jcp.disconnect_all(port)
 
 
-def connect_all(jcp, jacktrip_clients, ladspa_ports):
-    """Connect all JackTrip clients to a list of ladspa ports"""
-    for i, ladspa_port in enumerate(ladspa_ports):
-        jcp.connect_to_ladspa(jacktrip_clients[i], ladspa_port)
-        for jacktrip_client in jacktrip_clients:
-            if jacktrip_client == jacktrip_clients[i]:
-                continue
-            else:
-                jcp.connect_from_ladspa(ladspa_port, jacktrip_client)
-
-
 def get_current_clients(jackClient, dry_run):
     """Get an array of client jack port prefixes"""
     return list(
@@ -174,7 +163,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
         ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
-        connect_all(jcp, jacktrip_clients, ladspa_ports)
+        jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+        jcp.make_all_connections()
 
         print("-- darkice --")
         for ladspa_port in ladspa_ports:
