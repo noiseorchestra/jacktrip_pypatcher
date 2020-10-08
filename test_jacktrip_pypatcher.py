@@ -1,10 +1,15 @@
 import jack
 import jacktrip_pypatcher
 import ladspa_plugins as ladspa
+from unittest.mock import Mock
 
 
 def run_pypatcher_voice_count(number_of_voices):
-    jackClient = jack.Client("TestAutoPatcher")
+    jackClient = Mock(spec=["get_ports"])
+    # We need to mock this in this way because we're going to split the name string
+    mockPort = Mock()
+    mockPort.name = "mockport:1"
+    jackClient.get_ports.return_value = [mockPort]
     dry_run = True
 
     jacktrip_clients = [
@@ -23,9 +28,12 @@ def run_pypatcher_voice_count(number_of_voices):
     ]
     jacktrip_clients = jacktrip_clients[0:number_of_voices]
 
-    # TODO: hacky way to use pytest - we know this assertion will fail, but at the moment
-    # we can just inspect the stdout
-    assert jacktrip_pypatcher.autopatch(jackClient, dry_run, jacktrip_clients) == True
+    # Nb. this won't test the logic of the patching, but may be useful as some kind
+    # of integration test to check for other issues
+    jacktrip_pypatcher.autopatch(jackClient, dry_run, jacktrip_clients)
+    assert jackClient.get_ports.call_count == 6
+    # This is going to test the last set of parameters passed to the function
+    jackClient.get_ports.assert_called_with("lounge-music.*")
 
 
 # TODO: when we have actual tests, we can use a loop here
