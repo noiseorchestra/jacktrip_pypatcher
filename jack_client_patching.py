@@ -75,8 +75,14 @@ class JackClientPatching:
 
     def make_all_connections(self):
 
-        [self.make_connection(c[0], c[1], "jacktrip", "ladspa") for c in self.connections_to_ladspa]
-        [self.make_connection(c[0], c[1], "ladspa", "jacktrip") for c in self.connections_from_ladspa]
+        [
+            self.make_connection(c[0], c[1], "jacktrip", "ladspa")
+            for c in self.connections_to_ladspa
+        ]
+        [
+            self.make_connection(c[0], c[1], "ladspa", "jacktrip")
+            for c in self.connections_from_ladspa
+        ]
 
     def get_send_string(self, send, send_type):
         send_types = {
@@ -91,7 +97,7 @@ class JackClientPatching:
         receive_types = {
             "jacktrip": ":receive_.*",
             "ladspa": ":Output.*",
-            "mpg123": ":.*"
+            "mpg123": ":.*",
         }
 
         return receive + receive_types[receive_type]
