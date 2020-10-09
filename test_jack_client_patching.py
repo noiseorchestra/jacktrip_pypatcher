@@ -45,6 +45,7 @@ def test_set_all_connections_4_clients():
     assert jcp.connections_to_ladspa == connections_to_ladspa
     assert jcp.connections_from_ladspa == connections_from_ladspa
 
+
 def test_set_all_connections_2_clients():
 
     jackClient = None
@@ -63,6 +64,7 @@ def test_set_all_connections_2_clients():
     jcp.set_one_to_one_client_connection(jacktrip_clients[1], jacktrip_clients[0])
 
     assert jcp.client_connections == client_connections
+
 
 def test_set_all_connections_3_clients():
 

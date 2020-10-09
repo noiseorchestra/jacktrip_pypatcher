@@ -87,15 +87,27 @@ class JackClientPatching:
 
         if len(jacktrip_clients) == 2:
 
-            self.set_one_to_one_client_connection(jacktrip_clients[0], jacktrip_clients[1])
-            self.set_one_to_one_client_connection(jacktrip_clients[1], jacktrip_clients[0])
+            self.set_one_to_one_client_connection(
+                jacktrip_clients[0], jacktrip_clients[1]
+            )
+            self.set_one_to_one_client_connection(
+                jacktrip_clients[1], jacktrip_clients[0]
+            )
 
         if len(jacktrip_clients) == 3:
 
-            self.set_one_to_one_ladspa_connection(jacktrip_clients[1], ladspa_ports[0], jacktrip_clients[0])
-            self.set_one_to_one_ladspa_connection(jacktrip_clients[1], ladspa_ports[1], jacktrip_clients[2])
-            self.set_one_to_many_ladspa_connections(jacktrip_clients[0], ladspa_ports[2], jacktrip_clients[1:])
-            self.set_one_to_many_ladspa_connections(jacktrip_clients[2], ladspa_ports[3], jacktrip_clients[:2])
+            self.set_one_to_one_ladspa_connection(
+                jacktrip_clients[1], ladspa_ports[0], jacktrip_clients[0]
+            )
+            self.set_one_to_one_ladspa_connection(
+                jacktrip_clients[1], ladspa_ports[1], jacktrip_clients[2]
+            )
+            self.set_one_to_many_ladspa_connections(
+                jacktrip_clients[0], ladspa_ports[2], jacktrip_clients[1:]
+            )
+            self.set_one_to_many_ladspa_connections(
+                jacktrip_clients[2], ladspa_ports[3], jacktrip_clients[:2]
+            )
 
         if len(jacktrip_clients) > 3:
 
@@ -105,7 +117,9 @@ class JackClientPatching:
                     if jacktrip_client == jacktrip_clients[i]:
                         continue
                     else:
-                        self.connections_from_ladspa.append((ladspa_port, jacktrip_client))
+                        self.connections_from_ladspa.append(
+                            (ladspa_port, jacktrip_client)
+                        )
 
     def make_all_connections(self):
         if self.dry_run:

@@ -35,6 +35,7 @@ def test_generate_port_name():
         ladspa.generate_port_name(position) for position in panning_positions
     ] == port_names
 
+
 def test_get_panning_positions():
 
     all_panning_positions = [
@@ -62,8 +63,31 @@ def test_get_panning_positions():
     positions_for_7_clients = [0, -0.15, 0.15, -0.45, 0.45, -0.6, 0.6]
     positions_for_8_clients = [-0.15, 0.15, -0.3, 0.3, -0.45, 0.45, -0.6, 0.6]
     positions_for_9_clients = [0, -0.15, 0.15, -0.3, 0.3, -0.45, 0.45, -0.6, 0.6]
-    positions_for_10_clients = [-0.15, 0.15, -0.3, 0.3, -0.45, 0.45, -0.6, 0.6, -0.75, 0.75]
-    positions_for_11_clients = [0, -0.15, 0.15, -0.3, 0.3, -0.45, 0.45, -0.6, 0.6, -0.75, 0.75]
+    positions_for_10_clients = [
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
+    positions_for_11_clients = [
+        0,
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
 
     assert ladspa.get_panning_positions(2) == positions_for_2_clients
     assert ladspa.get_panning_positions(3) == positions_for_3_clients
@@ -75,6 +99,7 @@ def test_get_panning_positions():
     assert ladspa.get_panning_positions(9) == positions_for_9_clients
     assert ladspa.get_panning_positions(10) == positions_for_10_clients
     assert ladspa.get_panning_positions(11) == positions_for_11_clients
+
 
 # run pytest with -rP flag to see stdout logs showing which ports need to be started
 def test_get_and_check_port():
