@@ -51,7 +51,7 @@ class LoungeMusic(object):
             return
 
         print("Start the lounge music please!")
-        retry_count = 3
+        retry_count = 0
 
         while port_count == 0 and retry_count < retries:
             retry_count += 1
