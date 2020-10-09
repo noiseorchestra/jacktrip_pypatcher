@@ -100,22 +100,6 @@ class JackClientPatching:
 
         self.connect_ports(mpg123 + ":.*", send + ":send_.*")
 
-    def connect_to_left(self, receive, send):
-        """connect receive port/s to left send"""
-        if self.dry_run:
-            print("Connect left", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_1")
-
-    def connect_to_right(self, receive, send):
-        """connect receive port/s to right send"""
-        if self.dry_run:
-            print("Connect right", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_.*")
-
     def connect_to_ladspa(self, receive, ladspa):
         """connect receive port/s to a ladspa plugin"""
         if self.dry_run:
