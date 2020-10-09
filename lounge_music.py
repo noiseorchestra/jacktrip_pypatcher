@@ -28,27 +28,29 @@ class LoungeMusic(object):
 
     def get_all_ports(self):
         """Return all lounge_music ports"""
+
+        ports = self.jackClient.get_ports(self.port + ".*")
+
         if self.dry_run:
             print("Called lounge_music.get_all_ports()")
-            print("Response:", self.jackClient.get_ports(self.port + ".*"))
+            print("Response:", ports)
 
-        return self.jackClient.get_ports(self.port + ".*")
+        return ports
 
     def start_the_music_with_retries(self, retries=3):
         """start looping the hold music, if it isn't already playing"""
-
-        port_count = len(self.get_all_ports())
 
         if self.dry_run:
             print("Start lounge music with", retries, "retries")
             return
 
-        if len(self.get_all_ports()) > 0:
+        port_count = len(self.get_all_ports())
+
+        if port_count > 0:
             print("Lounge music already playing!")
             return
 
         print("Start the lounge music please!")
-
         retry_count = 3
 
         while port_count == 0:
@@ -65,11 +67,11 @@ class LoungeMusic(object):
     def kill_the_music(self):
         """kill the hold music, if it's playing"""
 
-        no_of_ports = len(self.get_all_ports())
-
         if self.dry_run:
             print("Kill the music")
             return
+
+        no_of_ports = len(self.get_all_ports())
 
         if no_of_ports == 0:
             print("Lounge music is not playing!")
