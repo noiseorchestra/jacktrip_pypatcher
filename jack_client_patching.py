@@ -70,13 +70,13 @@ class JackClientPatching:
         self.client_connections.append((receive, send))
 
     def set_one_to_one_ladspa_connection(self, receive, ladspa_port, send):
-        """append one connection between JackTrip clients"""
+        """append one ladspa connection between JackTrip clients"""
 
         self.connections_to_ladspa.append((receive, ladspa_port))
         self.connections_from_ladspa.append((ladspa_port, send))
 
     def set_one_to_many_ladspa_connections(self, one_receive, ladspa_port, many_sends):
-        """append one-to-many connections between JackTrip clients"""
+        """append one-to-many ladspa connections between JackTrip clients"""
 
         self.connections_to_ladspa.append((one_receive, ladspa_port))
         for send in many_sends:
