@@ -74,33 +74,33 @@ class JackClientPatching:
                     self.connections_from_ladspa.append((ladspa_port, jacktrip_client))
 
     def make_all_connections(self):
-        # if self.dry_run:
-        #     print("Make connections to ladspa")
-        #     print(self.connections_to_ladspa)
-        #     print("Make connections from ladspa")
-        #     print(self.connections_from_ladspa)
-        #     return
 
         [self.make_connection(c[0], c[1], "jacktrip", "ladspa") for c in self.connections_to_ladspa]
         [self.make_connection(c[0], c[1], "ladspa", "jacktrip") for c in self.connections_from_ladspa]
 
-    def make_connection(self, send, receive, send_type, receive_type):
-        """make connection based on port types"""
-
-        receive_types = {
-            "jacktrip": ":receive_.*",
-            "ladspa": ":Output.*",
-            "mpg123": ":.*"
-        }
-
+    def get_send_string(self, send, send_type):
         send_types = {
             "jacktrip": ":send_.*",
             "ladspa": ":Input.*",
             "darkice": ":.*",
         }
 
-        receive = receive + receive_types[send_type]
-        send = send + send_types[send_type]
+        return send + send_types[send_type]
+
+    def get_receive_string(self, receive, receive_type):
+        receive_types = {
+            "jacktrip": ":receive_.*",
+            "ladspa": ":Output.*",
+            "mpg123": ":.*"
+        }
+
+        return receive + receive_types[receive_type]
+
+    def make_connection(self, send, receive, send_type, receive_type):
+        """make connection based on port types"""
+
+        receive = self.get_receive_string(receive, receive_type)
+        send = self.get_send_string(send, send_type)
 
         if self.dry_run:
             print("Connect", receive, "to", send)
