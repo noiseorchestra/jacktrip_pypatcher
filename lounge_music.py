@@ -37,26 +37,28 @@ class LoungeMusic(object):
 
         return ports
 
+    def start_the_music(self):
+        if self.dry_run:
+            print("Start lounge music!")
+            return
+        subprocess.Popen(self.get_command())
+        time.sleep(0.5)
+
     def start_the_music_with_retries(self, retries=3):
         """start looping the hold music, if it isn't already playing"""
 
-        if self.dry_run:
-            print("Start lounge music with", retries, "retries")
-            return
-
+        print("Start lounge music with", retries, "retries")
         port_count = len(self.get_all_ports())
 
         if port_count > 0:
             print("Lounge music already playing!")
             return
 
-        print("Start the lounge music please!")
         retry_count = 0
 
         while port_count == 0 and retry_count < retries:
             retry_count += 1
-            subprocess.Popen(self.get_command())
-            time.sleep(0.5)
+            self.start_the_music()
             port_count = len(self.get_all_ports())
 
         if port_count == 0:
