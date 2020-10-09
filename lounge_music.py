@@ -53,7 +53,7 @@ class LoungeMusic(object):
         print("Start the lounge music please!")
         retry_count = 3
 
-        while port_count == 0:
+        while port_count == 0 and retry_count < retries:
             retry_count += 1
             subprocess.Popen(self.get_command())
             time.sleep(0.5)
