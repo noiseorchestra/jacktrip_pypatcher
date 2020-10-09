@@ -11,6 +11,7 @@ class JackClientPatching:
         self.jackClient = jackClient
         self.connections_to_ladspa = []
         self.connections_from_ladspa = []
+        self.client_connections = []
         self.dry_run = dry_run
 
     def disconnect_all(self, my_port):
@@ -63,15 +64,48 @@ class JackClientPatching:
         except Exception as e:
             print("Error connecting ports:", e)
 
-    def set_all_connections(self, jacktrip_clients, ladspa_ports):
+    def set_one_to_one_client_connection(self, send, receive):
+        """append one connection between JackTrip clients"""
+
+        self.client_connections.append((send, receive))
+
+    def set_one_to_one_ladspa_connection(self, send, ladspa_port, receive):
+        """append one connection between JackTrip clients"""
+
+        self.connections_to_ladspa.append((send, ladspa_port))
+        self.connections_from_ladspa.append((ladspa_port, receive))
+
+    def set_one_to_many_ladspa_connections(self, one_send, ladspa_port, many_receives):
+        """append one-to-many connections between JackTrip clients"""
+
+        self.connections_to_ladspa.append((one_send, ladspa_port))
+        for receive in many_receives:
+            self.connections_from_ladspa.append((ladspa_port, receive))
+
+    def set_all_connections(self, jacktrip_clients, ladspa_ports=[]):
         """make list of all connections between JackTrip clients & ladspa ports"""
-        for i, ladspa_port in enumerate(ladspa_ports):
-            self.connections_to_ladspa.append((jacktrip_clients[i], ladspa_port))
-            for jacktrip_client in jacktrip_clients:
-                if jacktrip_client == jacktrip_clients[i]:
-                    continue
-                else:
-                    self.connections_from_ladspa.append((ladspa_port, jacktrip_client))
+
+        if len(jacktrip_clients) == 2:
+
+            self.set_one_to_one_client_connection(jacktrip_clients[0], jacktrip_clients[1])
+            self.set_one_to_one_client_connection(jacktrip_clients[1], jacktrip_clients[0])
+
+        if len(jacktrip_clients) == 3:
+
+            self.set_one_to_one_ladspa_connection(jacktrip_clients[1], ladspa_ports[0], jacktrip_clients[0])
+            self.set_one_to_one_ladspa_connection(jacktrip_clients[1], ladspa_ports[1], jacktrip_clients[2])
+            self.set_one_to_many_ladspa_connections(jacktrip_clients[0], ladspa_ports[2], jacktrip_clients[1:])
+            self.set_one_to_many_ladspa_connections(jacktrip_clients[2], ladspa_ports[3], jacktrip_clients[:2])
+
+        if len(jacktrip_clients) > 3:
+
+            for i, ladspa_port in enumerate(ladspa_ports):
+                self.connections_to_ladspa.append((jacktrip_clients[i], ladspa_port))
+                for jacktrip_client in jacktrip_clients:
+                    if jacktrip_client == jacktrip_clients[i]:
+                        continue
+                    else:
+                        self.connections_from_ladspa.append((ladspa_port, jacktrip_client))
 
     def make_all_connections(self):
         if self.dry_run:
@@ -83,6 +117,7 @@ class JackClientPatching:
 
         [self.connect_to_ladspa(c[0], c[1]) for c in self.connections_to_ladspa]
         [self.connect_from_ladspa(c[0], c[1]) for c in self.connections_from_ladspa]
+        [self.connect_to_centre(c[0], c[1]) for c in self.client_connections]
 
     def connect_to_centre(self, receive, send):
         """connect receive port/s to centre send"""
