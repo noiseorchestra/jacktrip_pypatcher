@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 from lounge_music import LoungeMusic
 
+
 def test_start_the_music_with_retries():
     jackClient = Mock(spec=["get_ports"])
     jackClient.get_ports.return_value = []
