@@ -37,6 +37,8 @@ class LoungeMusic(object):
     def start_the_music_with_retries(self, retries=3):
         """start looping the hold music, if it isn't already playing"""
 
+        port_count = len(self.get_all_ports())
+
         if self.dry_run:
             print("Start lounge music with", retries, "retries")
             return
@@ -47,7 +49,6 @@ class LoungeMusic(object):
 
         print("Start the lounge music please!")
 
-        port_count = len(self.get_all_ports())
         retry_count = 3
 
         while port_count == 0:
@@ -64,11 +65,13 @@ class LoungeMusic(object):
     def kill_the_music(self):
         """kill the hold music, if it's playing"""
 
+        no_of_ports = len(self.get_all_ports())
+
         if self.dry_run:
             print("Kill the music")
             return
 
-        if len(self.get_all_ports()) == 0:
+        if no_of_ports == 0:
             print("Lounge music is not playing!")
             return
         else:
