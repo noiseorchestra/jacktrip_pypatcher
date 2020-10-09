@@ -39,7 +39,7 @@ Systemd service files are in `./services`, see the [README.md](./services/README
 
 ## Usage
 
-TODO
+If all dependencies are configured correctly you can start the Jackd, Icecast and JackTrip services. Edit the relevant service config files if you want to change the default session configurations.
 
 ### hard-coded paths
 
