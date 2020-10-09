@@ -64,23 +64,23 @@ class JackClientPatching:
         except Exception as e:
             print("Error connecting ports:", e)
 
-    def set_one_to_one_client_connection(self, send, receive):
+    def set_one_to_one_client_connection(self, receive, send):
         """append one connection between JackTrip clients"""
 
-        self.client_connections.append((send, receive))
+        self.client_connections.append((receive, send))
 
-    def set_one_to_one_ladspa_connection(self, send, ladspa_port, receive):
+    def set_one_to_one_ladspa_connection(self, receive, ladspa_port, send):
         """append one connection between JackTrip clients"""
 
-        self.connections_to_ladspa.append((send, ladspa_port))
-        self.connections_from_ladspa.append((ladspa_port, receive))
+        self.connections_to_ladspa.append((receive, ladspa_port))
+        self.connections_from_ladspa.append((ladspa_port, send))
 
-    def set_one_to_many_ladspa_connections(self, one_send, ladspa_port, many_receives):
+    def set_one_to_many_ladspa_connections(self, one_receive, ladspa_port, many_sends):
         """append one-to-many connections between JackTrip clients"""
 
-        self.connections_to_ladspa.append((one_send, ladspa_port))
-        for receive in many_receives:
-            self.connections_from_ladspa.append((ladspa_port, receive))
+        self.connections_to_ladspa.append((one_receive, ladspa_port))
+        for send in many_sends:
+            self.connections_from_ladspa.append((ladspa_port, send))
 
     def set_all_connections(self, jacktrip_clients, ladspa_ports=[]):
         """make list of all connections between JackTrip clients & ladspa ports"""
