@@ -18,4 +18,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - run: python -m black --check .
-    - run: python -m pytest test_ladspa_plugins.py test_stereo_recording.py test_jacktrip_pypatcher.py
+    - run: python -m pytest test_ladspa_plugins.py test_stereo_recording.py test_jacktrip_pypatcher.py test_lounge_music.py
