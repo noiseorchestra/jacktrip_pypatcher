@@ -116,23 +116,16 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
-    if len(jacktrip_clients) == 2:
-        ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
-        jcp.set_all_connections(jacktrip_clients, ladspa_ports)
-        jcp.set_darkice_connections(ladspa_ports, darkice_port)
-        jcp.make_all_connections()
-
-    if len(jacktrip_clients) == 3:
+    if len(jacktrip_clients) >= 2 and len(jacktrip_clients) <= 11:
 
         ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
-        jcp.set_all_connections(jacktrip_clients, ladspa_ports)
-        jcp.set_darkice_connections([ladspa_ports[0]] + ladspa_ports[3:], darkice_port)
-        jcp.make_all_connections()
+        darkice_ladspa_ports = ladspa_ports
 
-    if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
-        ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
+        if len(jacktrip_clients) == 3:
+            darkice_ladspa_ports = [ladspa_ports[0]] + ladspa_ports[3:]
+
         jcp.set_all_connections(jacktrip_clients, ladspa_ports)
-        jcp.set_darkice_connections(ladspa_ports, darkice_port)
+        jcp.set_darkice_connections(darkice_ladspa_ports, darkice_port)
         jcp.make_all_connections()
 
     if len(jacktrip_clients) > 11:
