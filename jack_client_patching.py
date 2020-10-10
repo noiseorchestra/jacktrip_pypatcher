@@ -85,18 +85,35 @@ class JackClientPatching:
                 (self.ladspa_receive(ladspa), self.darkice_send(darkice))
             )
 
+    def set_connections_2_clients(self, jacktrip_ports, ladspa_ports):
+
+        jacktrip_receive_1 = self.jacktrip_receive(jacktrip_ports[0])
+        jacktrip_receive_2 = self.jacktrip_receive(jacktrip_ports[1])
+        jacktrip_send_1 = self.jacktrip_send(jacktrip_ports[0])
+        jacktrip_send_2 = self.jacktrip_send(jacktrip_ports[1])
+
+        self.connections.append((jacktrip_receive_1, jacktrip_send_2))
+        self.connections.append((jacktrip_receive_2, jacktrip_send_1))
+        self.connections.append((jacktrip_receive_1, self.ladspa_send(ladspa_ports[0])))
+        self.connections.append((jacktrip_receive_2, self.ladspa_send(ladspa_ports[1])))
+
     def set_all_connections(self, jacktrip_ports, ladspa_ports):
-        """make list of all connections between JackTrip clients & ladspa ports"""
-        for i, ladspa in enumerate(ladspa_ports):
-            jacktrip_receive = self.jacktrip_receive(jacktrip_ports[i])
-            ladspa_send = self.ladspa_send(ladspa)
-            self.connections.append((jacktrip_receive, ladspa_send))
-            for jacktrip_port in jacktrip_ports:
-                if jacktrip_port == jacktrip_ports[i]:
-                    continue
-                ladspa_receive = self.ladspa_receive(ladspa)
-                jacktrip_send = self.jacktrip_send(jacktrip_port)
-                self.connections.append((ladspa_receive, jacktrip_send))
+        """append all connections between JackTrip clients & ladspa ports"""
+
+        if len(jacktrip_ports) == 2:
+            self.set_connections_2_clients(jacktrip_ports, ladspa_ports)
+
+        if len(jacktrip_ports) > 3:
+            for i, ladspa in enumerate(ladspa_ports):
+                jacktrip_receive = self.jacktrip_receive(jacktrip_ports[i])
+                ladspa_send = self.ladspa_send(ladspa)
+                self.connections.append((jacktrip_receive, ladspa_send))
+                for jacktrip_port in jacktrip_ports:
+                    if jacktrip_port == jacktrip_ports[i]:
+                        continue
+                    ladspa_receive = self.ladspa_receive(ladspa)
+                    jacktrip_send = self.jacktrip_send(jacktrip_port)
+                    self.connections.append((ladspa_receive, jacktrip_send))
 
     def make_all_connections(self):
         if self.dry_run:
