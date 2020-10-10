@@ -166,69 +166,12 @@ class JackClientPatching:
 
         self.connect_ports(mpg123 + ":.*", send + ":send_.*")
 
-    def connect_to_left(self, receive, send):
-        """connect receive port/s to left send"""
-        if self.dry_run:
-            print("Connect left", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_1")
-
-    def connect_to_right(self, receive, send):
-        """connect receive port/s to right send"""
-        if self.dry_run:
-            print("Connect right", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_.*")
-
-    def connect_to_ladspa(self, receive, ladspa):
-        """connect receive port/s to a ladspa plugin"""
-        if self.dry_run:
-            print("Connect to ladspa", receive, "to", ladspa)
-            return
-
-        self.connect_ports(receive + ":receive_.*", ladspa + ":Input.*")
-
-    def connect_from_ladspa(self, ladspa, send):
-        """connect a ladspa plugin to send port/s"""
-        if self.dry_run:
-            print("Connect from ladspa", ladspa, "to", send)
-            return
-
-        self.connect_ports(ladspa + ":Output.*", send + ":send_.*")
-
     def connect_darkice_to_centre(self, receive, send):
         if self.dry_run:
             print("Connect centre", receive, "to", send)
             return
 
         self.connect_ports(receive + ":receive_.*", send + ".*")
-
-    def connect_darkice_to_left(self, receive, send):
-
-        """connect pair of receive ports to the send ports, left panned"""
-        if self.dry_run:
-            print("Connect left", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":left")
-
-    def connect_darkice_to_right(self, receive, send):
-        """connect pair of receive ports to the send ports, right panned"""
-        if self.dry_run:
-            print("Connect right", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":right")
-
-    def connect_darkice_from_ladspa(self, ladspa, send):
-        """connect a ladspa plugin to a pair of send ports"""
-        if self.dry_run:
-            print("Connect from ladspa", ladspa, "to", send)
-            return
-
-        self.connect_ports(ladspa + ":Output.*", send + ".*")
 
     def connect_mpg123_to_darkice(self, mpg123, send):
         """connect an instance of mpg123-jack to a darkice client"""
