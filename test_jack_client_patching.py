@@ -45,6 +45,7 @@ def test_set_all_connections():
     assert jcp.connections_to_ladspa == connections_to_ladspa
     assert jcp.connections_from_ladspa == connections_from_ladspa
 
+
 def test_set_all_connections_3_clients():
     pytest.xfail("This configuration not currently supported")
 
