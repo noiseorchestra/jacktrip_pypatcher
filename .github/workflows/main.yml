@@ -1,9 +1,27 @@
 name: "jacktrip_pypatcher"
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - trunk
+  pull_request:
 
 jobs:
   black:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+    - name: Install python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - run: python -m black --check .
+
+  pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,5 +35,4 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - run: python -m black --check .
-    - run: python -m pytest test_ladspa_plugins.py test_stereo_recording.py test_jacktrip_pypatcher.py
+    - run: python -m pytest test_ladspa_plugins.py test_stereo_recording.py test_jacktrip_pypatcher.py test_lounge_music.py
