@@ -56,7 +56,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         0.75,
     ]
 
-    lounge_music = LoungeMusic(jackClient, "lounge-music", "/home/sam/lounge-music.mp3")
+    lounge_music = LoungeMusic(
+        jackClient, "lounge-music", "/home/sam/lounge-music.mp3", dry_run
+    )
     stereo_recording = StereoRecording("/home/sam/darkice-", dry_run)
     darkice = Darkice(jackClient, "darkice", dry_run)
     ladspa = LadspaPlugins(
