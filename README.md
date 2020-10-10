@@ -67,4 +67,4 @@ $ python3 -m pytest
 
 ## Credits
 
-Written by Tom Ward ( http://www.madwort.co.uk ) as part of a project with Noise Orchestra ( https://noiseorchestra.org/ )
+Written by [Tom Ward](http://www.madwort.co.uk) and [Sam Andreae](https://www.samandreae.com/) as part of a project with [Noise Orchestra](https://noiseorchestra.org/)
