@@ -36,6 +36,70 @@ def test_generate_port_name():
     ] == port_names
 
 
+def test_get_panning_positions():
+
+    all_panning_positions = [
+        0,
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
+    ladspa = LadspaPlugins(
+        None, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run=True
+    )
+
+    positions_for_2_3_clients = [-0.45, 0.45, -0.46, 0.46]
+    positions_for_4_clients = [-0.3, 0.3, -0.45, 0.45]
+    positions_for_5_clients = [0, -0.3, 0.3, -0.45, 0.45]
+    positions_for_6_clients = [-0.15, 0.15, -0.45, 0.45, -0.6, 0.6]
+    positions_for_7_clients = [0, -0.15, 0.15, -0.45, 0.45, -0.6, 0.6]
+    positions_for_8_clients = [-0.15, 0.15, -0.3, 0.3, -0.45, 0.45, -0.6, 0.6]
+    positions_for_9_clients = [0, -0.15, 0.15, -0.3, 0.3, -0.45, 0.45, -0.6, 0.6]
+    positions_for_10_clients = [
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
+    positions_for_11_clients = [
+        0,
+        -0.15,
+        0.15,
+        -0.3,
+        0.3,
+        -0.45,
+        0.45,
+        -0.6,
+        0.6,
+        -0.75,
+        0.75,
+    ]
+
+    assert ladspa.get_panning_positions(2) == positions_for_2_3_clients
+    assert ladspa.get_panning_positions(3) == positions_for_2_3_clients
+    assert ladspa.get_panning_positions(4) == positions_for_4_clients
+    assert ladspa.get_panning_positions(5) == positions_for_5_clients
+    assert ladspa.get_panning_positions(6) == positions_for_6_clients
+    assert ladspa.get_panning_positions(7) == positions_for_7_clients
+    assert ladspa.get_panning_positions(8) == positions_for_8_clients
+    assert ladspa.get_panning_positions(9) == positions_for_9_clients
+    assert ladspa.get_panning_positions(10) == positions_for_10_clients
+    assert ladspa.get_panning_positions(11) == positions_for_11_clients
+
+
 # run pytest with -rP flag to see stdout logs showing which ports need to be started
 def test_get_and_check_port():
     ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
