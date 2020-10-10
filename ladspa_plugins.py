@@ -13,7 +13,9 @@ class LadspaPlugins(object):
         self.dry_run = dry_run
 
     def get_panning_positions(self, number_of_clients):
-        if number_of_clients == 2 or number_of_clients == 3:
+        if number_of_clients == 2:
+            return self.all_positions[5:7]
+        if number_of_clients == 3:
             return [
                 self.all_positions[5],
                 self.all_positions[6],
