@@ -1,4 +1,5 @@
 import jack_client_patching as p
+import pytest
 
 
 def test_set_all_connections():
