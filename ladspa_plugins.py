@@ -17,6 +17,7 @@ class LadspaPlugins(object):
             return self.all_positions[5:7]
         if number_of_clients == 3:
             return [
+                self.all_positions[0],
                 self.all_positions[5],
                 self.all_positions[6],
                 (self.all_positions[5] - 0.01),

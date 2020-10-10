@@ -56,7 +56,7 @@ def test_get_panning_positions():
     )
 
     positions_for_2_clients = [-0.45, 0.45]
-    positions_for_3_clients = [-0.45, 0.45, -0.46, 0.46]
+    positions_for_3_clients = [0, -0.45, 0.45, -0.46, 0.46]
     positions_for_4_clients = [-0.3, 0.3, -0.45, 0.45]
     positions_for_5_clients = [0, -0.3, 0.3, -0.45, 0.45]
     positions_for_6_clients = [-0.15, 0.15, -0.45, 0.45, -0.6, 0.6]
