@@ -99,6 +99,7 @@ def test_get_panning_positions():
     assert ladspa.get_panning_positions(10) == positions_for_10_clients
     assert ladspa.get_panning_positions(11) == positions_for_11_clients
 
+
 # run pytest with -rP flag to see stdout logs showing which ports need to be started
 def test_get_and_check_port():
     ladspa = LadspaPlugins(None, "/home/sam/ng-jackspa/jackspa-cli", [], dry_run=True)
