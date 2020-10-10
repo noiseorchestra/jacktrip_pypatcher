@@ -42,6 +42,7 @@ def test_set_all_connections():
 
     assert jcp.connections == connections
 
+
 def test_set_all_connections_3_clients():
     pytest.xfail("This configuration not currently supported")
 
