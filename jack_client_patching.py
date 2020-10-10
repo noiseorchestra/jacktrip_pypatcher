@@ -77,15 +77,15 @@ class JackClientPatching:
     def set_all_connections(self, jacktrip_ports, ladspa_ports):
         """make list of all connections between JackTrip clients & ladspa ports"""
         for i, ladspa in enumerate(ladspa_ports):
-            r = self.jacktrip_receive(jacktrip_ports[i])
-            s = self.ladspa_send(ladspa)
-            self.connections.append((r, s))
+            jacktrip_receive = self.jacktrip_receive(jacktrip_ports[i])
+            ladspa_send = self.ladspa_send(ladspa)
+            self.connections.append((jacktrip_receive, ladspa_send))
             for jacktrip_port in jacktrip_ports:
                 if jacktrip_port == jacktrip_ports[i]:
                     continue
-                r = self.ladspa_receive(ladspa)
-                s = self.jacktrip_send(jacktrip_port)
-                self.connections.append((r, s))
+                ladspa_send = self.ladspa_receive(ladspa)
+                jacktrip_receive = self.jacktrip_send(jacktrip_port)
+                self.connections.append((ladspa_send, jacktrip_receive))
 
     def make_all_connections(self):
         if self.dry_run:
