@@ -97,11 +97,38 @@ class JackClientPatching:
         self.connections.append((jacktrip_receive_1, self.ladspa_send(ladspa_ports[0])))
         self.connections.append((jacktrip_receive_2, self.ladspa_send(ladspa_ports[1])))
 
+    def set_connections_3_clients(self, jacktrip_ports, ladspa_ports):
+
+        jacktrip_receive_1 = self.jacktrip_receive(jacktrip_ports[0])
+        jacktrip_receive_2 = self.jacktrip_receive(jacktrip_ports[1])
+        jacktrip_receive_3 = self.jacktrip_receive(jacktrip_ports[2])
+        jacktrip_send_1 = self.jacktrip_send(jacktrip_ports[0])
+        jacktrip_send_2 = self.jacktrip_send(jacktrip_ports[1])
+        jacktrip_send_3 = self.jacktrip_send(jacktrip_ports[2])
+
+        for ladspa_port in ladspa_ports[0:3]:
+            self.connections.append(jacktrip_receive_1, self.ladspa_send(ladspa_port))
+
+        self.connections.append(jacktrip_receive_2, self.ladspa_send(ladspa_ports[3]))
+        self.connections.append(jacktrip_receive_3, self.ladspa_send(ladspa_ports[4]))
+
+        self.connections.append(self.ladspa_receive(ladspa_ports[3]), jacktrip_send_1)
+        self.connections.append(self.ladspa_receive(ladspa_ports[4]), jacktrip_send_1)
+
+        self.connections.append(self.ladspa_receive(ladspa_ports[1]), jacktrip_send_2)
+        self.connections.append(self.ladspa_receive(ladspa_ports[4]), jacktrip_send_2)
+
+        self.connections.append(self.ladspa_receive(ladspa_ports[3]), jacktrip_send_3)
+        self.connections.append(self.ladspa_receive(ladspa_ports[2]), jacktrip_send_3)
+
     def set_all_connections(self, jacktrip_ports, ladspa_ports):
         """append all connections between JackTrip clients & ladspa ports"""
 
         if len(jacktrip_ports) == 2:
             self.set_connections_2_clients(jacktrip_ports, ladspa_ports)
+
+        if len(jacktrip_ports) == 3:
+            self.set_connections_3_clients(jacktrip_ports, ladspa_ports)
 
         if len(jacktrip_ports) > 3:
             for i, ladspa in enumerate(ladspa_ports):
