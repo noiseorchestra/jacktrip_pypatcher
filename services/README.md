@@ -1,11 +1,11 @@
 # copy and set permissions for service and config files
 
 ```bash
-sudo cp services/jackd.service /etc/systemd/system/
-sudo chmod 644 /etc/systemd/system/jackd.service
-sudo chmod u+x /etc/systemd/system/jackd.service
+sudo chmod 644 /etc/systemd/system/*.service
+sudo chmod u+x /etc/systemd/system/*.service
+sudo cp services/*.service /etc/systemd/system/
 sudo mkdir /etc/jacktrip_pypatcher
-sudo cp services/config/jackd.conf /etc/jacktrip_pypatcher/jackd.conf
+sudo cp services/config/*.conf /etc/jacktrip_pypatcher/
 systemctl daemon-reload
 ```
 
