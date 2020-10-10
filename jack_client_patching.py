@@ -9,8 +9,7 @@ class JackClientPatching:
     def __init__(self, jackClient, dry_run):
         super(JackClientPatching, self).__init__()
         self.jackClient = jackClient
-        self.connections_to_ladspa = []
-        self.connections_from_ladspa = []
+        self.connections = []
         self.dry_run = dry_run
 
     def disconnect_all(self, my_port):
@@ -63,26 +62,35 @@ class JackClientPatching:
         except Exception as e:
             print("Error connecting ports:", e)
 
+    def jacktrip_receive(self, port):
+        return port + ":receive_.*"
+
+    def jacktrip_send(self, port):
+        return port + ":send_.*"
+
+    def ladspa_receive(self, port):
+        return port + ":Output.*"
+
+    def ladspa_send(self, port):
+        return port + ":Input.*"
+
     def set_all_connections(self, jacktrip_clients, ladspa_ports):
         """make list of all connections between JackTrip clients & ladspa ports"""
-        for i, ladspa_port in enumerate(ladspa_ports):
-            self.connections_to_ladspa.append((jacktrip_clients[i], ladspa_port))
+        for i, ladspa in enumerate(ladspa_ports):
+            self.connections.append((self.jacktrip_receive(jacktrip_clients[i]), self.ladspa_send(ladspa)))
             for jacktrip_client in jacktrip_clients:
                 if jacktrip_client == jacktrip_clients[i]:
                     continue
                 else:
-                    self.connections_from_ladspa.append((ladspa_port, jacktrip_client))
+                    self.connections.append((self.ladspa_receive(ladspa), self.jacktrip_send(jacktrip_client)))
 
     def make_all_connections(self):
         if self.dry_run:
-            print("Make connections to ladspa")
-            print(self.connections_to_ladspa)
-            print("Make connections from ladspa")
-            print(self.connections_from_ladspa)
+            print("Make all connections")
+            print(self.connections)
             return
 
-        [self.connect_to_ladspa(c[0], c[1]) for c in self.connections_to_ladspa]
-        [self.connect_from_ladspa(c[0], c[1]) for c in self.connections_from_ladspa]
+        [self.connect_ports(c[0], c[1]) for c in self.connections]
 
     def connect_to_centre(self, receive, send):
         """connect receive port/s to centre send"""
