@@ -83,9 +83,9 @@ class JackClientPatching:
             for jacktrip_port in jacktrip_ports:
                 if jacktrip_port == jacktrip_ports[i]:
                     continue
-                ladspa_send = self.ladspa_receive(ladspa)
-                jacktrip_receive = self.jacktrip_send(jacktrip_port)
-                self.connections.append((ladspa_send, jacktrip_receive))
+                ladspa_receive = self.ladspa_receive(ladspa)
+                jacktrip_send = self.jacktrip_send(jacktrip_port)
+                self.connections.append((ladspa_receive, jacktrip_send))
 
     def make_all_connections(self):
         if self.dry_run:
