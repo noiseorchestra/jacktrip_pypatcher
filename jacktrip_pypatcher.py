@@ -166,11 +166,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
         ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
         jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+        jcp.set_darkice_connections(ladspa_ports, darkice_port)
         jcp.make_all_connections()
-
-        print("-- darkice --")
-        for ladspa_port in ladspa_ports:
-            jcp.connect_darkice_from_ladspa(ladspa_port, darkice_port)
 
     if len(jacktrip_clients) > 11:
         print("Not yet implemented")

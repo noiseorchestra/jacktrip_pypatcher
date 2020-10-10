@@ -74,6 +74,17 @@ class JackClientPatching:
     def ladspa_send(self, port):
         return port + ":Input.*"
 
+    def darkice_send(self, port):
+        return port + ".*"
+
+    def set_darkice_connections(self, ladspa_ports, darkice):
+        """append darkice connections to connections list"""
+        print("-- darkice --")
+        for ladspa in ladspa_ports:
+            self.connections.append(
+                (self.ladspa_receive(ladspa), self.darkice_send(darkice))
+            )
+
     def set_all_connections(self, jacktrip_ports, ladspa_ports):
         """make list of all connections between JackTrip clients & ladspa ports"""
         for i, ladspa in enumerate(ladspa_ports):
