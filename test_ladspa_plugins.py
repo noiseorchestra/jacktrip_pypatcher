@@ -55,7 +55,8 @@ def test_get_panning_positions():
         None, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run=True
     )
 
-    positions_for_2_3_clients = [-0.45, 0.45, -0.46, 0.46]
+    positions_for_2_clients = [-0.45, 0.45]
+    positions_for_3_clients = [0, -0.45, 0.45, -0.46, 0.46]
     positions_for_4_clients = [-0.3, 0.3, -0.45, 0.45]
     positions_for_5_clients = [0, -0.3, 0.3, -0.45, 0.45]
     positions_for_6_clients = [-0.15, 0.15, -0.45, 0.45, -0.6, 0.6]
@@ -88,8 +89,8 @@ def test_get_panning_positions():
         0.75,
     ]
 
-    assert ladspa.get_panning_positions(2) == positions_for_2_3_clients
-    assert ladspa.get_panning_positions(3) == positions_for_2_3_clients
+    assert ladspa.get_panning_positions(2) == positions_for_2_clients
+    assert ladspa.get_panning_positions(3) == positions_for_3_clients
     assert ladspa.get_panning_positions(4) == positions_for_4_clients
     assert ladspa.get_panning_positions(5) == positions_for_5_clients
     assert ladspa.get_panning_positions(6) == positions_for_6_clients

@@ -116,57 +116,16 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
-    if len(jacktrip_clients) == 2 or len(jacktrip_clients) == 3:
+    if len(jacktrip_clients) >= 2 and len(jacktrip_clients) <= 11:
 
-        panning_positions = ladspa.get_panning_positions(len(jacktrip_clients))
-
-        # ports needed for 2 & 3 client sessions
-        # if we like this method we can add the positions to all_panning_positions
-        ladspa_mid_left_1 = ladspa.get_port(panning_positions[0], all_ladspa_ports)
-        ladspa_mid_right_1 = ladspa.get_port(panning_positions[1], all_ladspa_ports)
-        ladspa_mid_left_2 = ladspa.get_port(panning_positions[2], all_ladspa_ports)
-        ladspa_mid_right_2 = ladspa.get_port(panning_positions[3], all_ladspa_ports)
-
-    if len(jacktrip_clients) == 2:
-
-        jcp.connect_to_centre(jacktrip_clients[1], jacktrip_clients[0])
-        jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[1])
-
-        print("-- darkice --")
-        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa_mid_left_1)
-        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_mid_right_2)
-
-        jcp.connect_darkice_from_ladspa(ladspa_mid_left_1, darkice_port)
-        jcp.connect_darkice_from_ladspa(ladspa_mid_right_2, darkice_port)
-
-    if len(jacktrip_clients) == 3:
-        # Connections for 3 clients are a bit special as we need to make sure the L-R
-        # balance for each client is even (not two peers in one channel)
-
-        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_mid_left_1)
-        jcp.connect_to_ladspa(jacktrip_clients[1], ladspa_mid_right_1)
-        jcp.connect_to_ladspa(jacktrip_clients[0], ladspa_mid_left_2)
-        jcp.connect_to_ladspa(jacktrip_clients[2], ladspa_mid_right_2)
-
-        jcp.connect_from_ladspa(ladspa_mid_left_1, jacktrip_clients[0])
-        jcp.connect_from_ladspa(ladspa_mid_right_2, jacktrip_clients[0])
-
-        jcp.connect_from_ladspa(ladspa_mid_left_2, jacktrip_clients[1])
-        jcp.connect_from_ladspa(ladspa_mid_right_2, jacktrip_clients[1])
-
-        jcp.connect_from_ladspa(ladspa_mid_left_2, jacktrip_clients[2])
-        jcp.connect_from_ladspa(ladspa_mid_right_1, jacktrip_clients[2])
-
-        print("-- darkice --")
-
-        jcp.connect_darkice_from_ladspa(ladspa_mid_left_2, darkice_port)
-        jcp.connect_darkice_from_ladspa(ladspa_mid_right_2, darkice_port)
-        jcp.connect_darkice_to_centre(jacktrip_clients[1], darkice_port)
-
-    if len(jacktrip_clients) >= 4 and len(jacktrip_clients) <= 11:
         ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
+        darkice_ladspa_ports = ladspa_ports
+
+        if len(jacktrip_clients) == 3:
+            darkice_ladspa_ports = [ladspa_ports[0]] + ladspa_ports[3:]
+
         jcp.set_all_connections(jacktrip_clients, ladspa_ports)
-        jcp.set_darkice_connections(ladspa_ports, darkice_port)
+        jcp.set_darkice_connections(darkice_ladspa_ports, darkice_port)
         jcp.make_all_connections()
 
     if len(jacktrip_clients) > 11:

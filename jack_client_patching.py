@@ -85,18 +85,62 @@ class JackClientPatching:
                 (self.ladspa_receive(ladspa), self.darkice_send(darkice))
             )
 
+    def set_connections_2_clients(self, jacktrip_ports, ladspa_ports):
+
+        jacktrip_receive_1 = self.jacktrip_receive(jacktrip_ports[0])
+        jacktrip_receive_2 = self.jacktrip_receive(jacktrip_ports[1])
+        jacktrip_send_1 = self.jacktrip_send(jacktrip_ports[0])
+        jacktrip_send_2 = self.jacktrip_send(jacktrip_ports[1])
+
+        self.connections.append((jacktrip_receive_1, jacktrip_send_2))
+        self.connections.append((jacktrip_receive_2, jacktrip_send_1))
+        self.connections.append((jacktrip_receive_1, self.ladspa_send(ladspa_ports[0])))
+        self.connections.append((jacktrip_receive_2, self.ladspa_send(ladspa_ports[1])))
+
+    def set_connections_3_clients(self, jacktrip_ports, ladspa_ports):
+
+        jacktrip_receive_1 = self.jacktrip_receive(jacktrip_ports[0])
+        jacktrip_receive_2 = self.jacktrip_receive(jacktrip_ports[1])
+        jacktrip_receive_3 = self.jacktrip_receive(jacktrip_ports[2])
+        jacktrip_send_1 = self.jacktrip_send(jacktrip_ports[0])
+        jacktrip_send_2 = self.jacktrip_send(jacktrip_ports[1])
+        jacktrip_send_3 = self.jacktrip_send(jacktrip_ports[2])
+
+        for ladspa_port in ladspa_ports[0:3]:
+            self.connections.append((jacktrip_receive_1, self.ladspa_send(ladspa_port)))
+
+        self.connections.append((jacktrip_receive_2, self.ladspa_send(ladspa_ports[3])))
+        self.connections.append((jacktrip_receive_3, self.ladspa_send(ladspa_ports[4])))
+
+        self.connections.append((self.ladspa_receive(ladspa_ports[3]), jacktrip_send_1))
+        self.connections.append((self.ladspa_receive(ladspa_ports[4]), jacktrip_send_1))
+
+        self.connections.append((self.ladspa_receive(ladspa_ports[1]), jacktrip_send_2))
+        self.connections.append((self.ladspa_receive(ladspa_ports[4]), jacktrip_send_2))
+
+        self.connections.append((self.ladspa_receive(ladspa_ports[3]), jacktrip_send_3))
+        self.connections.append((self.ladspa_receive(ladspa_ports[2]), jacktrip_send_3))
+
     def set_all_connections(self, jacktrip_ports, ladspa_ports):
-        """make list of all connections between JackTrip clients & ladspa ports"""
-        for i, ladspa in enumerate(ladspa_ports):
-            jacktrip_receive = self.jacktrip_receive(jacktrip_ports[i])
-            ladspa_send = self.ladspa_send(ladspa)
-            self.connections.append((jacktrip_receive, ladspa_send))
-            for jacktrip_port in jacktrip_ports:
-                if jacktrip_port == jacktrip_ports[i]:
-                    continue
-                ladspa_receive = self.ladspa_receive(ladspa)
-                jacktrip_send = self.jacktrip_send(jacktrip_port)
-                self.connections.append((ladspa_receive, jacktrip_send))
+        """append all connections between JackTrip clients & ladspa ports"""
+
+        if len(jacktrip_ports) == 2:
+            self.set_connections_2_clients(jacktrip_ports, ladspa_ports)
+
+        if len(jacktrip_ports) == 3:
+            self.set_connections_3_clients(jacktrip_ports, ladspa_ports)
+
+        if len(jacktrip_ports) > 3:
+            for i, ladspa in enumerate(ladspa_ports):
+                jacktrip_receive = self.jacktrip_receive(jacktrip_ports[i])
+                ladspa_send = self.ladspa_send(ladspa)
+                self.connections.append((jacktrip_receive, ladspa_send))
+                for jacktrip_port in jacktrip_ports:
+                    if jacktrip_port == jacktrip_ports[i]:
+                        continue
+                    ladspa_receive = self.ladspa_receive(ladspa)
+                    jacktrip_send = self.jacktrip_send(jacktrip_port)
+                    self.connections.append((ladspa_receive, jacktrip_send))
 
     def make_all_connections(self):
         if self.dry_run:
@@ -122,69 +166,12 @@ class JackClientPatching:
 
         self.connect_ports(mpg123 + ":.*", send + ":send_.*")
 
-    def connect_to_left(self, receive, send):
-        """connect receive port/s to left send"""
-        if self.dry_run:
-            print("Connect left", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_1")
-
-    def connect_to_right(self, receive, send):
-        """connect receive port/s to right send"""
-        if self.dry_run:
-            print("Connect right", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_.*")
-
-    def connect_to_ladspa(self, receive, ladspa):
-        """connect receive port/s to a ladspa plugin"""
-        if self.dry_run:
-            print("Connect to ladspa", receive, "to", ladspa)
-            return
-
-        self.connect_ports(receive + ":receive_.*", ladspa + ":Input.*")
-
-    def connect_from_ladspa(self, ladspa, send):
-        """connect a ladspa plugin to send port/s"""
-        if self.dry_run:
-            print("Connect from ladspa", ladspa, "to", send)
-            return
-
-        self.connect_ports(ladspa + ":Output.*", send + ":send_.*")
-
     def connect_darkice_to_centre(self, receive, send):
         if self.dry_run:
             print("Connect centre", receive, "to", send)
             return
 
         self.connect_ports(receive + ":receive_.*", send + ".*")
-
-    def connect_darkice_to_left(self, receive, send):
-
-        """connect pair of receive ports to the send ports, left panned"""
-        if self.dry_run:
-            print("Connect left", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":left")
-
-    def connect_darkice_to_right(self, receive, send):
-        """connect pair of receive ports to the send ports, right panned"""
-        if self.dry_run:
-            print("Connect right", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":right")
-
-    def connect_darkice_from_ladspa(self, ladspa, send):
-        """connect a ladspa plugin to a pair of send ports"""
-        if self.dry_run:
-            print("Connect from ladspa", ladspa, "to", send)
-            return
-
-        self.connect_ports(ladspa + ":Output.*", send + ".*")
 
     def connect_mpg123_to_darkice(self, mpg123, send):
         """connect an instance of mpg123-jack to a darkice client"""
