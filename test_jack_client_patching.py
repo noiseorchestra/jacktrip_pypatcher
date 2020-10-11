@@ -1,6 +1,4 @@
 import jack_client_patching as p
-import pytest
-import jack_client_patching as p
 
 
 def test_set_jacktrip_connections_2_clients():
