@@ -23,22 +23,20 @@ class LadspaPlugins(object):
                 (self.all_positions[5] - 0.01),
                 (self.all_positions[6] + 0.01),
             ]
-        if number_of_clients == 4:
-            return self.all_positions[3:7]
-        if number_of_clients == 5:
-            return [self.all_positions[0]] + self.all_positions[3:7]
-        if number_of_clients == 6:
-            return self.all_positions[1:3] + self.all_positions[5:9]
-        if number_of_clients == 7:
-            return self.all_positions[0:3] + self.all_positions[5:9]
-        if number_of_clients == 8:
-            return self.all_positions[1:9]
-        if number_of_clients == 9:
-            return self.all_positions[0:9]
-        if number_of_clients == 10:
-            return self.all_positions[1:11]
-        if number_of_clients == 11:
-            return self.all_positions[0:11]
+
+        if number_of_clients % 2 == 0:
+            positions = []
+        else:
+            positions = [self.all_positions[0]]
+
+        if number_of_clients < 6:
+            return positions + self.all_positions[3:7]
+        if number_of_clients < 8:
+            return positions + self.all_positions[1:3] + self.all_positions[5:9]
+        if number_of_clients < 10:
+            return positions + self.all_positions[1:9]
+        if number_of_clients < 12:
+            return positions + self.all_positions[1:11]
 
     def generate_port_name(self, panning_position):
         """Returns a ladspa port name"""
