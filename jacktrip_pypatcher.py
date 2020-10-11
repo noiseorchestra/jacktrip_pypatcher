@@ -64,6 +64,16 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("client count:", len(jacktrip_clients))
     print("clients:", jacktrip_clients)
 
+    max_supported_clients = len(ladspa.all_positions)
+    if len(jacktrip_clients) > max_supported_clients:
+        print(
+            "Unsupported number of clients, patching",
+            max_supported_clients,
+            "of",
+            len(jacktrip_clients),
+        )
+        jacktrip_clients = jacktrip_clients[0:max_supported_clients]
+
     print("=== LADSPA ports ===")
     all_ladspa_ports = jackClient.get_ports("ladspa-.*")
     print("Current ladspa plugins:", len(all_ladspa_ports))
@@ -88,16 +98,6 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         SystemExit(1)
     else:
         lounge_music.start_the_music_with_retries()
-
-    max_supported_clients = len(ladspa.all_positions)
-    if len(jacktrip_clients) > max_supported_clients:
-        print(
-            "Unsupported number of clients, patching",
-            max_supported_clients,
-            "of",
-            len(jacktrip_clients),
-        )
-        jacktrip_clients = jacktrip_clients[0:max_supported_clients]
 
     if len(jacktrip_clients) == 1:
         print("=== Patch", len(jacktrip_clients), "client ===")
