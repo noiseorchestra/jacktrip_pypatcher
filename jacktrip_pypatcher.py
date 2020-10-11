@@ -1,5 +1,4 @@
 import jack
-import time
 from stereo_recording import StereoRecording
 import jack_client_patching as p
 from ladspa_plugins import LadspaPlugins
@@ -38,10 +37,6 @@ def get_current_clients(jackClient, dry_run):
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
-    print("=== Clients ===")
-    print("client count:", len(jacktrip_clients))
-    print("clients", jacktrip_clients)
-
     all_panning_positions = [
         0,
         -0.15,
@@ -55,33 +50,44 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         -0.75,
         0.75,
     ]
+    jackspa_path = "/home/sam/ng-jackspa/jackspa-cli"
+    lounge_music_path = "/home/sam/lounge-music.mp3"
+    recording_path_prefix = "/home/sam/darkice-"
 
-    lounge_music = LoungeMusic(
-        jackClient, "lounge-music", "/home/sam/lounge-music.mp3", dry_run
-    )
-    stereo_recording = StereoRecording("/home/sam/darkice-", dry_run)
+    lounge_music = LoungeMusic(jackClient, "lounge-music", lounge_music_path, dry_run)
+    stereo_recording = StereoRecording(recording_path_prefix, dry_run)
     darkice = Darkice(jackClient, "darkice", dry_run)
-    ladspa = LadspaPlugins(
-        jackClient, "/home/sam/ng-jackspa/jackspa-cli", all_panning_positions, dry_run
-    )
+    ladspa = LadspaPlugins(jackClient, jackspa_path, all_panning_positions, dry_run)
+    jcp = p.JackClientPatching(jackClient, dry_run)
+
+    print("=== JackTrip clients ===")
+    print("client count:", len(jacktrip_clients))
+    print("clients:", jacktrip_clients)
+
+    print("=== LADSPA ports ===")
+    all_ladspa_ports = jackClient.get_ports("ladspa-.*")
+    print("Current ladspa plugins:", len(all_ladspa_ports))
+    print("ports:", all_ladspa_ports)
+
+    if len(jacktrip_clients) <= 1 and len(all_ladspa_ports) > 0:
+        print("Killing LADSPA plugins")
+        ladspa.kill_plugins()
+        all_ladspa_ports = jackClient.get_ports("ladspa-.*")
+        print("Current ladspa plugins:", len(all_ladspa_ports))
+
+    print("=== Darkice ===")
+    darkice_port = darkice.get_port()
+    print("darkice port:", darkice_port)
 
     print("=== Disconnecting existing connections ===")
     disconnect(jackClient, dry_run, lounge_music.port)
 
-    print("=== Start LADSPA plugins ===")
-
-    all_ladspa_ports = jackClient.get_ports("ladspa-.*")
-    print("Current ladspa ports: ", len(all_ladspa_ports))
-
-    if len(jacktrip_clients) <= 1 and len(all_ladspa_ports) > 0:
-        ladspa.kill_plugins()
-
-    print("=== Creating new connections ===")
-
-    darkice_port = darkice.get_port()
-    print("darkice port:", darkice_port)
-
-    jcp = p.JackClientPatching(jackClient, dry_run)
+    print("=== Lounge Music ===")
+    if len(jacktrip_clients) != 1:
+        lounge_music.kill_the_music()
+        SystemExit(1)
+    else:
+        lounge_music.start_the_music_with_retries()
 
     max_supported_clients = len(ladspa.all_positions)
     if len(jacktrip_clients) > max_supported_clients:
@@ -93,31 +99,15 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         )
         jacktrip_clients = jacktrip_clients[0:max_supported_clients]
 
-    if len(jacktrip_clients) > 0:
-        stereo_recording.start()
-    else:
-        stereo_recording.stop()
-
-    if len(jacktrip_clients) != 1:
-        # Only play the hold music if there is exactly one person connected!
-        lounge_music.kill_the_music()
-        SystemExit(1)
-
     if len(jacktrip_clients) == 1:
-        # start hold music & patch to the one client
-        lounge_music.start_the_music_with_retries()
-
+        print("=== Patch", len(jacktrip_clients), "client ===")
         jcp.connect_mpg123_to_centre(lounge_music.port, jacktrip_clients[0])
-
-        # also connect loopback
         jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
-
-        print("-- darkice --")
         jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
     if len(jacktrip_clients) >= 2 and len(jacktrip_clients) <= 11:
-
+        print("=== Start LADSPA plugins ===")
         ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
         darkice_ladspa_ports = ladspa_ports
 
@@ -126,21 +116,21 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
         jcp.set_all_connections(jacktrip_clients, ladspa_ports)
         jcp.set_darkice_connections(darkice_ladspa_ports, darkice_port)
+        print("=== Patch", len(jacktrip_clients), "client ===")
         jcp.make_all_connections()
 
-    if len(jacktrip_clients) > 11:
-        print("Not yet implemented")
-        SystemExit(1)
+    print("=== Recording ===")
+    if len(jacktrip_clients) > 0:
+        stereo_recording.start()
+    else:
+        stereo_recording.stop()
 
 
 def main(dry_run=False):
     """Do some setup, then do the autopatch"""
     jackClient = jack.Client("MadwortAutoPatcher")
-
     jacktrip_clients = get_current_clients(jackClient, dry_run)
-
     autopatch(jackClient, dry_run, jacktrip_clients)
-
     jackClient.deactivate()
     jackClient.close()
 

@@ -32,7 +32,7 @@ def run_pypatcher_voice_count(number_of_voices):
     jacktrip_pypatcher.autopatch(jackClient, dry_run, jacktrip_clients)
     assert jackClient.get_ports.call_count == 4
     # This is going to test the last set of parameters passed to the function
-    jackClient.get_ports.assert_called_with("ladspa-.*")
+    jackClient.get_ports.assert_called_with("lounge-music.*")
 
 
 # TODO: when we have actual tests, we can use a loop here
