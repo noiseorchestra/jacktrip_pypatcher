@@ -95,7 +95,6 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     print("=== Lounge Music ===")
     if len(jacktrip_clients) != 1:
         lounge_music.kill_the_music()
-        SystemExit(1)
     else:
         lounge_music.start_the_music_with_retries()
 
