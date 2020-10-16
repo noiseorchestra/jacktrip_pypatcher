@@ -79,7 +79,6 @@ class JackClientPatching:
 
     def set_darkice_connections(self, ladspa_ports, darkice):
         """append darkice connections to connections list"""
-        print("-- darkice --")
         for ladspa in ladspa_ports:
             self.connections.append(
                 (self.ladspa_receive(ladspa), self.darkice_send(darkice))

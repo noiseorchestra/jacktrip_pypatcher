@@ -37,7 +37,6 @@ class StereoRecording(object):
         if self.dry_run:
             print("Start recording if not running already")
             return
-        print("-- recordings --")
         if self.darkice_process():
             print("already started!")
         else:
@@ -49,7 +48,6 @@ class StereoRecording(object):
         if self.dry_run:
             print("Stop recording if not stopped already")
             return
-        print("-- recordings --")
         myprocess = self.darkice_process()
         if not myprocess:
             print("No recording running, apparently!")
