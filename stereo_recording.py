@@ -3,6 +3,7 @@
 # import jack
 import psutil
 import subprocess
+from datetime import datetime
 
 
 class StereoRecording(object):
@@ -13,11 +14,18 @@ class StereoRecording(object):
         self.recording_path_prefix = recording_path_prefix
         self.dry_run = dry_run
 
+    def get_time_string(self):
+        return datetime.now().strftime("%Y_%m_%d_%H%M")
+
+    def get_filename_prefix(self):
+        time = self.get_time_string()
+        return self.recording_path_prefix + time + "-"
+
     def generate_subprocess_cmd(self):
         return [
             "jack_capture",
             "--filename-prefix",
-            self.recording_path_prefix,
+            self.get_filename_prefix(),
             "-S",
             "--channels",
             "2",
