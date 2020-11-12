@@ -5,6 +5,9 @@ Requires=jacktrip.service
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
+LimitRTPRIO=infinity
+LimitMEMLOCK=infinity
+LimitRTTIME=infinity
 ExecStart=/usr/bin/python3 -u /home/sam/jacktrip_pypatcher/patcher_watchgod.py
 WorkingDirectory=/home/sam/jacktrip_pypatcher/
 Restart=always
