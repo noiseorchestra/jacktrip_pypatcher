@@ -3,4 +3,5 @@ cffi==1.14.2
 JACK-Client==0.5.2
 psutil==5.7.2
 pytest==6.0.1
+pytest-freezegun==0.4.2
 watchgod==0.6
