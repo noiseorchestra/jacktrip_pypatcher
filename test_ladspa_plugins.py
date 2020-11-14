@@ -51,9 +51,7 @@ def test_get_panning_positions():
         -0.75,
         0.75,
     ]
-    ladspa = LadspaPlugins(
-        None, "jackspa-cli", all_panning_positions, dry_run=True
-    )
+    ladspa = LadspaPlugins(None, "jackspa-cli", all_panning_positions, dry_run=True)
 
     positions_for_2_clients = [-0.45, 0.45]
     positions_for_3_clients = [0, -0.45, 0.45, -0.46, 0.46]
@@ -137,9 +135,7 @@ def test_get_ports():
         -0.75,
         0.75,
     ]
-    ladspa = LadspaPlugins(
-        None, "jackspa-cli", all_panning_positions, dry_run=True
-    )
+    ladspa = LadspaPlugins(None, "jackspa-cli", all_panning_positions, dry_run=True)
     no_of_clients = 4
 
     all_existing_ladspa_ports = [
