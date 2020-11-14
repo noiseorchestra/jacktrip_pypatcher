@@ -50,7 +50,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         -0.75,
         0.75,
     ]
-    jackspa_path = "/home/sam/ng-jackspa/jackspa-cli"
+    jackspa_path = "jackspa-cli"
     lounge_music_path = "/home/sam/lounge-music.mp3"
     recording_path_prefix = "/home/sam/darkice-"
 
