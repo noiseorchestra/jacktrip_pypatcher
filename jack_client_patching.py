@@ -179,37 +179,3 @@ class JackClientPatching:
             return
 
         [self.connect_ports(c[0], c[1]) for c in self.connections]
-
-    def connect_to_centre(self, receive, send):
-        """connect receive port/s to centre send"""
-        if self.dry_run:
-            print("Connect centre", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ":send_.*")
-
-    def connect_mpg123_to_centre(self, mpg123, send):
-        """connect an instance of mpg123-jack to a jacktrip client"""
-        if self.dry_run:
-            print("Connect mpg123 centre", mpg123, "to", send)
-            return
-
-        self.connect_ports(mpg123 + ":.*", send + ":send_.*")
-
-    def connect_darkice_to_centre(self, receive, send):
-        if self.dry_run:
-            print("Connect centre", receive, "to", send)
-            return
-
-        self.connect_ports(receive + ":receive_.*", send + ".*")
-
-    def connect_mpg123_to_darkice(self, mpg123, send):
-        """connect an instance of mpg123-jack to a darkice client"""
-        if self.dry_run:
-            print("Connect mpg123 centre", mpg123, "to", send)
-            return
-        try:
-            self.connect_ports(mpg123 + ".*", send + ".*")
-        except jack.JackErrorCode as e:
-            print("Could not find mpg123, not patching ", send)
-            return
