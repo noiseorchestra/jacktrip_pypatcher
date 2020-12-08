@@ -25,7 +25,7 @@ def test_set_jacktrip_connections_1_client():
 def test_set_darkice_connections_1_clients():
 
     jackClient = None
-    lounge_music_port = "lounge-music.*"
+    lounge_music_port = "lounge-music"
     jacktrip_client = "..ffff.192.168.0.1"
     darkice_port = "darkice"
 
