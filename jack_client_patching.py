@@ -92,13 +92,21 @@ class JackClientPatching:
 
     def set_darkice_connections(self, ladspa_ports, darkice):
         """append darkice connections to connections list"""
+
         for ladspa in ladspa_ports:
             self.connections.append(
                 (self.ladspa_receive(ladspa), self.darkice_send(darkice))
             )
 
-    def set_connections_1_clients(self, jacktrip_ports, ladspa_ports):
-        pass
+    def set_connections_1_clients(self, jacktrip_ports, lounge_music_port):
+        """append jacktrip connections for one client"""
+
+        jacktrip_receive = self.jacktrip_receive(jacktrip_ports[0])
+        jacktrip_send = self.jacktrip_send(jacktrip_ports[0])
+        lounge_music_receive = self.mpg123_send(lounge_music_port)
+
+        self.connections.append((lounge_music_receive, jacktrip_send))
+        self.connections.append((jacktrip_receive, jacktrip_send))
 
     def set_connections_2_clients(self, jacktrip_ports, ladspa_ports):
 
@@ -136,11 +144,11 @@ class JackClientPatching:
         self.connections.append((self.ladspa_receive(ladspa_ports[3]), jacktrip_send_3))
         self.connections.append((self.ladspa_receive(ladspa_ports[2]), jacktrip_send_3))
 
-    def set_all_connections(self, jacktrip_ports, ladspa_ports, lounge_music_ports=None):
+    def set_all_connections(self, jacktrip_ports, ladspa_ports, lounge_music_port=None):
         """append all connections between JackTrip clients & ladspa ports"""
 
         if len(jacktrip_ports) == 1:
-            self.set_connections_1_clients(jacktrip_ports, lounge_music_ports)
+            self.set_connections_1_clients(jacktrip_ports, lounge_music_port)
 
         if len(jacktrip_ports) == 2:
             self.set_connections_2_clients(jacktrip_ports, ladspa_ports)

@@ -7,9 +7,7 @@ def test_set_jacktrip_connections_1_client():
     jacktrip_clients = [
         "..ffff.192.168.0.1",
     ]
-    lounge_music_ports = [
-        "lounge-music.*",
-    ]
+    lounge_music_port = "lounge-music"
 
     connections = [
         ("lounge-music.*", "..ffff.192.168.0.1:send_.*"),
@@ -17,7 +15,7 @@ def test_set_jacktrip_connections_1_client():
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, lounge_music_ports)
+    jcp.set_all_connections(jacktrip_clients, [], lounge_music_port)
 
     assert jcp.connections == connections
 
