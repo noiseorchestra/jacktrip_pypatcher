@@ -1,6 +1,45 @@
 import jack_client_patching as p
 
 
+def test_set_jacktrip_connections_1_client():
+
+    jackClient = None
+    jacktrip_clients = [
+        "..ffff.192.168.0.1",
+    ]
+    lounge_music_ports = [
+        "lounge-music.*",
+    ]
+
+    connections = [
+        ("lounge-music.*", "..ffff.192.168.0.1:send_.*"),
+        ("..ffff.192.168.0.1:receive_.*", "..ffff.192.168.0.1:send_.*")
+    ]
+
+    jcp = p.JackClientPatching(jackClient, dry_run=True)
+    jcp.set_all_connections(jacktrip_clients, lounge_music_ports)
+
+    assert jcp.connections == connections
+
+
+def test_set_darkice_connections_1_clients():
+
+    jackClient = None
+    lounge_music_port = "lounge-music.*"
+    jacktrip_client = "..ffff.192.168.0.1"
+    darkice_port = "darkice"
+
+    connections = [
+        ("..ffff.192.168.0.1:receive_.*", "darkice.*"),
+        ("lounge-music.*", "darkice.*")
+    ]
+
+    jcp = p.JackClientPatching(jackClient, dry_run=True)
+    jcp.set_darkice_connections_one_client(jacktrip_client, lounge_music_port, darkice_port)
+
+    assert jcp.connections == connections
+
+
 def test_set_jacktrip_connections_2_clients():
 
     jackClient = None
