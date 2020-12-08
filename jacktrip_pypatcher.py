@@ -98,23 +98,16 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     else:
         lounge_music.start_the_music_with_retries()
 
-    if len(jacktrip_clients) == 1:
-        print("=== Patch", len(jacktrip_clients), "client ===")
-        jcp.connect_mpg123_to_centre(lounge_music.port, jacktrip_clients[0])
-        jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
-        jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
-        jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
-
-    if len(jacktrip_clients) >= 2 and len(jacktrip_clients) <= 11:
+    if len(jacktrip_clients) >= 1 and len(jacktrip_clients) <= 11:
         print("=== Start LADSPA plugins ===")
         ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
         darkice_ladspa_ports = ladspa_ports
-
         if len(jacktrip_clients) == 3:
             darkice_ladspa_ports = [ladspa_ports[0]] + ladspa_ports[3:]
 
-        jcp.set_all_connections(jacktrip_clients, ladspa_ports)
-        jcp.set_darkice_connections(darkice_ladspa_ports, darkice_port)
+        jcp.set_all_connections(jacktrip_clients, ladspa_ports, lounge_music.port)
+        jcp.set_darkice_connections(darkice_ladspa_ports, darkice_port, jacktrip_clients, lounge_music.port)
+
         print("=== Patch", len(jacktrip_clients), "client ===")
         jcp.make_all_connections()
 
