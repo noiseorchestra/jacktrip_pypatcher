@@ -11,7 +11,7 @@ def test_set_jacktrip_connections_1_client():
 
     connections = [
         ("lounge-music.*", "..ffff.192.168.0.1:send_.*"),
-        ("..ffff.192.168.0.1:receive_.*", "..ffff.192.168.0.1:send_.*")
+        ("..ffff.192.168.0.1:receive_.*", "..ffff.192.168.0.1:send_.*"),
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
@@ -29,7 +29,7 @@ def test_set_darkice_connections_1_clients():
 
     connections = [
         ("..ffff.192.168.0.1:receive_.*", "darkice.*"),
-        ("lounge-music.*", "darkice.*")
+        ("lounge-music.*", "darkice.*"),
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)

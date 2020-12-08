@@ -80,7 +80,9 @@ class JackClientPatching:
     def mpg123_send(self, port):
         return port + ".*"
 
-    def set_darkice_connections_one_client(self, jacktrip_ports, lounge_music_port, darkice):
+    def set_darkice_connections_one_client(
+        self, jacktrip_ports, lounge_music_port, darkice
+    ):
         """append darkice connections for one client to connections list"""
 
         jacktrip_receive = self.jacktrip_receive(jacktrip_ports[0])
@@ -90,11 +92,15 @@ class JackClientPatching:
         self.connections.append((jacktrip_receive, darkice_send))
         self.connections.append((lounge_music_receive, darkice_send))
 
-    def set_darkice_connections(self, ladspa_ports, darkice, jacktrip_ports=[], lounge_music_port=None):
+    def set_darkice_connections(
+        self, ladspa_ports, darkice, jacktrip_ports=[], lounge_music_port=None
+    ):
         """append darkice connections to connections list"""
 
         if len(jacktrip_ports) == 1:
-            self.set_darkice_connections_one_client(jacktrip_ports, lounge_music_port, darkice)
+            self.set_darkice_connections_one_client(
+                jacktrip_ports, lounge_music_port, darkice
+            )
             return
 
         for ladspa in ladspa_ports:
