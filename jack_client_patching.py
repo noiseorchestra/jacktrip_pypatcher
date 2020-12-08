@@ -84,6 +84,9 @@ class JackClientPatching:
                 (self.ladspa_receive(ladspa), self.darkice_send(darkice))
             )
 
+    def set_connections_1_clients(self, jacktrip_ports, ladspa_ports):
+        pass
+
     def set_connections_2_clients(self, jacktrip_ports, ladspa_ports):
 
         jacktrip_receive_1 = self.jacktrip_receive(jacktrip_ports[0])
