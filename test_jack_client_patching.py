@@ -24,7 +24,7 @@ def test_set_darkice_connections_1_clients():
 
     jackClient = None
     lounge_music_port = "lounge-music"
-    jacktrip_client = "..ffff.192.168.0.1"
+    jacktrip_clients = ["..ffff.192.168.0.1"]
     darkice_port = "darkice"
 
     connections = [
@@ -33,7 +33,7 @@ def test_set_darkice_connections_1_clients():
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_darkice_connections_one_client(jacktrip_client, lounge_music_port, darkice_port)
+    jcp.set_darkice_connections([], darkice_port, jacktrip_clients, lounge_music_port)
 
     assert jcp.connections == connections
 
