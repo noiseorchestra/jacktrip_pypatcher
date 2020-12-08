@@ -57,7 +57,7 @@ class LadspaPlugins(object):
         return port_name
 
     def get_ports(self, no_of_clients, all_ladspa_ports):
-        if len(no_of_clients) == 1:
+        if no_of_clients == 1:
             return []
 
         panning_positions = self.get_panning_positions(no_of_clients)
