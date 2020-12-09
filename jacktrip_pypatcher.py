@@ -99,9 +99,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         lounge_music.start_the_music_with_retries()
 
     if len(jacktrip_clients) >= 1 and len(jacktrip_clients) <= 11:
-        print("=== Start LADSPA plugins ===")
-        ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
-        darkice_ladspa_ports = ladspa_ports
+        ladspa_ports = []
+        darkice_ladspa_ports = []
+        if len(jacktrip_clients) > 1:
+            print("=== Start LADSPA plugins ===")
+            ladspa_ports = ladspa.get_ports(len(jacktrip_clients), all_ladspa_ports)
+            darkice_ladspa_ports = ladspa_ports
         if len(jacktrip_clients) == 3:
             darkice_ladspa_ports = [ladspa_ports[0]] + ladspa_ports[3:]
 
