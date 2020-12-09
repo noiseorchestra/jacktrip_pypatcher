@@ -43,6 +43,7 @@ def test_pypatcher0():
     # rewrite of these tests.
     run_pypatcher_voice_count(0, expected_call_count=5)
 
+
 def test_pypatcher1():
     # different get_ports call count expected because of lounge_music being started
     # and ladspa being shut down. This is still a hack but can be fixed in a full
