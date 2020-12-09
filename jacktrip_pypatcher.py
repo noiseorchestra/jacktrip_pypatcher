@@ -89,9 +89,6 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     darkice_port = darkice.get_port()
     print("darkice port:", darkice_port)
 
-    print("=== Disconnecting existing connections ===")
-    disconnect(jackClient, dry_run, lounge_music.port)
-
     print("=== Lounge Music ===")
     if len(jacktrip_clients) != 1:
         lounge_music.kill_the_music()
@@ -112,6 +109,9 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         jcp.set_darkice_connections(
             darkice_ladspa_ports, darkice_port, jacktrip_clients, lounge_music.port
         )
+
+        print("=== Disconnecting existing connections ===")
+        disconnect(jackClient, dry_run, lounge_music.port)
 
         print("=== Patch", len(jacktrip_clients), "client ===")
         jcp.make_all_connections()
