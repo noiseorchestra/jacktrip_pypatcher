@@ -101,7 +101,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     if len(jacktrip_clients) == 1:
         print("=== Patch", len(jacktrip_clients), "client ===")
         # jcp.connect_mpg123_to_centre(lounge_music.port, jacktrip_clients[0])
-        jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
+        # jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
         # jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
