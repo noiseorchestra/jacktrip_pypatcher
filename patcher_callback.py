@@ -46,8 +46,8 @@ print("registering callbacks")
 @client.set_client_registration_callback
 def client_registration(name, register):
     print("client", repr(name), ["unregistered", "registered"][register])
-    print(name, " starts with '..'? (therefore JT client?)", name.startswith(".."))
-    if name.startswith(".."):
+    print(name, " starts with '__'? (therefore JT client?)", name.startswith("__"))
+    if name.startswith("__"):
         print("touching")
         touch_path = Path("/var/tmp/jacktrip_pypatcher")
         touch_path.touch()

@@ -19,7 +19,7 @@ $ sudo aptitude install invada-studio-plugins-ladspa
 $ git clone https://repo.or.cz/ng-jackspa.git
 $ sudo aptitude install libglib2.0-dev libncurses5-dev ladspa-sdk ladspa-sdk-dev
 $ cd ng-jackspa
-# trying to avoid building the GTK version, so avoid make install...!
+# trying to avoid building the GTK version, so avoid make install__.!
 $ make njackspa jackspa-cli
 $ cp njackspa jackspa-cli /usr/local/bin/
 $ njackspa /usr/lib/ladspa/inv_input.so 3301

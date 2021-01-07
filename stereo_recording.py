@@ -48,7 +48,7 @@ class StereoRecording(object):
         if self.darkice_process():
             print("already started!")
         else:
-            print("starting...")
+            print("starting__.")
             mysub = subprocess.Popen(self.generate_subprocess_cmd())
             print("Recording started, process num: ", mysub.pid)
 
