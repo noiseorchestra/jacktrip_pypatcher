@@ -47,7 +47,7 @@ print("registering callbacks")
 def client_registration(name, register):
     isJacktripClient = False
     if name.startswith("..") or name.startswith("__"):
-        isJacktripClient = True 
+        isJacktripClient = True
     print("client", repr(name), ["unregistered", "registered"][register])
     print(name, " starts with '..' or '__' ? (therefore JT client?)", isJacktripClient)
     if isJacktripClient:
