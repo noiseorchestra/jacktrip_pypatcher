@@ -15,50 +15,59 @@ from time import sleep
 import jacktrip_pypatcher as jtp
 from pathlib import Path
 
-print("setting error/info functions")
+
+def check_for_jacktrip_client(name):
+    if name.startswith("..") or name.startswith("__"):
+        return True
+    return False
 
 
-@jack.set_error_function
-def error(msg):
-    print("Error:", msg)
+def main():
+
+    print("setting error/info functions")
+
+    @jack.set_error_function
+    def error(msg):
+        print("Error:", msg)
+
+    @jack.set_info_function
+    def info(msg):
+        print("Info:", msg)
+
+    print("starting chatty client")
+
+    client = jack.Client("Chatty-Client")
+
+    if client.status.server_started:
+        print("JACK server was started")
+    else:
+        print("JACK server was already running")
+    if client.status.name_not_unique:
+        print("unique client name generated:", client.name)
+
+    print("registering callbacks")
+
+    @client.set_client_registration_callback
+    def client_registration(name, register):
+        isJacktripClient = check_for_jacktrip_client(name)
+        print("client", repr(name), ["unregistered", "registered"][register])
+        print(
+            name, " starts with '..' or '__' ? (therefore JT client?)", isJacktripClient
+        )
+        if isJacktripClient:
+            print("touching")
+            touch_path = Path("/var/tmp/jacktrip_pypatcher")
+            touch_path.touch()
+
+    @client.set_port_connect_callback
+    def port_connect(a, b, connect):
+        print(["disconnected", "connected"][connect], a, "and", b)
+
+    print("activating JACK")
+    with client:
+        while True:
+            sleep(0.1)
 
 
-@jack.set_info_function
-def info(msg):
-    print("Info:", msg)
-
-
-print("starting chatty client")
-
-client = jack.Client("Chatty-Client")
-
-if client.status.server_started:
-    print("JACK server was started")
-else:
-    print("JACK server was already running")
-if client.status.name_not_unique:
-    print("unique client name generated:", client.name)
-
-
-print("registering callbacks")
-
-
-@client.set_client_registration_callback
-def client_registration(name, register):
-    print("client", repr(name), ["unregistered", "registered"][register])
-    print(name, " starts with '..'? (therefore JT client?)", name.startswith(".."))
-    if name.startswith(".."):
-        print("touching")
-        touch_path = Path("/var/tmp/jacktrip_pypatcher")
-        touch_path.touch()
-
-
-@client.set_port_connect_callback
-def port_connect(a, b, connect):
-    print(["disconnected", "connected"][connect], a, "and", b)
-
-
-print("activating JACK")
-with client:
-    while True:
-        sleep(0.1)
+if __name__ == "__main__":
+    main()

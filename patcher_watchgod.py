@@ -7,6 +7,7 @@ from watchgod import run_process
 def foobar():
     while True:
         try:
+            time.sleep(2)
             jtp.main()
             time.sleep(6000)
         except Exception as e:
