@@ -37,19 +37,6 @@ def get_current_clients(jackClient, dry_run):
 def autopatch(jackClient, dry_run, jacktrip_clients):
     """Autopatch all the things!"""
 
-    all_panning_positions = [
-        0,
-        -0.15,
-        0.15,
-        -0.3,
-        0.3,
-        -0.45,
-        0.45,
-        -0.6,
-        0.6,
-        -0.75,
-        0.75,
-    ]
     jackspa_path = "jackspa-cli"
     lounge_music_path = "/home/sam/lounge-music.mp3"
     recording_path_prefix = "/home/sam/darkice-"
@@ -57,22 +44,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     lounge_music = LoungeMusic(jackClient, "lounge-music", lounge_music_path, dry_run)
     stereo_recording = StereoRecording(recording_path_prefix, dry_run)
     darkice = Darkice(jackClient, "darkice", dry_run)
-    ladspa = LadspaPlugins(jackClient, jackspa_path, all_panning_positions, dry_run)
+    ladspa = LadspaPlugins(jackClient, jackspa_path, dry_run)
     jcp = p.JackClientPatching(jackClient, dry_run)
 
     print("=== JackTrip clients ===")
     print("client count:", len(jacktrip_clients))
     print("clients:", jacktrip_clients)
-
-    max_supported_clients = len(ladspa.all_positions)
-    if len(jacktrip_clients) > max_supported_clients:
-        print(
-            "Unsupported number of clients, patching",
-            max_supported_clients,
-            "of",
-            len(jacktrip_clients),
-        )
-        jacktrip_clients = jacktrip_clients[0:max_supported_clients]
 
     print("=== LADSPA ports ===")
     all_ladspa_ports = jackClient.get_ports("ladspa-.*")

@@ -1,42 +1,36 @@
 import subprocess
 import time
+import numpy as np
 
 
 class LadspaPlugins(object):
     """LadspaPlugins patching stuff"""
 
-    def __init__(self, jackClient, jackspa_path, all_positions, dry_run=False):
+    def __init__(self, jackClient, jackspa_path, dry_run=False):
         super(LadspaPlugins, self).__init__()
         self.jackClient = jackClient
         self.jackspa_path = jackspa_path
-        self.all_positions = all_positions
         self.dry_run = dry_run
 
     def get_panning_positions(self, number_of_clients):
+        if number_of_clients == 0:
+            return []
+
+        if number_of_clients == 1:
+            return [0]
+
         if number_of_clients == 2:
-            return self.all_positions[5:7]
+            # Just map points between -0.5 and 0.5 for shallow 2 client panning
+            return list(np.linspace(-0.5, 0.5, number_of_clients))
+
         if number_of_clients == 3:
-            return [
-                self.all_positions[0],
-                self.all_positions[5],
-                self.all_positions[6],
-                (self.all_positions[5] - 0.01),
-                (self.all_positions[6] + 0.01),
-            ]
+            # Fixes the strange case of 3 clients
+            panning_positions = list(np.linspace(-0.5, 0.5, number_of_clients))
+            panning_positions + (panning_positions[0] - 0.01)
+            panning_positions + (panning_positions[2] - 0.01)
+            return panning_positions
 
-        if number_of_clients % 2 == 0:
-            positions = []
-        else:
-            positions = [self.all_positions[0]]
-
-        if number_of_clients < 6:
-            return positions + self.all_positions[3:7]
-        if number_of_clients < 8:
-            return positions + self.all_positions[1:3] + self.all_positions[5:9]
-        if number_of_clients < 10:
-            return positions + self.all_positions[1:9]
-        if number_of_clients < 12:
-            return positions + self.all_positions[1:11]
+        return list(np.linspace(-1, 1, number_of_clients))
 
     def generate_port_name(self, panning_position):
         """Returns a ladspa port name"""
