@@ -101,7 +101,6 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
 
     if len(jacktrip_clients) == 1:
         print("=== Patch", len(jacktrip_clients), "client ===")
-        jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
     if len(jacktrip_clients) >= 2 and len(jacktrip_clients) <= 11:
