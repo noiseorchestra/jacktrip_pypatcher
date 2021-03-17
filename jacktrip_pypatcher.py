@@ -93,16 +93,15 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     disconnect(jackClient, dry_run, lounge_music.port)
 
     print("=== Lounge Music ===")
-    if len(jacktrip_clients) != 1:
+    if len(jacktrip_clients) != 0:
         lounge_music.kill_the_music()
     else:
         lounge_music.start_the_music_with_retries()
+        jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
 
     if len(jacktrip_clients) == 1:
         print("=== Patch", len(jacktrip_clients), "client ===")
-        jcp.connect_mpg123_to_centre(lounge_music.port, jacktrip_clients[0])
         jcp.connect_to_centre(jacktrip_clients[0], jacktrip_clients[0])
-        jcp.connect_mpg123_to_darkice(lounge_music.port, darkice_port)
         jcp.connect_darkice_to_centre(jacktrip_clients[0], darkice_port)
 
     if len(jacktrip_clients) >= 2 and len(jacktrip_clients) <= 11:
