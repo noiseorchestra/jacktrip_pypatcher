@@ -105,9 +105,12 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         if len(jacktrip_clients) == 3:
             darkice_ladspa_ports = [ladspa_ports[0]] + ladspa_ports[3:]
 
-        jcp.set_client_connections(jacktrip_clients, ladspa_ports, lounge_music.port)
+        jcp.set_lounge_music_connections(
+            jacktrip_clients, darkice_port, lounge_music.port
+        )
+        jcp.set_client_connections(jacktrip_clients, ladspa_ports)
         jcp.set_darkice_connections(
-            darkice_ladspa_ports, darkice_port, jacktrip_clients, lounge_music.port
+            darkice_ladspa_ports, darkice_port, jacktrip_clients
         )
 
     print("=== Disconnecting existing connections ===")
