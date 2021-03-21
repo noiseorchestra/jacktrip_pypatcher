@@ -37,20 +37,19 @@ def run_pypatcher_voice_count(number_of_voices, expected_call_count=4):
 
 
 # TODO: when we have actual tests, we can use a loop here
+
+# different get_ports call count expected because of lounge_music being started
+# and ladspa being shut down. This is still a hack but can be fixed in a full
+# rewrite of these tests.
 def test_pypatcher0():
-    # different get_ports call count expected because of lounge_music being started
-    # and ladspa being shut down. This is still a hack but can be fixed in a full
-    # rewrite of these tests.
     run_pypatcher_voice_count(0, expected_call_count=5)
 
 
 def test_pypatcher1():
-    # different get_ports call count expected because of lounge_music being started
-    # and ladspa being shut down. This is still a hack but can be fixed in a full
-    # rewrite of these tests.
     run_pypatcher_voice_count(1, expected_call_count=6)
 
 
+# The remaining tests don't call lounge_music
 def test_pypatcher2():
     run_pypatcher_voice_count(2)
 

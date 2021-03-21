@@ -105,7 +105,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         if len(jacktrip_clients) == 3:
             darkice_ladspa_ports = [ladspa_ports[0]] + ladspa_ports[3:]
 
-        jcp.set_all_connections(jacktrip_clients, ladspa_ports, lounge_music.port)
+        jcp.set_client_connections(jacktrip_clients, ladspa_ports, lounge_music.port)
         jcp.set_darkice_connections(
             darkice_ladspa_ports, darkice_port, jacktrip_clients, lounge_music.port
         )
@@ -114,7 +114,7 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
     disconnect(jackClient, dry_run, lounge_music.port)
 
     print("=== Patch", len(jacktrip_clients), "client ===")
-    jcp.make_all_connections()
+    jcp.make_connections()
 
     print("=== Recording ===")
     if len(jacktrip_clients) > 0:

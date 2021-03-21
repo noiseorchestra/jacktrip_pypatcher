@@ -15,7 +15,7 @@ def test_set_jacktrip_connections_1_client():
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, [], lounge_music_port)
+    jcp.set_client_connections(jacktrip_clients, [], lounge_music_port)
 
     assert jcp.connections == connections
 
@@ -64,7 +64,7 @@ def run_set_jacktrip_connections_2_clients(client_prefix):
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+    jcp.set_client_connections(jacktrip_clients, ladspa_ports)
 
     assert jcp.connections == connections
 
@@ -90,7 +90,7 @@ def run_set_darkice_connections_2_clients():
     assert jcp.connections == connections
 
 
-def run_set_all_connections_2_clients(client_prefix):
+def run_set_client_connections_2_clients(client_prefix):
 
     jackClient = None
     jacktrip_clients = [
@@ -120,7 +120,7 @@ def run_set_all_connections_2_clients(client_prefix):
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+    jcp.set_client_connections(jacktrip_clients, ladspa_ports)
     jcp.set_darkice_connections(ladspa_ports, darkice_port)
 
     assert jcp.connections == connections
@@ -162,7 +162,7 @@ def run_set_jacktrip_connections_4_clients(client_prefix):
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+    jcp.set_client_connections(jacktrip_clients, ladspa_ports)
 
     assert jcp.connections == connections
 
@@ -193,7 +193,7 @@ def run_set_darkice_connections_4_clients():
     assert jcp.connections == connections
 
 
-def run_set_all_connections_4_clients(client_prefix):
+def run_set_client_connections_4_clients(client_prefix):
 
     jackClient = None
     jacktrip_clients = [
@@ -235,7 +235,7 @@ def run_set_all_connections_4_clients(client_prefix):
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+    jcp.set_client_connections(jacktrip_clients, ladspa_ports)
     jcp.set_darkice_connections(ladspa_ports, darkice_port)
 
     assert jcp.connections == connections
@@ -280,7 +280,7 @@ def run_set_jacktrip_connections_3_clients(client_prefix):
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+    jcp.set_client_connections(jacktrip_clients, ladspa_ports)
 
     assert jcp.connections == connections
 
@@ -318,7 +318,7 @@ def run_set_darkice_connections_3_clients():
     assert jcp.connections == connections
 
 
-def run_set_all_connections_3_clients(client_prefix):
+def run_set_client_connections_3_clients(client_prefix):
 
     jackClient = None
     jacktrip_clients = [
@@ -362,7 +362,7 @@ def run_set_all_connections_3_clients(client_prefix):
     ]
 
     jcp = p.JackClientPatching(jackClient, dry_run=True)
-    jcp.set_all_connections(jacktrip_clients, ladspa_ports)
+    jcp.set_client_connections(jacktrip_clients, ladspa_ports)
     jcp.set_darkice_connections([ladspa_ports[0]] + ladspa_ports[3:], darkice_port)
 
     assert jcp.connections == connections
@@ -387,6 +387,6 @@ def test_darkice_connections():
 
 def test_all_connections():
     for client_prefix in client_prefixes:
-        run_set_all_connections_2_clients(client_prefix)
-        run_set_all_connections_3_clients(client_prefix)
-        run_set_all_connections_4_clients(client_prefix)
+        run_set_client_connections_2_clients(client_prefix)
+        run_set_client_connections_3_clients(client_prefix)
+        run_set_client_connections_4_clients(client_prefix)
