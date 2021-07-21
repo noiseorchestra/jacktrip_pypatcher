@@ -7,7 +7,7 @@ def test_start_the_music_with_retries():
     jackClient.get_ports.return_value = []
     dry_run = True
     lounge_music = LoungeMusic(
-        jackClient, "lounge-music", "/home/sam/lounge-music.mp3", dry_run
+        jackClient, "lounge-music", "/home/jacktrip/lounge-music.mp3", dry_run
     )
 
     lounge_music.start_the_music_with_retries()
@@ -21,7 +21,7 @@ def test_start_the_music_with_more_retries():
     jackClient.get_ports.return_value = []
     dry_run = True
     lounge_music = LoungeMusic(
-        jackClient, "lounge-music", "/home/sam/lounge-music.mp3", dry_run
+        jackClient, "lounge-music", "/home/jacktrip/lounge-music.mp3", dry_run
     )
 
     lounge_music.start_the_music_with_retries(10)

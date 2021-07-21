@@ -11,7 +11,7 @@ ExecStart=/usr/bin/jackd -d dummy -p $FPP
 Restart=always
 RestartSec=2s
 # Use a dedicated user to run our service
-User=sam
+User=jacktrip
 
 [Install]
 

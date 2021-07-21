@@ -51,8 +51,8 @@ def autopatch(jackClient, dry_run, jacktrip_clients):
         0.75,
     ]
     jackspa_path = "jackspa-cli"
-    lounge_music_path = "/home/sam/lounge-music.mp3"
-    recording_path_prefix = "/home/sam/darkice-"
+    lounge_music_path = "/home/jacktrip/lounge-music.mp3"
+    recording_path_prefix = "/home/jacktrip/darkice-"
 
     lounge_music = LoungeMusic(jackClient, "lounge-music", lounge_music_path, dry_run)
     stereo_recording = StereoRecording(recording_path_prefix, dry_run)

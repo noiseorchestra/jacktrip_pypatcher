@@ -13,7 +13,7 @@ Restart=always
 RestartSec=2s
 
 # Use a dedicated user to run our service
-User=sam
+User=jacktrip
 
 [Install]
 
