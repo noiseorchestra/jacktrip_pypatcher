@@ -1,20 +1,28 @@
 [Unit]
 Description=JackTrip service
-Requires=jackd.service
 After=jackd.service
 
 [Service]
-LimitRTPRIO=infinity
-LimitMEMLOCK=infinity
-LimitRTTIME=infinity
+Type=simple
+User=sam
+Group=audio
+Nice=-20
+IOSchedulingClass=realtime
+IOSchedulingPriority=0
+Environment="JACK_NO_AUDIO_RESERVATION=1"
+Environment="JACK_NO_START_SERVER=1"
+ExecStartPre=jack_wait -w -t 5
 EnvironmentFile=/etc/jacktrip_pypatcher/jacktrip.conf
 ExecStart=/usr/local/bin/jacktrip -S -p0 --nojackportsconnect -z -q $Q
 Restart=always
-RestartSec=2s
-
-# Use a dedicated user to run our service
-User=sam
+RestartSec=5
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=jacktrip
+LimitMEMLOCK=infinity
+LimitRTPRIO=99
+LimitNOFILE=200000
+LimitNPROC=200000
 
 [Install]
-
 WantedBy=default.target
