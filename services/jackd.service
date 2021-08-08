@@ -4,7 +4,7 @@ PartOf=pypatcher_callback.service jacktrip.service
 
 [Service]
 Type=simple
-User=sam
+User=jacktrip
 Group=audio
 Nice=-20
 IOSchedulingClass=realtime

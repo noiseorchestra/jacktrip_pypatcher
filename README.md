@@ -44,9 +44,9 @@ If all dependencies are configured correctly you can start the Jackd, Icecast an
 
 ### hard-coded paths
 
-* Ensure that you have some lounge music path at the currently hard-coded path in [lounge_music.py](./lounge_music.py), currently `/home/sam/lounge-music.mp3`.
+* Ensure that you have some lounge music path at the currently hard-coded path in [lounge_music.py](./lounge_music.py), currently `/home/jacktrip/lounge-music.mp3`.
 
-* Ensure that you have write access to the currently hard-coded path in [stereo_recording.py](./stereo_recording.py), currently `/home/sam/`. Nb. files will have filenames with prefix `darkice-`, e.g. `darkice-01.wav`.
+* Ensure that you have write access to the currently hard-coded path in [stereo_recording.py](./stereo_recording.py), currently `/home/jacktrip/`. Nb. files will have filenames with prefix `darkice-`, e.g. `darkice-01.wav`.
 
 ### Modes
 
@@ -68,4 +68,4 @@ $ python3 -m pytest
 
 ## Credits
 
-Written by [Tom Ward](http://www.madwort.co.uk) and [Sam Andreae](https://www.samandreae.com/) as part of a project with [Noise Orchestra](https://noiseorchestra.org/)
+Written by [Tom Ward](http://www.madwort.co.uk) and [jacktrip Andreae](https://www.jacktripandreae.com/) as part of a project with [Noise Orchestra](https://noiseorchestra.org/)

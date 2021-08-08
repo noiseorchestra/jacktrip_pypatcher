@@ -4,22 +4,22 @@ import pytest
 
 
 def test_get_filename_prefix(freezer):
-    stereo_recording = StereoRecording("/home/sam/recordings/audio/", dry_run=True)
+    stereo_recording = StereoRecording("/home/jacktrip/recordings/audio/", dry_run=True)
     freezer.move_to("2020-10-15 12:54")
 
-    filename_prefix = "/home/sam/recordings/audio/2020_10_15_1254-"
+    filename_prefix = "/home/jacktrip/recordings/audio/2020_10_15_1254-"
     assert stereo_recording.get_filename_prefix() == filename_prefix
 
 
 def test_generate_subprocess_cmd(freezer):
 
-    stereo_recording = StereoRecording("/home/sam/recordings/audio/", dry_run=True)
+    stereo_recording = StereoRecording("/home/jacktrip/recordings/audio/", dry_run=True)
     freezer.move_to("2020-10-15 12:54")
 
     cmd = [
         "jack_capture",
         "--filename-prefix",
-        "/home/sam/recordings/audio/2020_10_15_1254-",
+        "/home/jacktrip/recordings/audio/2020_10_15_1254-",
         "-S",
         "--channels",
         "2",

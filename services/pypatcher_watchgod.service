@@ -8,13 +8,13 @@ Environment=PYTHONUNBUFFERED=1
 LimitRTPRIO=infinity
 LimitMEMLOCK=infinity
 LimitRTTIME=infinity
-ExecStart=/usr/bin/python3 -u /home/sam/jacktrip_pypatcher/patcher_watchgod.py
-WorkingDirectory=/home/sam/jacktrip_pypatcher/
+ExecStart=/usr/bin/python3 -u /home/jacktrip/jacktrip_pypatcher/patcher_watchgod.py
+WorkingDirectory=/home/jacktrip/jacktrip_pypatcher/
 Restart=always
 RestartSec=2s
 
 # Use a dedicated user to run our service
-User=sam
+User=jacktrip
 
 [Install]
 
